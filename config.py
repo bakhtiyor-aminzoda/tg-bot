@@ -22,3 +22,6 @@ USER_COOLDOWN_SECONDS = 10
 
 # Логирование (уровень и путь можно переопределить)
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
+# опционально
+YTDLP_COOKIES_FILE = os.environ.get("YTDLP_COOKIES_FILE", None)
+

@@ -1,99 +1,255 @@
 # utils/downloader.py
-# Асинхронный загрузчик видео через yt-dlp (внешний процесс).
-# Возвращает абсолютный путь к скачанному файлу или выбрасывает исключение.
+"""
+Улучшенный асинхронный загрузчик для yt-dlp с постпроверкой через ffprobe + мерджем через ffmpeg.
+- Скачивает bestvideo+bestaudio (предпочитая mp4/m4a).
+- При отсутствии аудио скачивает отдельно аудио и делает merge.
+- Поддерживает COOKIES_FILE (опционно) и настраиваемый USER_AGENT.
+- Бросает DownloadError при неудаче.
+"""
 
 import asyncio
 import shlex
 import os
 from pathlib import Path
 import logging
-from typing import Tuple
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
 class DownloadError(Exception):
-    """Ошибка при скачивании видео."""
     pass
 
-async def download_video(url: str, output_dir: Path, timeout: int = 20*60) -> Path:
-    """
-    Асинхронно запускает yt-dlp для скачивания видео по url в output_dir.
-    Возвращает Path к скачанному файлу.
-    Бросает DownloadError при ошибках.
+async def _run_cmd(cmd: list[str], timeout: int):
+    """Run subprocess, return (stdout, stderr, returncode)."""
+    logger.debug("Run command: %s", " ".join(shlex.quote(x) for x in cmd))
+    proc = await asyncio.create_subprocess_exec(
+        *cmd,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE
+    )
+    try:
+        stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=timeout)
+    except asyncio.TimeoutError:
+        proc.kill()
+        await proc.communicate()
+        raise DownloadError("Таймаут выполнения внешней команды.")
+    return stdout.decode(errors="ignore"), stderr.decode(errors="ignore"), proc.returncode
 
-    Параметры:
-        url: ссылка на видео
-        output_dir: папка, куда сохранять (Path)
-        timeout: таймаут процесса в секундах
+async def _ffprobe_has_audio_or_video(path: Path, timeout: int = 30) -> dict:
+    """
+    Проверяем потоки в файле через ffprobe.
+    Возвращаем dict {'has_audio': bool, 'has_video': bool}
+    """
+    cmd = [
+        "ffprobe", "-v", "error",
+        "-select_streams", "a",
+        "-show_entries", "stream=codec_type",
+        "-of", "default=noprint_wrappers=1:nokey=1",
+        str(path)
+    ]
+    has_audio = False
+    try:
+        stdout, stderr, rc = await _run_cmd(cmd, timeout=timeout)
+        has_audio = bool(stdout.strip())
+    except DownloadError:
+        logger.debug("ffprobe audio check failed for %s", path)
+
+    cmd_v = [
+        "ffprobe", "-v", "error",
+        "-select_streams", "v",
+        "-show_entries", "stream=codec_type",
+        "-of", "default=noprint_wrappers=1:nokey=1",
+        str(path)
+    ]
+    has_video = False
+    try:
+        stdout, stderr, rc = await _run_cmd(cmd_v, timeout=timeout)
+        has_video = bool(stdout.strip())
+    except DownloadError:
+        logger.debug("ffprobe video check failed for %s", path)
+
+    return {"has_audio": has_audio, "has_video": has_video}
+
+async def _ffmpeg_merge(video_path: Path, audio_path: Path, output_path: Path, timeout: int = 120):
+    """
+    Мерджит video + audio в output_path с помощью ffmpeg.
+    Мы стараемся копировать видео-стрим, перекодировать аудио в aac (для совместимости).
+    """
+    cmd = [
+        "ffmpeg", "-y",
+        "-i", str(video_path),
+        "-i", str(audio_path),
+        "-c:v", "copy",
+        "-c:a", "aac",
+        "-map", "0:v:0",
+        "-map", "1:a:0",
+        str(output_path)
+    ]
+    stdout, stderr, rc = await _run_cmd(cmd, timeout=timeout)
+    if rc != 0:
+        logger.error("ffmpeg merge failed: %s", stderr[:1000])
+        raise DownloadError(f"ffmpeg merge failed: {stderr.splitlines()[-1] if stderr else 'unknown'}")
+    return output_path
+
+async def download_video(url: str, output_dir: Path, timeout: int = 20*60, cookies_file: Optional[str] = None) -> Path:
+    """
+    Асинхронно скачивает видео через yt-dlp, возвращает путь к итоговому файлу.
+    - output_dir: папка, куда сохранять
+    - timeout: общий таймаут для операций yt-dlp (сек)
+    - cookies_file: необязательный путь к cookies.txt
     """
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Шаблон имени выходного файла: title-id.ext (обрезаем title чтобы не было слишком длинным)
+    # Шаблон имени выходного файла
     output_template = str(output_dir / "%(title).100s-%(id)s.%(ext)s")
 
-    # Формируем аргументы yt-dlp.
-    # - --no-playlist : гарантируем, что не скачиваем плейлист
-    # - -f "bestvideo+bestaudio/best" : берем лучший видеопоток и аудио (и объединяем)
-    # - --merge-output-format mp4 : итог в mp4 для лучшей совместимости
-    # - -o <template> : путь вывода
-    # - --no-warnings : уборка лишних предупреждений
-    # - --restrict-filenames : чтобы избегать странных символов (опционально)
+    # Настройки yt-dlp: приоритет mp4/m4a, мердж в mp4
+    # Добавим user agent и ретраи
+    user_agent = os.environ.get("YTDLP_USER_AGENT", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36")
     cmd = [
         "yt-dlp",
         "--no-playlist",
-        "-f", "bestvideo+bestaudio/best",
+        "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best",
         "--merge-output-format", "mp4",
         "--no-warnings",
         "--restrict-filenames",
-        "-o", output_template,
-        url,
+        "--output", output_template,
+        "--retries", "3",
+        "--fragment-retries", "3",
+        "--user-agent", user_agent,
     ]
 
-    logger.info("Запускаем yt-dlp: %s", " ".join(shlex.quote(x) for x in cmd))
+    if cookies_file:
+        cmd += ["--cookies", cookies_file]
+    else:
+        # Попробуем взять из переменной окружения, если задана
+        cf = os.environ.get("YTDLP_COOKIES_FILE")
+        if cf:
+            cmd += ["--cookies", cf]
 
-    # Запускаем subprocess
+    # Иногда полезно указать referer для instagram
+    if "instagram.com" in url:
+        cmd += ["--add-header", "Referer: https://www.instagram.com/"]
+
+    # Запускаем yt-dlp
+    logger.info("Запускаем yt-dlp: %s ...", url)
     try:
-        proc = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
-        )
-
-        try:
-            stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=timeout)
-        except asyncio.TimeoutError:
-            proc.kill()
-            await proc.communicate()
-            raise DownloadError("Таймаут скачивания (превышено время ожидания).")
-
-        if proc.returncode != 0:
-            err_text = stderr.decode(errors="ignore")[:2000]
-            logger.error("yt-dlp завершился с кодом %s: %s", proc.returncode, err_text)
-            raise DownloadError(f"Ошибка yt-dlp: {err_text or 'неизвестная ошибка'}")
-
-        out_text = stdout.decode(errors="ignore")
-        logger.debug("yt-dlp stdout: %s", out_text)
-
+        stdout, stderr, rc = await _run_cmd(cmd + [url], timeout=timeout)
     except FileNotFoundError as e:
-        logger.exception("yt-dlp не найден в PATH.")
-        raise DownloadError("yt-dlp не найден. Установите yt-dlp в систему и убедитесь, что он доступен в PATH.") from e
-    except Exception as e:
-        logger.exception("Ошибка при запуске yt-dlp")
-        raise DownloadError(f"Ошибка при запуске yt-dlp: {e}") from e
+        logger.exception("yt-dlp не найден.")
+        raise DownloadError("yt-dlp не найден. Убедитесь, что он установлен и доступен в PATH.") from e
+    except DownloadError as e:
+        logger.exception("Ошибка yt-dlp (timeout?)")
+        raise
 
-    # После успешного завершения: ищем новый файл в output_dir (по расширению mp4 или другим)
-    # Поскольку мы использовали шаблон с title-id, обычно появляется один новый файл.
-    candidates = list(output_dir.glob("*"))
+    if rc != 0:
+        logger.error("yt-dlp завершился с кодом %s: %s", rc, stderr[:2000])
+        # Попробуем получить больше информации: запустить yt-dlp с --dump-single-json (коротко)
+        raise DownloadError(f"Ошибка yt-dlp: {stderr.splitlines()[-1] if stderr else 'unknown error'}")
+
+    # Находим последнее созданное видео-файл в output_dir
+    candidates = [p for p in output_dir.iterdir() if p.is_file()]
     if not candidates:
         raise DownloadError("Файл не найден после завершения yt-dlp.")
 
-    # Берём самый свежий файл (на случай, если папка не пуста)
-    candidates_sorted = sorted(candidates, key=lambda p: p.stat().st_mtime, reverse=True)
-    downloaded = candidates_sorted[0]
+    downloaded = sorted(candidates, key=lambda p: p.stat().st_mtime, reverse=True)[0]
+    logger.info("Первичный файл: %s (%.2f MB)", downloaded, downloaded.stat().st_size / 1024 / 1024)
 
-    # Некоторые форматы могут включать .tmp — если он есть, выдаём ошибку
-    if downloaded.suffix == ".tmp" or not downloaded.exists():
-        raise DownloadError("Файл скачан некорректно или имеет временное расширение.")
+    # Проверяем с помощью ffprobe наличие аудио+видео
+    probes = await _ffprobe_has_audio_or_video(downloaded)
+    logger.debug("ffprobe result: %s", probes)
 
-    logger.info("Скачано: %s (%.2f MB)", downloaded, downloaded.stat().st_size / 1024 / 1024)
-    return downloaded
+    # Если есть видео и аудио — возвращаем
+    if probes.get("has_video") and probes.get("has_audio"):
+        return downloaded
+
+    # Если есть видео, но нет аудио — пробуем скачать audio отдельно и смёрджить
+    if probes.get("has_video") and not probes.get("has_audio"):
+        logger.info("Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.")
+        audio_template = str(output_dir / "%(title).100s-%(id)s.%(ext)s")
+        audio_cmd = [
+            "yt-dlp",
+            "--no-playlist",
+            "-f", "bestaudio[ext=m4a]/bestaudio",
+            "--output", audio_template,
+            "--user-agent", user_agent,
+            "--retries", "3",
+            "--fragment-retries", "3",
+        ]
+        if cookies_file:
+            audio_cmd += ["--cookies", cookies_file]
+        else:
+            cf = os.environ.get("YTDLP_COOKIES_FILE")
+            if cf:
+                audio_cmd += ["--cookies", cf]
+        if "instagram.com" in url:
+            audio_cmd += ["--add-header", "Referer: https://www.instagram.com/"]
+
+        stdout_a, stderr_a, rc_a = await _run_cmd(audio_cmd + [url], timeout=timeout)
+        if rc_a != 0:
+            logger.error("Не удалось скачать аудио отдельно: %s", stderr_a[:1000])
+            raise DownloadError("Не удалось скачать аудио для объединения.")
+
+        # Найдём скачанный аудиофайл
+        candidates2 = [p for p in output_dir.iterdir() if p.is_file() and p != downloaded]
+        if not candidates2:
+            raise DownloadError("Аудиофайл не найден после скачивания.")
+        audio_file = sorted(candidates2, key=lambda p: p.stat().st_mtime, reverse=True)[0]
+        logger.info("Аудио скачано: %s", audio_file)
+
+        # Мержим через ffmpeg
+        merged_path = downloaded.with_name(downloaded.stem + "_merged.mp4")
+        merged = await _ffmpeg_merge(downloaded, audio_file, merged_path)
+        # Clean up originals if merge ok
+        try:
+            downloaded.unlink(missing_ok=True)
+            audio_file.unlink(missing_ok=True)
+        except Exception:
+            logger.debug("Не удалось удалить временные файлы после merge.")
+        logger.info("Merge выполнен, итог: %s", merged)
+        return merged
+
+    # Если есть аудио, но нет видео (редкий кейс) — скачиваем video отдельно
+    if probes.get("has_audio") and not probes.get("has_video"):
+        logger.info("Файл содержит только аудио. Пробуем скачать video отдельно и смержить.")
+        video_template = str(output_dir / "%(title).100s-%(id)s.%(ext)s")
+        video_cmd = [
+            "yt-dlp",
+            "--no-playlist",
+            "-f", "bestvideo[ext=mp4]/bestvideo",
+            "--output", video_template,
+            "--user-agent", user_agent,
+            "--retries", "3",
+            "--fragment-retries", "3",
+        ]
+        if cookies_file:
+            video_cmd += ["--cookies", cookies_file]
+        else:
+            cf = os.environ.get("YTDLP_COOKIES_FILE")
+            if cf:
+                video_cmd += ["--cookies", cf]
+        if "instagram.com" in url:
+            video_cmd += ["--add-header", "Referer: https://www.instagram.com/"]
+
+        stdout_v, stderr_v, rc_v = await _run_cmd(video_cmd + [url], timeout=timeout)
+        if rc_v != 0:
+            logger.error("Не удалось скачать video отдельно: %s", stderr_v[:1000])
+            raise DownloadError("Не удалось скачать видео для объединения.")
+
+        # Найдём скачанный видеофайл
+        candidates3 = [p for p in output_dir.iterdir() if p.is_file() and p != downloaded]
+        if not candidates3:
+            raise DownloadError("Видеофайл не найден после скачивания.")
+        video_file = sorted(candidates3, key=lambda p: p.stat().st_mtime, reverse=True)[0]
+        merged_path = video_file.with_name(video_file.stem + "_merged.mp4")
+        merged = await _ffmpeg_merge(video_file, downloaded, merged_path)
+        try:
+            downloaded.unlink(missing_ok=True)
+            video_file.unlink(missing_ok=True)
+        except Exception:
+            logger.debug("Не удалось удалить временные файлы после merge.")
+        logger.info("Merge выполнен, итог: %s", merged)
+        return merged
+
+    # Иначе — непонятный кейс
+    raise DownloadError("Скачанный файл не содержит не аудио, ни видео или неизвестный формат.")

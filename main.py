@@ -96,7 +96,7 @@ async def handle_download_command(message: types.Message):
     tmpdir.mkdir(parents=True, exist_ok=True)
 
     try:
-        downloaded_path = await download_video(url, tmpdir, timeout=config.DOWNLOAD_TIMEOUT_SECONDS)
+        downloaded_path = await download_video(url, tmpdir, timeout=config.DOWNLOAD_TIMEOUT_SECONDS, cookies_file=config.YTDLP_COOKIES_FILE)
 
         # Проверка размера
         size = downloaded_path.stat().st_size
@@ -112,7 +112,7 @@ async def handle_download_command(message: types.Message):
             logger.warning("send_video не подошёл (%s), пробуем send_document", e)
             try:
                 file_obj = FSInputFile(path=str(downloaded_path))
-                await bot.send_document(chat_id=message.chat.id, document=file_obj, caption=f"Видео (файл) с {platform}")
+                await bot.send_document(chat_id=message.chat.id, document=file_obj, caption=f"Видео (файл) скачали с помощью @MediaBanditbot")
             except Exception as e2:
                 logger.exception("Не удалось отправить как документ: %s", e2)
                 await status_msg.edit_text("Ошибка отправки файла в Telegram: " + str(e2))
