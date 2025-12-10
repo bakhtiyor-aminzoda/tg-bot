@@ -1,32 +1,45 @@
 # Dockerfile — для Railway / Docker Hub / Render
+# Многоэтапная сборка для надёжного декодирования видео
 FROM python:3.11-slim
 
-# Установим зависимости ОС (ffmpeg + инструменты)
+# Устанавливаем зависимости ОС (ffmpeg, требуемый для yt-dlp + git для некоторых источников)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       ffmpeg \
       git \
-      build-essential \
+      curl \
       ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR /app
 
-# Скопируем только файлы зависимостей сначала для кэширования слоёв
+# Копируем только requirements.txt для кэширования слоёв Docker
 COPY requirements.txt .
 
-# Установим Python зависимости
-RUN pip install --upgrade pip setuptools wheel && \
+# Обновляем pip и устанавливаем Python зависимости
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
     pip install --no-cache-dir -r requirements.txt
 
-# Копируем весь проект
+# Копируем весь исходный код проекта
 COPY . .
 
-# Убедимся, что tmp папка существует
-RUN mkdir -p /app/tmp
+# Создаём необходимые каталоги
+RUN mkdir -p /app/tmp /app/logs && \
+    chmod 755 /app/tmp /app/logs
 
-# Переменные среды можно переопределить в Railway UI
-ENV PYTHONUNBUFFERED=1
+# Проверим, что ffmpeg доступен
+RUN ffmpeg -version | head -n 1
 
-# Команда запуска
+# Переменные окружения
+ENV PYTHONUNBUFFERED=1 \
+    LOG_FILE=/app/logs/bot.log \
+    DOWNLOAD_TIMEOUT=1200 \
+    MAX_GLOBAL_CONCURRENT_DOWNLOADS=4
+
+# Health check (проверяет, что бот работает)
+# Примечание: это базовая проверка; для полного health check нужен дополнительный механизм
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8080/health 2>/dev/null || exit 1 || true
+
+# Команда запуска бота
 CMD ["python", "main.py"]

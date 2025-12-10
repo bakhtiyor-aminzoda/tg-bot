@@ -1,0 +1,107 @@
+2025-12-11 01:10:28,597 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 01:10:28,597 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 01:10:28,945 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 01:12:29,588 | INFO | aiogram.event | Update id=198324925 is handled. Duration 424 ms by bot id=7636144709
+2025-12-11 01:12:31,820 | INFO | __main__ | Received callback_query: download:d8ccbc9c73954f3194e3f2a648b40875 from 1175046908
+2025-12-11 01:12:32,088 | INFO | __main__ | Waiting for global download slot (callback)...
+2025-12-11 01:12:32,088 | INFO | __main__ | Acquired global download slot (callback)
+2025-12-11 01:12:32,088 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRx5YHjiPCS/?igsh=MWcxZ2c5Njh6bnhuaA== ...
+2025-12-11 01:12:35,135 | INFO | utils.downloader | Первичный файл: tmp/1175046908_1765397552/Video_by_lis.skins-DRx5YHjiPCS.mp4 (2.20 MB)
+2025-12-11 01:12:35,199 | INFO | __main__ | Released global download slot (callback)
+2025-12-11 01:12:39,413 | INFO | aiogram.event | Update id=198324926 is handled. Duration 7593 ms by bot id=7636144709
+2025-12-11 01:14:46,333 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 01:14:46,335 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 01:14:46,335 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 01:27:19,100 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 01:27:19,100 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 01:27:19,474 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 01:27:26,562 | INFO | aiogram.event | Update id=198324927 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 01:27:46,489 | INFO | aiogram.event | Update id=198324928 is handled. Duration 1 ms by bot id=7636144709
+2025-12-11 01:27:51,452 | INFO | aiogram.event | Update id=198324929 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 01:30:15,921 | INFO | aiogram.event | Update id=198324930 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 01:30:24,222 | INFO | aiogram.event | Update id=198324931 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 01:31:33,470 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 01:31:33,471 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 01:31:33,472 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 01:32:56,741 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 01:32:56,741 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 01:32:57,102 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 01:33:04,350 | INFO | aiogram.event | Update id=198324932 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 01:33:12,095 | INFO | aiogram.event | Update id=198324933 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 01:33:19,096 | INFO | aiogram.event | Update id=198324934 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 01:33:24,046 | INFO | aiogram.event | Update id=198324935 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 01:42:01,133 | INFO | aiogram.event | Update id=198324936 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 01:42:10,179 | INFO | aiogram.event | Update id=198324937 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 01:42:17,836 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 01:42:17,837 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 01:42:17,837 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 01:42:18,074 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 01:42:20,066 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 01:42:20,066 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 01:42:20,417 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 01:42:29,816 | INFO | aiogram.event | Update id=198324938 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 01:42:33,399 | INFO | aiogram.event | Update id=198324939 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 01:42:44,671 | INFO | aiogram.event | Update id=198324940 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 01:42:51,502 | INFO | aiogram.event | Update id=198324941 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 01:43:08,583 | INFO | aiogram.event | Update id=198324942 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 01:44:23,497 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 01:44:23,498 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 01:44:23,498 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 01:44:26,315 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 01:44:26,315 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 01:44:26,752 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 01:44:39,896 | INFO | aiogram.event | Update id=198324943 is handled. Duration 399 ms by bot id=7636144709
+2025-12-11 01:44:44,251 | INFO | __main__ | Команда /stats от пользователя 1175046908 (starik713)
+2025-12-11 01:44:44,390 | INFO | aiogram.event | Update id=198324944 is handled. Duration 139 ms by bot id=7636144709
+2025-12-11 01:45:10,306 | INFO | __main__ | Команда /stats от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 01:45:10,547 | INFO | aiogram.event | Update id=198324945 is handled. Duration 241 ms by bot id=7636144709
+2025-12-11 01:45:14,705 | INFO | __main__ | Команда /my_stats от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 01:45:14,851 | INFO | aiogram.event | Update id=198324946 is handled. Duration 146 ms by bot id=7636144709
+2025-12-11 01:46:37,680 | INFO | aiogram.event | Update id=198324947 is handled. Duration 164 ms by bot id=7636144709
+2025-12-11 01:53:48,265 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 01:53:48,266 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 01:53:48,266 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 01:53:50,411 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 01:53:50,411 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 01:53:51,920 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 01:56:07,183 | INFO | __main__ | Команда /stats от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 01:56:07,710 | INFO | aiogram.event | Update id=198324948 is handled. Duration 527 ms by bot id=7636144709
+2025-12-11 02:03:38,376 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 02:03:38,377 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 02:03:38,377 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 02:03:40,896 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 02:03:40,896 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 02:03:41,277 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 02:03:45,951 | INFO | __main__ | Команда /stats от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 02:03:46,529 | INFO | aiogram.event | Update id=198324949 is handled. Duration 579 ms by bot id=7636144709
+2025-12-11 02:03:51,070 | INFO | aiogram.event | Update id=198324950 is handled. Duration 169 ms by bot id=7636144709
+2025-12-11 02:06:30,655 | INFO | aiogram.event | Update id=198324951 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 02:06:30,776 | INFO | aiogram.event | Update id=198324952 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 02:07:15,322 | INFO | aiogram.event | Update id=198324954 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 02:07:15,353 | INFO | db | Добавлен авторизованный админ: 7319778914
+2025-12-11 02:07:15,353 | INFO | __main__ | Auto-authorized 1 admins from chat -1002327428407
+2025-12-11 02:07:15,353 | INFO | aiogram.event | Update id=198324953 is handled. Duration 149 ms by bot id=7636144709
+2025-12-11 02:07:31,113 | INFO | db | Добавлен авторизованный админ: 7636144709
+2025-12-11 02:07:31,113 | INFO | db | Добавлен авторизованный админ: 7319778914
+2025-12-11 02:07:31,114 | INFO | db | Добавлен авторизованный админ: 1175046908
+2025-12-11 02:07:31,114 | INFO | __main__ | Auto-authorized 3 admins from chat -1002327428407
+2025-12-11 02:07:31,115 | INFO | aiogram.event | Update id=198324955 is handled. Duration 131 ms by bot id=7636144709
+2025-12-11 02:07:38,433 | INFO | __main__ | Команда /stats от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 02:07:38,793 | INFO | aiogram.event | Update id=198324956 is handled. Duration 360 ms by bot id=7636144709
+2025-12-11 02:07:55,493 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 02:07:55,659 | INFO | aiogram.event | Update id=198324957 is handled. Duration 166 ms by bot id=7636144709
+2025-12-11 02:08:10,366 | INFO | aiogram.event | Update id=198324958 is not handled. Duration 0 ms by bot id=7636144709
+2025-12-11 02:08:16,646 | INFO | aiogram.event | Update id=198324959 is handled. Duration 208 ms by bot id=7636144709
+2025-12-11 02:08:20,745 | INFO | __main__ | Received callback_query: download:a5200da61ee24f6a8473be0e96e0af43 from 7319778914
+2025-12-11 02:08:21,032 | INFO | __main__ | Waiting for global download slot (callback)...
+2025-12-11 02:08:21,032 | INFO | __main__ | Acquired global download slot (callback)
+2025-12-11 02:08:21,032 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRx5YHjiPCS/?igsh=MWcxZ2c5Njh6bnhuaA== ...
+2025-12-11 02:08:23,917 | INFO | utils.downloader | Первичный файл: tmp/7319778914_1765400901/Video_by_lis.skins-DRx5YHjiPCS.mp4 (2.20 MB)
+2025-12-11 02:08:23,982 | INFO | __main__ | Released global download slot (callback)
+2025-12-11 02:08:25,791 | INFO | aiogram.event | Update id=198324960 is handled. Duration 5046 ms by bot id=7636144709
+2025-12-11 02:09:14,459 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 02:09:14,649 | INFO | aiogram.event | Update id=198324961 is handled. Duration 191 ms by bot id=7636144709
+2025-12-11 02:09:35,538 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 02:09:35,539 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 02:09:35,540 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 02:09:35,694 | WARNING | aiogram.dispatcher | Received SIGINT signal

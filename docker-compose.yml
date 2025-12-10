@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  bot:
+    build: .
+    container_name: tg_video_downloader
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      LOG_LEVEL: INFO
+      LOG_FILE: /app/logs/bot.log
+      LOG_MAX_BYTES: 10485760  # 10 MB
+      LOG_BACKUP_COUNT: 5
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      DOWNLOAD_TIMEOUT: 1200  # 20 минут
+      MAX_GLOBAL_CONCURRENT_DOWNLOADS: 4
+      TEMP_DIR: /app/tmp
+    volumes:
+      # Монтируем логи, чтобы видеть их на хосте
+      - ./logs:/app/logs
+      # Опционально: монтируем проект для разработки (раскомментируйте при разработке)
+      # - .:/app
+    restart: unless-stopped
+    # Максимальное использование памяти
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M

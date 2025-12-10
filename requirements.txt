@@ -3,3 +3,5 @@
 aiogram>=3.0.0b7,<4.0.0
 yt-dlp>=2023.12.0
 python-dotenv>=1.0.0  # опционально, если вы используете .env для TOKEN
+sentry-sdk>=1.9.0
+packaging>=21.0  # для сравнения версий yt-dlp

@@ -65,11 +65,251 @@ https://vm.tiktok.com/xxxx
 Бот ответит статусом, скачает и пришлёт видео. Если файл > 2 ГБ — выдаст сообщение и не попытается отправить.
 
 ## Деплой
+
+### Docker (локально или в облаке)
+
+#### Локальная разработка с docker-compose
+```bash
+# 1. Установите Docker и docker-compose
+# https://docs.docker.com/get-docker/
+
+# 2. Создайте файл .env с токеном
+cat > .env << EOF
+TELEGRAM_BOT_TOKEN=your_token_here
+SENTRY_DSN=https://your-sentry-dsn-here (опционально)
+EOF
+
+# 3. Запустите контейнер
+docker-compose up -d
+
+# 4. Смотрите логи
+docker-compose logs -f bot
+
+# 5. Остановите контейнер
+docker-compose down
+```
+
+#### Сборка и запуск вручную
+```bash
+# Сборка образа
+docker build -t tg-video-downloader:latest .
+
+# Запуск с переменными окружения
+docker run -d \
+  -e TELEGRAM_BOT_TOKEN="your_token_here" \
+  -e LOG_FILE=/app/logs/bot.log \
+  -e SENTRY_DSN="https://your-sentry-dsn" \
+  -v $(pwd)/logs:/app/logs \
+  --restart unless-stopped \
+  --name tg_video_bot \
+  tg-video-downloader:latest
+
+# Просмотр логов
+docker logs -f tg_video_bot
+
+# Остановка контейнера
+docker stop tg_video_bot
+docker rm tg_video_bot
+```
+
+#### Проверка установки ffmpeg в образе
+```bash
+docker run --rm tg-video-downloader:latest ffmpeg -version | head -n 1
+docker run --rm tg-video-downloader:latest ffprobe -version | head -n 1
+```
+
 ### Railway / Render
 - Подключите репозиторий.
 - В переменных окружения (Environment) добавьте TELEGRAM_BOT_TOKEN.
-- Убедитесь, что requirements.txt содержит yt-dlp.
+- Убедитесь, что requirements.txt содержит yt-dlp и sentry-sdk.
 - Start Command: `python main.py`.
+
+**Дополнительные переменные окружения** (логирование и Sentry)
+- `LOG_FILE` — путь к файлу логов (по умолчанию `/app/logs/bot.log` в Docker). Если задан, бот будет писать ротационные логи в этот файл.
+- `LOG_MAX_BYTES` и `LOG_BACKUP_COUNT` — параметры ротации (по умолчанию 10MB и 5 файлов).
+- `SENTRY_DSN` — если указан, бот попытается инициализировать Sentry (требует `sentry-sdk` в `requirements.txt`).
+- `MAX_GLOBAL_CONCURRENT_DOWNLOADS` — ограничение одновременных загрузок (по умолчанию 4).
+- `DOWNLOAD_TIMEOUT` — таймаут скачивания в секундах (по умолчанию 1200 = 20 минут).
+
+**Пример** (Railway / Render): добавьте `SENTRY_DSN` в секреты проекта и остальные переменные в Environment.
+
+## Обновление yt-dlp
+
+yt-dlp регулярно обновляется, добавляя поддержку новых платформ и исправляя ошибки. Есть несколько способов обновления:
+
+### Автоматическое обновление (GitHub Actions)
+Если вы используете GitHub, репозиторий содержит workflow `.github/workflows/update-ytdlp.yml`, который:
+- Еженедельно (по среда в 3 утра UTC) проверяет новые версии yt-dlp
+- Автоматически обновляет и создаёт pull request
+- Тестирует базовый функционал перед PR
+
+Для использования:
+1. Убедитесь, что GitHub Actions включена в вашем репозитории
+2. Workflow автоматически запустится по расписанию или нажмите кнопку "Run workflow" вручную
+
+### Ручное обновление
+
+#### Способ 1: Используя скрипт
+```bash
+python3 update_ytdlp.py
+```
+Скрипт:
+- Проверит текущую версию yt-dlp
+- Получит последнюю версию из PyPI
+- Обновит, если доступна новая версия
+- Протестирует функционал после обновления
+
+#### Способ 2: Используя Makefile
+```bash
+make update-ytdlp
+```
+
+#### Способ 3: Прямой pip команда
+```bash
+pip install --upgrade yt-dlp
+```
+
+### Обновление в Docker
+Если используете Docker, образ автоматически получит последнюю версию yt-dlp из `requirements.txt`:
+```bash
+docker build --no-cache -t tg-video-downloader:latest .
+docker-compose up -d
+```
+
+### Откат к предыдущей версии
+Если после обновления возникли проблемы:
+```bash
+# Откатиться к конкретной версии
+pip install yt-dlp==2023.12.0
+```
+
+## Режимы ограничения доступа
+
+Бот поддерживает несколько режимов для ограничения доступа:
+
+### 1. Whitelist режим (только авторизованные пользователи)
+
+Разрешить загружать видео только конкретным пользователям:
+
+```bash
+export WHITELIST_MODE=true
+export ALLOWED_USER_IDS="123456789,987654321,111111111"
+python main.py
+```
+
+Или через переменную окружения в Docker:
+```yaml
+environment:
+  WHITELIST_MODE: "true"
+  ALLOWED_USER_IDS: "123456789,987654321,111111111"
+```
+
+**Как найти свой User ID:**
+1. Напишите боту сообщение
+2. Посмотрите логи или используйте Sentry для просмотра ID
+
+### 2. Admin-only режим (только администраторы)
+
+Разрешить загружать видео только администраторам:
+
+```bash
+export ADMIN_ONLY=true
+python main.py
+```
+
+В группах/каналах проверяется, что пользователь является администратором.
+Для приватных чатов используется список `ADMIN_USER_IDS`.
+
+Дополнительно можно указать своих администраторов:
+```bash
+export ADMIN_ONLY=true
+export ADMIN_USER_IDS="123456789,987654321"
+python main.py
+```
+
+### 3. Комбинированный режим
+
+Можно использовать оба режима одновременно:
+```bash
+export WHITELIST_MODE=true
+export ALLOWED_USER_IDS="123456789,987654321"
+export ADMIN_ONLY=true
+export ADMIN_USER_IDS="111111111"
+python main.py
+```
+
+В этом случае пользователь должен быть И в whitelist, И администратором.
+
+### 4. Без ограничений (по умолчанию)
+
+Если оба режима отключены (или не установлены), бот доступен всем:
+```bash
+python main.py
+```
+
+## История загрузок и админ-панель
+
+Бот может сохранять историю всех загрузок в SQLite БД и предоставлять админ-панель со статистикой.
+
+### Включение истории
+
+История включена по умолчанию. Чтобы отключить:
+```bash
+export ENABLE_HISTORY=false
+python main.py
+```
+
+### Команды админ-панели
+
+Следующие команды доступны администраторам (указаны в `ADMIN_USER_IDS` или админам групп):
+
+#### `/stats` — общая статистика
+Показывает:
+- Всего загрузок (успешных и ошибок)
+- Общий объём загруженных данных (MB/GB)
+- Количество уникальных пользователей
+
+#### `/top_users` — топ 10 пользователей
+Показывает пользователей по количеству загрузок:
+- Имя пользователя
+- Количество загрузок и ошибок
+- Объём загруженных данных
+
+#### `/platform_stats` — статистика по платформам
+Показывает статистику для каждой платформы (YouTube, TikTok, Instagram):
+- Количество загрузок
+- Объём данных
+- Количество ошибок
+
+#### `/my_stats` — ваша личная статистика
+Доступна всем пользователям. Показывает:
+- Количество ваших загрузок
+- Объём загруженных данных
+- Дата первой и последней загрузки
+
+#### `/recent` — последние 15 загрузок
+Только для администраторов. Показывает последние загрузки со статусом, платформой и размером файла.
+
+### Примеры использования
+
+**Запуск с админ-панелью:**
+```bash
+export ENABLE_HISTORY=true
+export ADMIN_USER_IDS="123456789,987654321"
+python main.py
+```
+
+**Отключение истории:**
+```bash
+export ENABLE_HISTORY=false
+python main.py
+```
+
+**Настройка удаления старых записей (по умолчанию 30 дней):**
+```bash
+export CLEANUP_OLD_RECORDS_DAYS=60
+python main.py
+```
 
 ### VPS (systemd)
 Создайте systemd unit:
@@ -82,6 +322,8 @@ After=network.target
 User=youruser
 WorkingDirectory=/home/youruser/project
 Environment=TELEGRAM_BOT_TOKEN=ВАШ_TOKEN
+Environment=WHITELIST_MODE=false
+Environment=ADMIN_ONLY=false
 ExecStart=/home/youruser/venv/bin/python /home/youruser/project/main.py
 Restart=on-failure
 RestartSec=5
