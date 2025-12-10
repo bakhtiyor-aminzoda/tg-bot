@@ -28,7 +28,7 @@ from utils.access_control import is_user_allowed, get_access_denied_message, che
 # === История загрузок (опционально) ===
 if config.ENABLE_HISTORY:
     from db import init_db, add_download, add_authorized_admin, remove_authorized_admin, is_authorized_admin
-    from admin_panel import (
+    from admin_panel_clean import (
         cmd_stats, cmd_top_users, cmd_platform_stats, 
         cmd_user_stats, cmd_recent, is_admin as is_admin_check
     )
@@ -285,6 +285,7 @@ async def universal_handler(message: types.Message):
                     username=message.from_user.username,
                     platform=platform,
                     url=url,
+                    chat_id=message.chat.id,
                     status="success",
                     file_size_bytes=size,
                 )
@@ -314,6 +315,7 @@ async def universal_handler(message: types.Message):
                     username=message.from_user.username,
                     platform=platform,
                     url=url,
+                    chat_id=message.chat.id,
                     status="error",
                     error_message=str(e),
                 )
@@ -341,6 +343,7 @@ async def universal_handler(message: types.Message):
                     username=message.from_user.username,
                     platform=platform,
                     url=url,
+                    chat_id=message.chat.id,
                     status="error",
                     error_message=str(e),
                 )
@@ -371,6 +374,7 @@ async def handle_download_callback(callback: types.CallbackQuery):
 
     url = entry.get("url")
     uid = callback.from_user.id
+    username = callback.from_user.username  # Добавляем username, которая была потеряна
 
     # === Проверка доступа (Whitelist / Admin-only режимы) ===
     if not await is_user_allowed(callback.message):
@@ -477,6 +481,7 @@ async def handle_download_callback(callback: types.CallbackQuery):
                     username=username,
                     platform=platform,
                     url=url,
+                    chat_id=callback.message.chat.id,
                     status="error",
                     file_size_bytes=0,
                     error_message=str(e)
@@ -506,6 +511,7 @@ async def handle_download_callback(callback: types.CallbackQuery):
                     username=username,
                     platform=platform,
                     url=url,
+                    chat_id=callback.message.chat.id,
                     status="error",
                     file_size_bytes=0,
                     error_message=str(e)
@@ -663,7 +669,16 @@ export ADMIN_USER_IDS="{message.from_user.id}"
 async def main():
     logger.info("Бот запущен (long-polling).")
     try:
-        await dp.start_polling(bot)
+        # Удаляем старые апдейты из очереди перед стартом polling'а
+        # чтобы не обрабатывать сообщения из истории
+        await bot.delete_webhook(drop_pending_updates=True)
+        logger.info("Старые апдейты удалены из очереди")
+        
+        await dp.start_polling(
+            bot,
+            allowed_updates=dp.resolve_used_update_types(),  # обрабатываем только нужные типы апдейтов
+            skip_updates=True  # пропускаем ещё остающиеся старые апдейты
+        )
     finally:
         await bot.session.close()
 

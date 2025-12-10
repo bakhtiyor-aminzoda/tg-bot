@@ -105,3 +105,1755 @@
 2025-12-11 02:09:35,539 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
 2025-12-11 02:09:35,540 | INFO | aiogram.dispatcher | Polling stopped
 2025-12-11 02:09:35,694 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 02:21:55,940 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 02:21:55,941 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 02:21:56,312 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 02:21:56,446 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 02:21:56,450 | INFO | __main__ | Команда /my_stats от пользователя 7319778914 (None)
+2025-12-11 02:21:56,451 | INFO | __main__ | Команда /stats от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 02:21:56,452 | INFO | __main__ | Команда /my_stats от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 02:21:56,454 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 02:21:56,456 | INFO | __main__ | Команда /stats от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 02:21:56,458 | INFO | __main__ | Команда /my_stats от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 02:21:56,459 | INFO | __main__ | Команда /stats от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 02:21:56,459 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 02:21:56,879 | INFO | aiogram.event | Update id=198324963 is handled. Duration 434 ms by bot id=7636144709
+2025-12-11 02:21:56,888 | INFO | aiogram.event | Update id=198324962 is handled. Duration 444 ms by bot id=7636144709
+2025-12-11 02:21:56,914 | INFO | aiogram.event | Update id=198324967 is handled. Duration 469 ms by bot id=7636144709
+2025-12-11 02:21:56,944 | INFO | aiogram.event | Update id=198324966 is handled. Duration 499 ms by bot id=7636144709
+2025-12-11 02:21:56,960 | INFO | aiogram.event | Update id=198324969 is handled. Duration 515 ms by bot id=7636144709
+2025-12-11 02:21:56,981 | INFO | aiogram.event | Update id=198324964 is handled. Duration 536 ms by bot id=7636144709
+2025-12-11 02:22:02,028 | INFO | aiogram.event | Update id=198324970 is handled. Duration 5582 ms by bot id=7636144709
+2025-12-11 02:22:02,047 | INFO | aiogram.event | Update id=198324965 is handled. Duration 5602 ms by bot id=7636144709
+2025-12-11 02:22:02,087 | INFO | aiogram.event | Update id=198324971 is handled. Duration 5641 ms by bot id=7636144709
+2025-12-11 02:22:02,100 | INFO | aiogram.event | Update id=198324968 is handled. Duration 5654 ms by bot id=7636144709
+2025-12-11 02:23:31,410 | INFO | aiogram.event | Update id=198324972 is handled. Duration 163 ms by bot id=7636144709
+2025-12-11 02:23:35,973 | INFO | __main__ | Received callback_query: download:154085e13c6442ef8580f8149643aed0 from 1175046908
+2025-12-11 02:23:36,257 | INFO | __main__ | Waiting for global download slot (callback)...
+2025-12-11 02:23:36,257 | INFO | __main__ | Acquired global download slot (callback)
+2025-12-11 02:23:36,258 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRx5YHjiPCS/?igsh=MWcxZ2c5Njh6bnhuaA== ...
+2025-12-11 02:23:39,002 | INFO | utils.downloader | Первичный файл: tmp/1175046908_1765401816/Video_by_lis.skins-DRx5YHjiPCS.mp4 (2.20 MB)
+2025-12-11 02:23:39,066 | INFO | __main__ | Released global download slot (callback)
+2025-12-11 02:23:40,941 | INFO | aiogram.event | Update id=198324973 is handled. Duration 4968 ms by bot id=7636144709
+2025-12-11 02:24:09,136 | INFO | __main__ | Команда /stats от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 02:24:09,410 | INFO | aiogram.event | Update id=198324974 is handled. Duration 274 ms by bot id=7636144709
+2025-12-11 02:24:46,970 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 02:24:47,114 | INFO | aiogram.event | Update id=198324975 is handled. Duration 145 ms by bot id=7636144709
+2025-12-11 02:26:58,367 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 02:26:58,368 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 02:26:58,368 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 02:26:58,562 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 02:27:00,460 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 02:27:00,933 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 02:27:00,933 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 02:27:01,049 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 02:27:09,721 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 02:27:10,120 | INFO | aiogram.event | Update id=198324976 is handled. Duration 401 ms by bot id=7636144709
+2025-12-11 02:27:24,098 | INFO | aiogram.event | Update id=198324977 is handled. Duration 149 ms by bot id=7636144709
+2025-12-11 02:27:26,533 | INFO | __main__ | Received callback_query: download:05819cc5b57341af92e5ed34baf9db83 from 7319778914
+2025-12-11 02:27:26,819 | INFO | __main__ | Waiting for global download slot (callback)...
+2025-12-11 02:27:26,819 | INFO | __main__ | Acquired global download slot (callback)
+2025-12-11 02:27:26,819 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRx5YHjiPCS/?igsh=MWcxZ2c5Njh6bnhuaA== ...
+2025-12-11 02:27:29,981 | INFO | utils.downloader | Первичный файл: tmp/7319778914_1765402046/Video_by_lis.skins-DRx5YHjiPCS.mp4 (2.20 MB)
+2025-12-11 02:27:30,054 | INFO | __main__ | Released global download slot (callback)
+2025-12-11 02:27:31,701 | INFO | aiogram.event | Update id=198324978 is handled. Duration 5167 ms by bot id=7636144709
+2025-12-11 02:27:51,814 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 02:27:51,971 | INFO | aiogram.event | Update id=198324979 is handled. Duration 157 ms by bot id=7636144709
+2025-12-11 02:27:58,381 | INFO | aiogram.event | Update id=198324980 is not handled. Duration 0 ms by bot id=7636144709
+2025-12-11 02:27:59,809 | INFO | __main__ | Waiting for global download slot...
+2025-12-11 02:27:59,809 | INFO | __main__ | Acquired global download slot
+2025-12-11 02:27:59,809 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRx5YHjiPCS/?igsh=MWcxZ2c5Njh6bnhuaA== ...
+2025-12-11 02:28:03,011 | INFO | utils.downloader | Первичный файл: tmp/7319778914_1765402079/Video_by_lis.skins-DRx5YHjiPCS.mp4 (2.20 MB)
+2025-12-11 02:28:03,074 | INFO | __main__ | Released global download slot
+2025-12-11 02:28:04,479 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=7319778914, platform=instagram, status=success
+2025-12-11 02:28:04,480 | INFO | aiogram.event | Update id=198324981 is handled. Duration 4801 ms by bot id=7636144709
+2025-12-11 02:28:07,128 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 02:28:07,299 | INFO | aiogram.event | Update id=198324982 is handled. Duration 172 ms by bot id=7636144709
+2025-12-11 02:28:16,411 | INFO | __main__ | Команда /my_stats от пользователя 7319778914 (None)
+2025-12-11 02:28:16,651 | INFO | aiogram.event | Update id=198324983 is handled. Duration 240 ms by bot id=7636144709
+2025-12-11 02:28:25,484 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 02:28:25,691 | INFO | aiogram.event | Update id=198324984 is handled. Duration 207 ms by bot id=7636144709
+2025-12-11 02:29:37,094 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 02:29:37,227 | INFO | aiogram.event | Update id=198324985 is not handled. Duration 133 ms by bot id=7636144709
+2025-12-11 02:29:37,227 | ERROR | aiogram.event | Cause exception while process update id=198324985 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 56
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 607, in cmd_top_users_handler
+    await cmd_top_users(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel.py", line 123, in cmd_top_users
+    await message.reply(text, parse_mode="Markdown")
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 56
+2025-12-11 02:29:43,366 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 02:29:43,486 | INFO | aiogram.event | Update id=198324986 is not handled. Duration 120 ms by bot id=7636144709
+2025-12-11 02:29:43,486 | ERROR | aiogram.event | Cause exception while process update id=198324986 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 56
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 607, in cmd_top_users_handler
+    await cmd_top_users(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel.py", line 123, in cmd_top_users
+    await message.reply(text, parse_mode="Markdown")
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 56
+2025-12-11 02:35:28,781 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 02:35:28,783 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 02:35:28,783 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 02:35:31,784 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 02:35:32,138 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 02:35:32,139 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 02:35:32,260 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 02:35:59,670 | INFO | aiogram.event | Update id=198324987 is handled. Duration 398 ms by bot id=7636144709
+2025-12-11 02:36:06,843 | INFO | aiogram.event | Update id=198324988 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 02:36:15,357 | INFO | aiogram.event | Update id=198324989 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 02:54:19,716 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 02:54:19,717 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 02:54:19,718 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 02:54:19,885 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 02:54:21,728 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 02:54:22,081 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 02:54:22,082 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 02:54:22,193 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 02:54:40,329 | INFO | __main__ | Команда /my_stats от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 02:54:40,715 | INFO | aiogram.event | Update id=198324990 is handled. Duration 387 ms by bot id=7636144709
+2025-12-11 02:54:44,635 | INFO | __main__ | Команда /top_users от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 02:54:44,888 | INFO | aiogram.event | Update id=198324991 is handled. Duration 253 ms by bot id=7636144709
+2025-12-11 02:55:28,318 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 02:55:28,637 | INFO | aiogram.event | Update id=198324992 is handled. Duration 319 ms by bot id=7636144709
+2025-12-11 02:55:34,904 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 02:55:35,016 | INFO | aiogram.event | Update id=198324993 is not handled. Duration 112 ms by bot id=7636144709
+2025-12-11 02:55:35,016 | ERROR | aiogram.event | Cause exception while process update id=198324993 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 56
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 612, in cmd_top_users_handler
+    await cmd_top_users(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel.py", line 139, in cmd_top_users
+    await message.reply(text, parse_mode="Markdown")
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 56
+2025-12-11 02:55:40,978 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 02:55:41,144 | INFO | aiogram.event | Update id=198324994 is handled. Duration 167 ms by bot id=7636144709
+2025-12-11 02:55:44,666 | INFO | __main__ | Команда /my_stats от пользователя 7319778914 (None)
+2025-12-11 02:55:44,798 | INFO | aiogram.event | Update id=198324995 is handled. Duration 132 ms by bot id=7636144709
+2025-12-11 02:56:06,537 | INFO | __main__ | Команда /platform_stats от пользователя 7319778914 (None)
+2025-12-11 02:56:06,671 | INFO | aiogram.event | Update id=198324996 is handled. Duration 134 ms by bot id=7636144709
+2025-12-11 02:56:16,923 | INFO | __main__ | Команда /recent от пользователя 7319778914 (None)
+2025-12-11 02:56:17,050 | INFO | aiogram.event | Update id=198324997 is not handled. Duration 127 ms by bot id=7636144709
+2025-12-11 02:56:17,050 | ERROR | aiogram.event | Cause exception while process update id=198324997 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 59
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 630, in cmd_recent_handler
+    await cmd_recent(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel.py", line 231, in cmd_recent
+    await message.reply(text, parse_mode="Markdown")
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 59
+2025-12-11 03:00:19,362 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 03:00:19,363 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 03:00:19,363 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 03:00:22,941 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 03:00:23,299 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 03:00:23,299 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 03:00:23,420 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 03:00:31,720 | INFO | __main__ | Команда /recent от пользователя 7319778914 (None)
+2025-12-11 03:00:32,119 | INFO | aiogram.event | Update id=198324998 is handled. Duration 400 ms by bot id=7636144709
+2025-12-11 03:02:40,813 | INFO | __main__ | Команда /platform_stats от пользователя 7319778914 (None)
+2025-12-11 03:02:40,955 | INFO | aiogram.event | Update id=198324999 is handled. Duration 142 ms by bot id=7636144709
+2025-12-11 03:02:49,773 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 03:02:49,908 | INFO | aiogram.event | Update id=198325000 is handled. Duration 135 ms by bot id=7636144709
+2025-12-11 03:06:54,213 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 03:06:54,215 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 03:06:54,215 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 03:33:57,299 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 03:33:57,680 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 03:33:57,681 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 03:33:57,801 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 03:34:23,457 | INFO | __main__ | Команда /top_users от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 03:34:23,941 | INFO | aiogram.event | Update id=198325001 is handled. Duration 484 ms by bot id=7636144709
+2025-12-11 03:34:37,113 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 03:34:37,245 | INFO | aiogram.event | Update id=198325002 is handled. Duration 132 ms by bot id=7636144709
+2025-12-11 03:34:47,000 | INFO | __main__ | Команда /recent от пользователя 7319778914 (None)
+2025-12-11 03:34:47,138 | INFO | aiogram.event | Update id=198325003 is handled. Duration 139 ms by bot id=7636144709
+2025-12-11 03:35:16,283 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 03:35:16,418 | INFO | aiogram.event | Update id=198325004 is handled. Duration 135 ms by bot id=7636144709
+2025-12-11 03:35:26,992 | INFO | __main__ | Команда /platform_stats от пользователя 7319778914 (None)
+2025-12-11 03:35:27,107 | INFO | aiogram.event | Update id=198325005 is not handled. Duration 115 ms by bot id=7636144709
+2025-12-11 03:35:27,108 | ERROR | aiogram.event | Cause exception while process update id=198325005 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '(' is reserved and must be escaped with the preceding '\'
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 618, in cmd_platform_stats_handler
+    await cmd_platform_stats(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 167, in cmd_platform_stats
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '(' is reserved and must be escaped with the preceding '\'
+2025-12-11 03:35:30,464 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 03:35:30,579 | INFO | aiogram.event | Update id=198325006 is not handled. Duration 116 ms by bot id=7636144709
+2025-12-11 03:35:30,580 | ERROR | aiogram.event | Cause exception while process update id=198325006 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 612, in cmd_top_users_handler
+    await cmd_top_users(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 134, in cmd_top_users
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+2025-12-11 03:35:41,543 | INFO | __main__ | Waiting for global download slot...
+2025-12-11 03:35:41,543 | INFO | __main__ | Acquired global download slot
+2025-12-11 03:35:41,543 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRx5YHjiPCS/?igsh=MWcxZ2c5Njh6bnhuaA== ...
+2025-12-11 03:35:44,473 | INFO | utils.downloader | Первичный файл: tmp/7319778914_1765406141/Video_by_lis.skins-DRx5YHjiPCS.mp4 (2.20 MB)
+2025-12-11 03:35:44,511 | INFO | aiogram.event | Update id=198325008 is handled. Duration 139 ms by bot id=7636144709
+2025-12-11 03:35:44,538 | INFO | __main__ | Released global download slot
+2025-12-11 03:35:45,856 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=7319778914, platform=instagram, status=success, chat_id=7319778914
+2025-12-11 03:35:45,857 | INFO | aiogram.event | Update id=198325007 is handled. Duration 4443 ms by bot id=7636144709
+2025-12-11 03:35:48,679 | INFO | aiogram.event | Update id=198325009 is handled. Duration 160 ms by bot id=7636144709
+2025-12-11 03:35:53,116 | INFO | __main__ | Received callback_query: download:e85ac51441f24966836dd97eb0985cb4 from 7319778914
+2025-12-11 03:35:53,560 | INFO | __main__ | Waiting for global download slot (callback)...
+2025-12-11 03:35:53,560 | INFO | __main__ | Acquired global download slot (callback)
+2025-12-11 03:35:53,560 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRx5YHjiPCS/?igsh=MWcxZ2c5Njh6bnhuaA== ...
+2025-12-11 03:35:56,202 | INFO | utils.downloader | Первичный файл: tmp/7319778914_1765406153/Video_by_lis.skins-DRx5YHjiPCS.mp4 (2.20 MB)
+2025-12-11 03:35:56,270 | INFO | __main__ | Released global download slot (callback)
+2025-12-11 03:35:57,226 | INFO | aiogram.event | Update id=198325010 is handled. Duration 4109 ms by bot id=7636144709
+2025-12-11 03:36:09,417 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 03:36:09,535 | INFO | aiogram.event | Update id=198325011 is not handled. Duration 118 ms by bot id=7636144709
+2025-12-11 03:36:09,536 | ERROR | aiogram.event | Cause exception while process update id=198325011 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 612, in cmd_top_users_handler
+    await cmd_top_users(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 134, in cmd_top_users
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+2025-12-11 03:36:14,081 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 03:36:14,198 | INFO | aiogram.event | Update id=198325012 is not handled. Duration 118 ms by bot id=7636144709
+2025-12-11 03:36:14,199 | ERROR | aiogram.event | Cause exception while process update id=198325012 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 563, in cmd_stats_handler
+    await cmd_stats(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 98, in cmd_stats
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+2025-12-11 03:36:26,816 | INFO | __main__ | Команда /my_stats от пользователя 7319778914 (None)
+2025-12-11 03:36:26,937 | INFO | aiogram.event | Update id=198325013 is not handled. Duration 121 ms by bot id=7636144709
+2025-12-11 03:36:26,937 | ERROR | aiogram.event | Cause exception while process update id=198325013 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 624, in cmd_user_stats_handler
+    await cmd_user_stats(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 191, in cmd_user_stats
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+2025-12-11 03:36:33,764 | INFO | __main__ | Команда /my_stats от пользователя 7319778914 (None)
+2025-12-11 03:36:33,882 | INFO | aiogram.event | Update id=198325014 is not handled. Duration 118 ms by bot id=7636144709
+2025-12-11 03:36:33,882 | ERROR | aiogram.event | Cause exception while process update id=198325014 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 624, in cmd_user_stats_handler
+    await cmd_user_stats(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 191, in cmd_user_stats
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+2025-12-11 03:36:36,495 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 03:36:36,613 | INFO | aiogram.event | Update id=198325015 is not handled. Duration 118 ms by bot id=7636144709
+2025-12-11 03:36:36,613 | ERROR | aiogram.event | Cause exception while process update id=198325015 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '(' is reserved and must be escaped with the preceding '\'
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 563, in cmd_stats_handler
+    await cmd_stats(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 98, in cmd_stats
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '(' is reserved and must be escaped with the preceding '\'
+2025-12-11 03:38:14,366 | INFO | __main__ | Команда /recent от пользователя 7319778914 (None)
+2025-12-11 03:38:14,519 | INFO | aiogram.event | Update id=198325016 is handled. Duration 153 ms by bot id=7636144709
+2025-12-11 03:38:23,711 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 03:38:23,821 | INFO | aiogram.event | Update id=198325017 is not handled. Duration 110 ms by bot id=7636144709
+2025-12-11 03:38:23,821 | ERROR | aiogram.event | Cause exception while process update id=198325017 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '(' is reserved and must be escaped with the preceding '\'
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 563, in cmd_stats_handler
+    await cmd_stats(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 98, in cmd_stats
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '(' is reserved and must be escaped with the preceding '\'
+2025-12-11 03:41:23,364 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 03:41:23,366 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 03:41:23,367 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 03:41:25,993 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 03:41:26,350 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 03:41:26,350 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 03:41:26,467 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 03:41:37,309 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 03:41:37,717 | INFO | aiogram.event | Update id=198325018 is handled. Duration 408 ms by bot id=7636144709
+2025-12-11 03:41:52,093 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 03:41:52,236 | INFO | aiogram.event | Update id=198325019 is handled. Duration 144 ms by bot id=7636144709
+2025-12-11 03:42:10,492 | INFO | __main__ | Команда /platform_stats от пользователя 7319778914 (None)
+2025-12-11 03:42:10,731 | INFO | aiogram.event | Update id=198325020 is handled. Duration 239 ms by bot id=7636144709
+2025-12-11 03:42:22,562 | INFO | __main__ | Команда /my_stats от пользователя 7319778914 (None)
+2025-12-11 03:42:22,702 | INFO | aiogram.event | Update id=198325021 is handled. Duration 141 ms by bot id=7636144709
+2025-12-11 03:42:32,311 | INFO | __main__ | Команда /recent от пользователя 7319778914 (None)
+2025-12-11 03:42:32,458 | INFO | aiogram.event | Update id=198325022 is handled. Duration 147 ms by bot id=7636144709
+2025-12-11 03:43:09,075 | INFO | aiogram.event | Update id=198325023 is handled. Duration 397 ms by bot id=7636144709
+2025-12-11 03:43:10,987 | INFO | __main__ | Received callback_query: download:1d4e681db97e403e9724548944e2d31c from 1175046908
+2025-12-11 03:43:11,263 | INFO | __main__ | Waiting for global download slot (callback)...
+2025-12-11 03:43:11,263 | INFO | __main__ | Acquired global download slot (callback)
+2025-12-11 03:43:11,263 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRx5YHjiPCS/?igsh=MWcxZ2c5Njh6bnhuaA== ...
+2025-12-11 03:43:14,010 | INFO | utils.downloader | Первичный файл: tmp/1175046908_1765406591/Video_by_lis.skins-DRx5YHjiPCS.mp4 (2.20 MB)
+2025-12-11 03:43:14,074 | INFO | __main__ | Released global download slot (callback)
+2025-12-11 03:43:15,074 | INFO | __main__ | Waiting for global download slot...
+2025-12-11 03:43:15,074 | INFO | __main__ | Acquired global download slot
+2025-12-11 03:43:15,074 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRx5YHjiPCS/?igsh=MWcxZ2c5Njh6bnhuaA== ...
+2025-12-11 03:43:15,749 | INFO | aiogram.event | Update id=198325024 is handled. Duration 4761 ms by bot id=7636144709
+2025-12-11 03:43:17,658 | INFO | utils.downloader | Первичный файл: tmp/1175046908_1765406595/Video_by_lis.skins-DRx5YHjiPCS.mp4 (2.20 MB)
+2025-12-11 03:43:17,722 | INFO | __main__ | Released global download slot
+2025-12-11 03:43:19,068 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=1175046908, platform=instagram, status=success, chat_id=1175046908
+2025-12-11 03:43:19,069 | INFO | aiogram.event | Update id=198325025 is handled. Duration 4515 ms by bot id=7636144709
+2025-12-11 03:43:29,315 | INFO | aiogram.event | Update id=198325026 is handled. Duration 142 ms by bot id=7636144709
+2025-12-11 03:43:31,177 | INFO | __main__ | Received callback_query: download:b7a527a6660c42e3a52b8a3964a278c7 from 1175046908
+2025-12-11 03:43:31,458 | INFO | __main__ | Waiting for global download slot (callback)...
+2025-12-11 03:43:31,458 | INFO | __main__ | Acquired global download slot (callback)
+2025-12-11 03:43:31,458 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRx5YHjiPCS/?igsh=MWcxZ2c5Njh6bnhuaA== ...
+2025-12-11 03:43:34,066 | INFO | utils.downloader | Первичный файл: tmp/1175046908_1765406611/Video_by_lis.skins-DRx5YHjiPCS.mp4 (2.20 MB)
+2025-12-11 03:43:34,129 | INFO | __main__ | Released global download slot (callback)
+2025-12-11 03:43:35,618 | INFO | aiogram.event | Update id=198325027 is handled. Duration 4440 ms by bot id=7636144709
+2025-12-11 03:43:47,685 | INFO | __main__ | Waiting for global download slot...
+2025-12-11 03:43:47,685 | INFO | __main__ | Acquired global download slot
+2025-12-11 03:43:47,685 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRx5YHjiPCS/?igsh=MWcxZ2c5Njh6bnhuaA== ...
+2025-12-11 03:43:50,136 | INFO | utils.downloader | Первичный файл: tmp/7319778914_1765406627/Video_by_lis.skins-DRx5YHjiPCS.mp4 (2.20 MB)
+2025-12-11 03:43:50,200 | INFO | __main__ | Released global download slot
+2025-12-11 03:43:50,988 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=7319778914, platform=instagram, status=success, chat_id=7319778914
+2025-12-11 03:43:50,988 | INFO | aiogram.event | Update id=198325028 is handled. Duration 3459 ms by bot id=7636144709
+2025-12-11 03:43:52,564 | INFO | aiogram.event | Update id=198325029 is handled. Duration 143 ms by bot id=7636144709
+2025-12-11 03:43:54,675 | INFO | __main__ | Received callback_query: download:2b9d635664e94902bdfe69f28de180ae from 7319778914
+2025-12-11 03:43:54,798 | INFO | aiogram.event | Update id=198325030 is handled. Duration 123 ms by bot id=7636144709
+2025-12-11 03:43:59,525 | INFO | __main__ | Received callback_query: download:2b9d635664e94902bdfe69f28de180ae from 7319778914
+2025-12-11 03:43:59,679 | INFO | aiogram.event | Update id=198325031 is handled. Duration 153 ms by bot id=7636144709
+2025-12-11 03:44:03,522 | INFO | aiogram.event | Update id=198325032 is handled. Duration 143 ms by bot id=7636144709
+2025-12-11 03:44:05,034 | INFO | __main__ | Received callback_query: download:75141ef1176b4a839d995c100f00f443 from 7319778914
+2025-12-11 03:44:05,398 | INFO | __main__ | Waiting for global download slot (callback)...
+2025-12-11 03:44:05,398 | INFO | __main__ | Acquired global download slot (callback)
+2025-12-11 03:44:05,398 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRx5YHjiPCS/?igsh=MWcxZ2c5Njh6bnhuaA== ...
+2025-12-11 03:44:07,997 | INFO | utils.downloader | Первичный файл: tmp/7319778914_1765406645/Video_by_lis.skins-DRx5YHjiPCS.mp4 (2.20 MB)
+2025-12-11 03:44:08,063 | INFO | __main__ | Released global download slot (callback)
+2025-12-11 03:44:09,093 | INFO | aiogram.event | Update id=198325033 is handled. Duration 4059 ms by bot id=7636144709
+2025-12-11 03:44:17,810 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 03:44:17,943 | INFO | aiogram.event | Update id=198325034 is handled. Duration 134 ms by bot id=7636144709
+2025-12-11 03:45:22,806 | INFO | __main__ | Команда /platform_stats от пользователя 7319778914 (None)
+2025-12-11 03:45:22,941 | INFO | aiogram.event | Update id=198325035 is handled. Duration 135 ms by bot id=7636144709
+2025-12-11 03:45:33,582 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 03:45:33,746 | INFO | aiogram.event | Update id=198325036 is handled. Duration 165 ms by bot id=7636144709
+2025-12-11 03:48:57,827 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 03:48:57,828 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 03:48:57,828 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 03:49:00,319 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 03:49:02,200 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 03:49:02,201 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 03:49:02,315 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 03:49:10,268 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 03:49:10,735 | INFO | aiogram.event | Update id=198325037 is not handled. Duration 467 ms by bot id=7636144709
+2025-12-11 03:49:10,735 | ERROR | aiogram.event | Cause exception while process update id=198325037 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 563, in cmd_stats_handler
+    await cmd_stats(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 106, in cmd_stats
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+2025-12-11 03:49:20,381 | INFO | __main__ | Команда /my_stats от пользователя 7319778914 (None)
+2025-12-11 03:49:20,648 | INFO | aiogram.event | Update id=198325038 is not handled. Duration 268 ms by bot id=7636144709
+2025-12-11 03:49:20,649 | ERROR | aiogram.event | Cause exception while process update id=198325038 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 624, in cmd_user_stats_handler
+    await cmd_user_stats(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 199, in cmd_user_stats
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+2025-12-11 03:51:12,640 | INFO | aiogram.event | Update id=198325039 is not handled. Duration 0 ms by bot id=7636144709
+2025-12-11 03:51:14,771 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 03:51:14,888 | INFO | aiogram.event | Update id=198325040 is not handled. Duration 117 ms by bot id=7636144709
+2025-12-11 03:51:14,888 | ERROR | aiogram.event | Cause exception while process update id=198325040 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 612, in cmd_top_users_handler
+    await cmd_top_users(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 142, in cmd_top_users
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+2025-12-11 03:51:25,216 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 03:51:25,330 | INFO | aiogram.event | Update id=198325041 is not handled. Duration 114 ms by bot id=7636144709
+2025-12-11 03:51:25,330 | ERROR | aiogram.event | Cause exception while process update id=198325041 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 563, in cmd_stats_handler
+    await cmd_stats(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 106, in cmd_stats
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '.' is reserved and must be escaped with the preceding '\'
+2025-12-11 03:56:16,518 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 03:56:16,520 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 03:56:16,520 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 03:56:18,628 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 03:56:18,986 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 03:56:18,987 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 03:56:19,101 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 03:56:26,937 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 03:56:27,308 | INFO | aiogram.event | Update id=198325042 is not handled. Duration 371 ms by bot id=7636144709
+2025-12-11 03:56:27,308 | ERROR | aiogram.event | Cause exception while process update id=198325042 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '(' is reserved and must be escaped with the preceding '\'
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 612, in cmd_top_users_handler
+    await cmd_top_users(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 151, in cmd_top_users
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '(' is reserved and must be escaped with the preceding '\'
+2025-12-11 03:56:34,584 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 03:56:34,829 | INFO | aiogram.event | Update id=198325043 is handled. Duration 246 ms by bot id=7636144709
+2025-12-11 03:56:40,417 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 03:56:40,605 | INFO | aiogram.event | Update id=198325044 is handled. Duration 188 ms by bot id=7636144709
+2025-12-11 03:57:06,330 | INFO | aiogram.event | Update id=198325045 is not handled. Duration 0 ms by bot id=7636144709
+2025-12-11 03:57:21,907 | INFO | __main__ | Команда /platform_stats от пользователя 7319778914 (None)
+2025-12-11 03:57:22,022 | INFO | aiogram.event | Update id=198325046 is not handled. Duration 114 ms by bot id=7636144709
+2025-12-11 03:57:22,022 | ERROR | aiogram.event | Cause exception while process update id=198325046 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '(' is reserved and must be escaped with the preceding '\'
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 618, in cmd_platform_stats_handler
+    await cmd_platform_stats(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 184, in cmd_platform_stats
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '(' is reserved and must be escaped with the preceding '\'
+2025-12-11 03:57:31,270 | INFO | __main__ | Команда /recent от пользователя 7319778914 (None)
+2025-12-11 03:57:31,390 | INFO | aiogram.event | Update id=198325047 is not handled. Duration 120 ms by bot id=7636144709
+2025-12-11 03:57:31,390 | ERROR | aiogram.event | Cause exception while process update id=198325047 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '(' is reserved and must be escaped with the preceding '\'
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 630, in cmd_recent_handler
+    await cmd_recent(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 251, in cmd_recent
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '(' is reserved and must be escaped with the preceding '\'
+2025-12-11 03:57:41,112 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 03:57:41,229 | INFO | aiogram.event | Update id=198325048 is not handled. Duration 117 ms by bot id=7636144709
+2025-12-11 03:57:41,230 | ERROR | aiogram.event | Cause exception while process update id=198325048 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '(' is reserved and must be escaped with the preceding '\'
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 612, in cmd_top_users_handler
+    await cmd_top_users(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 151, in cmd_top_users
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Character '(' is reserved and must be escaped with the preceding '\'
+2025-12-11 04:07:18,837 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 04:07:18,840 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 04:07:18,840 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 04:07:26,670 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 04:07:27,030 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 04:07:27,031 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 04:07:27,150 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 04:07:33,267 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 04:07:33,621 | INFO | aiogram.event | Update id=198325049 is not handled. Duration 354 ms by bot id=7636144709
+2025-12-11 04:07:33,621 | ERROR | aiogram.event | Cause exception while process update id=198325049 by bot id=7636144709
+TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Can't find end of Italic entity at byte offset 57
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 161, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 153, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/router.py", line 181, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/main.py", line 612, in cmd_top_users_handler
+    await cmd_top_users(message)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/admin_panel_clean.py", line 151, in cmd_top_users
+    await message.reply(text, parse_mode='MarkdownV2')
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/methods/base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 177, in make_request
+    response = self.check_response(
+        bot=bot,
+    ...<2 lines>...
+        content=raw_result,
+    )
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 121, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't parse entities: Can't find end of Italic entity at byte offset 57
+2025-12-11 04:09:38,553 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 04:09:38,556 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 04:09:38,556 | INFO | aiogram.dispatcher | Polling stopped

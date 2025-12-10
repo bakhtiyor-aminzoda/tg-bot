@@ -30,6 +30,7 @@ def init_db():
                 username TEXT,
                 platform TEXT,
                 url TEXT,
+                chat_id INTEGER,
                 status TEXT DEFAULT 'success',
                 file_size_bytes INTEGER,
                 duration_seconds REAL,
@@ -71,6 +72,18 @@ def init_db():
         """)
         
         conn.commit()
+        # ----- Миграции: добавим колонку chat_id в downloads если её нет -----
+        try:
+            cursor.execute("PRAGMA table_info(downloads)")
+            cols = [r[1] for r in cursor.fetchall()]
+            if 'chat_id' not in cols:
+                cursor.execute("ALTER TABLE downloads ADD COLUMN chat_id INTEGER")
+                logger.info("Миграция: добавлена колонка downloads.chat_id")
+        except Exception:
+            # не критично — продолжим
+            pass
+
+        conn.commit()
         conn.close()
         logger.info("✓ База данных инициализирована: %s", DB_PATH)
     except Exception as e:
@@ -83,6 +96,7 @@ def add_download(
     username: Optional[str],
     platform: str,
     url: str,
+    chat_id: Optional[int] = None,
     status: str = "success",
     file_size_bytes: Optional[int] = None,
     duration_seconds: Optional[float] = None,
@@ -91,14 +105,16 @@ def add_download(
     """Добавить запись о загрузке в историю."""
     try:
         conn = sqlite3.connect(str(DB_PATH))
+        conn.isolation_level = None  # autocommit mode
         cursor = conn.cursor()
         
         # Добавляем запись в таблицу downloads
         cursor.execute("""
             INSERT INTO downloads 
-            (user_id, username, platform, url, status, file_size_bytes, duration_seconds, error_message)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (user_id, username, platform, url, status, file_size_bytes, duration_seconds, error_message))
+            (user_id, username, platform, url, chat_id, status, file_size_bytes, duration_seconds, error_message)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (user_id, username, platform, url, chat_id, status, file_size_bytes, duration_seconds, error_message))
+        logger.debug(f"✓ Вставлена загрузка: user={user_id}, platform={platform}, status={status}")
         
         # Обновляем статистику пользователя
         cursor.execute("""
@@ -110,22 +126,24 @@ def add_download(
                 last_download = CURRENT_TIMESTAMP,
                 failed_count = CASE WHEN ? = 'success' THEN failed_count ELSE failed_count + 1 END
         """, (user_id, username, file_size_bytes or 0, file_size_bytes or 0, status))
+        logger.debug(f"✓ Обновлена статистика пользователя: user={user_id}")
         
         # Обновляем статистику платформы
         cursor.execute("""
-            INSERT INTO platform_stats (platform, download_count, total_bytes)
-            VALUES (?, 1, ?)
+            INSERT INTO platform_stats (platform, download_count, total_bytes, failed_count)
+            VALUES (?, 1, ?, CASE WHEN ? = 'success' THEN 0 ELSE 1 END)
             ON CONFLICT(platform) DO UPDATE SET
                 download_count = download_count + 1,
                 total_bytes = total_bytes + ?,
                 failed_count = CASE WHEN ? = 'success' THEN failed_count ELSE failed_count + 1 END
-        """, (platform, file_size_bytes or 0, file_size_bytes or 0, status))
+        """, (platform, file_size_bytes or 0, status, file_size_bytes or 0, status))
+        logger.debug(f"✓ Обновлена статистика платформы: platform={platform}")
         
-        conn.commit()
         conn.close()
+        logger.info(f"✓ Запись о загрузке сохранена в БД: user={user_id}, platform={platform}, status={status}, chat_id={chat_id}")
         return True
     except Exception as e:
-        logger.error("Ошибка при добавлении записи в БД: %s", e)
+        logger.error(f"Ошибка при добавлении записи в БД: {e}", exc_info=True)
         return False
 
 
@@ -191,6 +209,120 @@ def get_platform_stats() -> List[Dict]:
         return [dict(row) for row in rows]
     except Exception as e:
         logger.error("Ошибка при получении статистики платформ: %s", e)
+        return []
+
+
+def get_group_top_users(chat_id: int, limit: int = 10) -> List[Dict]:
+    """Получить топ пользователей по количеству загрузок внутри конкретного чата (group).
+
+    Возвращает список словарей с полями: user_id, username, total_downloads, total_bytes, failed_count
+    """
+    try:
+        conn = sqlite3.connect(str(DB_PATH))
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT d.user_id,
+                   d.username,
+                   COUNT(*) AS total_downloads,
+                   SUM(COALESCE(d.file_size_bytes,0)) AS total_bytes,
+                   SUM(CASE WHEN d.status != 'success' THEN 1 ELSE 0 END) AS failed_count
+            FROM downloads d
+            WHERE d.chat_id = ?
+            GROUP BY d.user_id, d.username
+            ORDER BY total_downloads DESC
+            LIMIT ?
+        """, (chat_id, limit))
+
+        rows = cursor.fetchall()
+        conn.close()
+        return [dict(row) for row in rows]
+    except Exception as e:
+        logger.error("Ошибка при получении топа пользователей для чата %s: %s", chat_id, e)
+        return []
+
+
+def get_group_stats_summary(chat_id: int) -> Dict:
+    """Получить сводную статистику для указанного чата (group)."""
+    try:
+        conn = sqlite3.connect(str(DB_PATH))
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT COUNT(*) FROM downloads WHERE chat_id = ?", (chat_id,))
+        total_downloads = cursor.fetchone()[0]
+
+        cursor.execute("SELECT COUNT(*) FROM downloads WHERE chat_id = ? AND status = 'success'", (chat_id,))
+        successful_downloads = cursor.fetchone()[0]
+
+        cursor.execute("SELECT COUNT(*) FROM downloads WHERE chat_id = ? AND status != 'success'", (chat_id,))
+        failed_downloads = cursor.fetchone()[0]
+
+        cursor.execute("SELECT SUM(file_size_bytes) FROM downloads WHERE chat_id = ? AND file_size_bytes IS NOT NULL", (chat_id,))
+        total_bytes = cursor.fetchone()[0] or 0
+
+        cursor.execute("SELECT COUNT(DISTINCT user_id) FROM downloads WHERE chat_id = ?", (chat_id,))
+        unique_users = cursor.fetchone()[0]
+
+        conn.close()
+        return {
+            "total_downloads": total_downloads,
+            "successful_downloads": successful_downloads,
+            "failed_downloads": failed_downloads,
+            "total_bytes": total_bytes,
+            "total_mb": round(total_bytes / (1024 * 1024), 2),
+            "unique_users": unique_users,
+        }
+    except Exception as e:
+        logger.error("Ошибка при получении статистики по чату %s: %s", chat_id, e)
+        return {}
+
+
+def get_group_recent_downloads(chat_id: int, limit: int = 20) -> List[Dict]:
+    """Получить последние загрузки для указанного чата."""
+    try:
+        conn = sqlite3.connect(str(DB_PATH))
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT * FROM downloads
+            WHERE chat_id = ?
+            ORDER BY timestamp DESC
+            LIMIT ?
+        """, (chat_id, limit))
+
+        rows = cursor.fetchall()
+        conn.close()
+        return [dict(row) for row in rows]
+    except Exception as e:
+        logger.error("Ошибка при получении последних загрузок для чата %s: %s", chat_id, e)
+        return []
+
+
+def get_group_platform_stats(chat_id: int) -> List[Dict]:
+    """Получить статистику по платформам внутри указанного чата."""
+    try:
+        conn = sqlite3.connect(str(DB_PATH))
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT COALESCE(d.platform, 'unknown') AS platform,
+                   COUNT(*) AS download_count,
+                   SUM(COALESCE(d.file_size_bytes,0)) AS total_bytes,
+                   SUM(CASE WHEN d.status != 'success' THEN 1 ELSE 0 END) AS failed_count
+            FROM downloads d
+            WHERE d.chat_id = ?
+            GROUP BY platform
+            ORDER BY download_count DESC
+        """, (chat_id,))
+
+        rows = cursor.fetchall()
+        conn.close()
+        return [dict(row) for row in rows]
+    except Exception as e:
+        logger.error("Ошибка при получении статистики по платформам для чата %s: %s", chat_id, e)
         return []
 
 
