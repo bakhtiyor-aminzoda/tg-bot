@@ -39,6 +39,11 @@ PENDING_CLEANUP_INTERVAL_SECONDS = int(os.environ.get("PENDING_CLEANUP_INTERVAL_
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
 # Путь до файла логов (опционально). Если задан — будет использоваться ротация.
 LOG_FILE = os.environ.get("LOG_FILE", "./logs/bot.log")
+if LOG_FILE:
+	# Готовим директорию для файла логов заранее
+	log_path = Path(LOG_FILE)
+	log_path.parent.mkdir(parents=True, exist_ok=True)
+	LOG_FILE = str(log_path)
 LOG_MAX_BYTES = int(os.environ.get("LOG_MAX_BYTES", str(10 * 1024 * 1024)))  # 10 MB
 LOG_BACKUP_COUNT = int(os.environ.get("LOG_BACKUP_COUNT", "5"))
 STRUCTURED_LOGS = os.environ.get("STRUCTURED_LOGS", "false").lower() in ("true", "1", "yes")
@@ -76,3 +81,9 @@ ADMIN_USER_IDS = set(int(uid.strip()) for uid in _admin_users_str.split(",") if 
 ENABLE_HISTORY = os.environ.get("ENABLE_HISTORY", "true").lower() in ("true", "1", "yes")
 # CLEANUP_OLD_RECORDS_DAYS: удалять записи старше N дней (0 = никогда)
 CLEANUP_OLD_RECORDS_DAYS = int(os.environ.get("CLEANUP_OLD_RECORDS_DAYS", "30"))
+
+# === Веб-админка ===
+ADMIN_PANEL_ENABLED = os.environ.get("ADMIN_PANEL_ENABLED", "true").lower() in ("true", "1", "yes")
+ADMIN_PANEL_HOST = os.environ.get("ADMIN_PANEL_HOST", "127.0.0.1")
+ADMIN_PANEL_PORT = int(os.environ.get("ADMIN_PANEL_PORT", "8090"))
+ADMIN_PANEL_TOKEN = os.environ.get("ADMIN_PANEL_TOKEN")

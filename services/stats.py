@@ -21,7 +21,7 @@ def _chat_clause(chat_id: Optional[int], alias: str = "") -> tuple[str, List[obj
     return f"WHERE {column} = ?", [chat_id]
 
 
-def get_summary(chat_id: Optional[int] = None) -> Dict[str, int]:
+def get_summary(chat_id: Optional[int] = None) -> Dict[str, object]:
     """Return aggregated totals optionally scoped to a chat."""
 
     where_clause, params = _chat_clause(chat_id)
@@ -31,7 +31,8 @@ def get_summary(chat_id: Optional[int] = None) -> Dict[str, int]:
             SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) AS successful_downloads,
             SUM(CASE WHEN status != 'success' THEN 1 ELSE 0 END) AS failed_downloads,
             COALESCE(SUM(file_size_bytes), 0) AS total_bytes,
-            COUNT(DISTINCT user_id) AS unique_users
+            COUNT(DISTINCT user_id) AS unique_users,
+            MAX(timestamp) AS last_activity
         FROM downloads
         {where_clause}
     """
@@ -46,6 +47,7 @@ def get_summary(chat_id: Optional[int] = None) -> Dict[str, int]:
             "failed_downloads": 0,
             "total_bytes": 0,
             "unique_users": 0,
+            "last_activity": None,
         }
 
     return {
@@ -54,11 +56,27 @@ def get_summary(chat_id: Optional[int] = None) -> Dict[str, int]:
         "failed_downloads": row["failed_downloads"] or 0,
         "total_bytes": row["total_bytes"] or 0,
         "unique_users": row["unique_users"] or 0,
+        "last_activity": row["last_activity"],
     }
 
 
-def get_top_users(chat_id: Optional[int] = None, limit: int = 10) -> List[Dict]:
+def _resolve_order(mapping: Dict[str, str], requested: Optional[str], default_key: str) -> str:
+    key = (requested or "").lower()
+    if key not in mapping:
+        key = default_key
+    return mapping[key]
+
+
+def get_top_users(chat_id: Optional[int] = None, limit: int = 10, order_by: str = "downloads") -> List[Dict]:
     """Return top users within the given chat (or globally)."""
+
+    orders = {
+        "downloads": "total_downloads DESC, total_bytes DESC",
+        "data": "total_bytes DESC, total_downloads DESC",
+        "errors": "failed_count DESC, total_downloads DESC",
+        "name": "COALESCE(username, user_id) ASC",
+    }
+    order_clause = _resolve_order(orders, order_by, "downloads")
 
     where_clause, params = _chat_clause(chat_id, alias="d")
     query = f"""
@@ -71,7 +89,7 @@ def get_top_users(chat_id: Optional[int] = None, limit: int = 10) -> List[Dict]:
         FROM downloads d
         {where_clause}
         GROUP BY d.user_id
-        ORDER BY total_downloads DESC, total_bytes DESC
+        ORDER BY {order_clause}
         LIMIT ?
     """
 
@@ -81,8 +99,16 @@ def get_top_users(chat_id: Optional[int] = None, limit: int = 10) -> List[Dict]:
     return [dict(row) for row in rows]
 
 
-def get_platform_stats(chat_id: Optional[int] = None) -> List[Dict]:
+def get_platform_stats(chat_id: Optional[int] = None, order_by: str = "downloads") -> List[Dict]:
     """Return platform breakdown scoped to chat."""
+
+    orders = {
+        "downloads": "download_count DESC",
+        "data": "total_bytes DESC",
+        "errors": "failed_count DESC",
+        "name": "platform ASC",
+    }
+    order_clause = _resolve_order(orders, order_by, "downloads")
 
     where_clause, params = _chat_clause(chat_id, alias="d")
     query = f"""
@@ -94,7 +120,7 @@ def get_platform_stats(chat_id: Optional[int] = None) -> List[Dict]:
         FROM downloads d
         {where_clause}
         GROUP BY platform
-        ORDER BY download_count DESC
+        ORDER BY {order_clause}
     """
 
     with _connect() as conn:
@@ -165,6 +191,69 @@ def get_recent_downloads(chat_id: Optional[int] = None, limit: int = 20) -> List
     """
 
     params = params + [limit]
+    with _connect() as conn:
+        rows = conn.execute(query, params).fetchall()
+    return [dict(row) for row in rows]
+
+
+def list_chats(order_by: str = "recent", search: Optional[str] = None, limit: int = 50) -> List[Dict]:
+    """Return known chats with aggregated stats for admin panel."""
+
+    orders = {
+        "recent": "last_activity DESC",
+        "downloads": "total_downloads DESC",
+        "data": "total_bytes DESC",
+        "errors": "failed_downloads DESC",
+        "name": "title ASC",
+    }
+    order_clause = _resolve_order(orders, order_by, "recent")
+
+    where = ""
+    params: List[object] = []
+    if search:
+        where = "WHERE (LOWER(COALESCE(c.title, '')) LIKE ? OR CAST(b.chat_id AS TEXT) LIKE ?)"
+        params.append(f"%{search.lower()}%")
+        params.append(f"%{search}%")
+
+    query = f"""
+        WITH stats AS (
+            SELECT
+                chat_id,
+                COUNT(*) AS total_downloads,
+                SUM(CASE WHEN status != 'success' THEN 1 ELSE 0 END) AS failed_downloads,
+                SUM(COALESCE(file_size_bytes, 0)) AS total_bytes,
+                COUNT(DISTINCT user_id) AS unique_users,
+                MAX(timestamp) AS last_download
+            FROM downloads
+            WHERE chat_id IS NOT NULL
+            GROUP BY chat_id
+        ),
+        base AS (
+            SELECT DISTINCT chat_id FROM downloads WHERE chat_id IS NOT NULL
+            UNION
+            SELECT chat_id FROM chats
+        )
+        SELECT
+            b.chat_id AS chat_id,
+            CASE
+                WHEN c.title IS NOT NULL AND TRIM(c.title) != '' THEN c.title
+                ELSE 'Chat #' || b.chat_id
+            END AS title,
+            COALESCE(NULLIF(TRIM(c.chat_type), ''), 'unknown') AS chat_type,
+            COALESCE(s.total_downloads, 0) AS total_downloads,
+            COALESCE(s.total_bytes, 0) AS total_bytes,
+            COALESCE(s.failed_downloads, 0) AS failed_downloads,
+            COALESCE(s.unique_users, 0) AS unique_users,
+            COALESCE(s.last_download, c.updated_at) AS last_activity
+        FROM base b
+        LEFT JOIN chats c ON c.chat_id = b.chat_id
+        LEFT JOIN stats s ON s.chat_id = b.chat_id
+        {where}
+        ORDER BY {order_clause}
+        LIMIT ?
+    """
+
+    params.append(limit)
     with _connect() as conn:
         rows = conn.execute(query, params).fetchall()
     return [dict(row) for row in rows]

@@ -54,8 +54,34 @@ def extract_first_url_from_text(text: str) -> Optional[str]:
         return match.group(1)
     return None
 
+
+def resolve_chat_title(chat: types.Chat) -> str:
+    """Return human-friendly chat title for storing in DB/UI."""
+
+    if not chat:
+        return ""
+
+    chat_type = (getattr(chat, "type", "") or "").lower()
+    if chat_type == "private":
+        name_parts = [getattr(chat, "first_name", None), getattr(chat, "last_name", None)]
+        display = " ".join([part for part in name_parts if part])
+        if not display:
+            display = getattr(chat, "username", None)
+        if display:
+            return display
+        return f"user_{getattr(chat, 'id', 'unknown')}"
+
+    title = getattr(chat, "title", None)
+    if title:
+        return title
+    username = getattr(chat, "username", None)
+    if username:
+        return f"@{username}"
+    return f"chat_{getattr(chat, 'id', 'unknown')}"
+
 __all__ = [
     "detect_platform",
     "extract_url_from_entities",
     "extract_first_url_from_text",
+    "resolve_chat_title",
 ]

@@ -11,7 +11,8 @@ from typing import Optional
 from aiogram import types
 
 import config
-from db import is_authorized_admin
+from bot_app.helpers import resolve_chat_title
+from db import is_authorized_admin, upsert_chat
 from services import stats as stats_service
 
 logger = logging.getLogger(__name__)
@@ -41,8 +42,16 @@ def _resolve_scope(message: types.Message) -> tuple[int, bool, Optional[str]]:
         return 0, False, None
     chat_id = getattr(chat, "id", 0)
     chat_type = getattr(chat, "type", "private")
+    display_title = resolve_chat_title(chat)
+
+    if config.ENABLE_HISTORY:
+        try:
+            upsert_chat(chat_id, display_title, chat_type)
+        except Exception:
+            logger.debug("Не удалось обновить сведения о чате (admin panel)", exc_info=True)
+
     if chat_type in ("group", "supergroup"):
-        title = _escape_html(getattr(chat, "title", str(chat_id)))
+        title = _escape_html(display_title or getattr(chat, "title", str(chat_id)))
         return chat_id, True, title
     return chat_id, False, None
 

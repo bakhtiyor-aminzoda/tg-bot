@@ -19,6 +19,7 @@ import bot_app.handlers.downloads  # noqa: F401
 from bot_app.maintenance import start_background_tasks, stop_background_tasks
 from bot_app.runtime import bot, dp
 from monitoring import HealthCheckServer
+from admin_panel_web import AdminPanelServer
 
 logger = logging.getLogger(__name__)
 
@@ -170,6 +171,7 @@ export ADMIN_USER_IDS="{message.from_user.id}"
 async def main():
     logger.info("Бот запущен (long-polling).")
     health_server = None
+    admin_panel_server = None
     try:
         if getattr(config, "HEALTHCHECK_ENABLED", False):
             health_server = HealthCheckServer(
@@ -177,6 +179,15 @@ async def main():
                 port=getattr(config, "HEALTHCHECK_PORT", 8080),
             )
             health_server.ensure_running()
+        if getattr(config, "ADMIN_PANEL_ENABLED", False):
+            if not getattr(config, "ENABLE_HISTORY", False):
+                logger.warning("Веб-админка включена, но ENABLE_HISTORY=false — панель покажет пустые данные.")
+            admin_panel_server = AdminPanelServer(
+                host=getattr(config, "ADMIN_PANEL_HOST", "127.0.0.1"),
+                port=getattr(config, "ADMIN_PANEL_PORT", 8090),
+                access_token=getattr(config, "ADMIN_PANEL_TOKEN", None),
+            )
+            admin_panel_server.ensure_running()
         start_background_tasks()
         # Удаляем старые апдейты из очереди перед стартом polling'а
         # чтобы не обрабатывать сообщения из истории
@@ -192,6 +203,8 @@ async def main():
         await stop_background_tasks()
         if health_server:
             health_server.shutdown()
+        if admin_panel_server:
+            admin_panel_server.shutdown()
         await bot.session.close()
 
 if __name__ == "__main__":

@@ -14,7 +14,12 @@ from aiogram.exceptions import TelegramBadRequest, TelegramAPIError
 from aiogram.types import FSInputFile, InlineKeyboardMarkup, InlineKeyboardButton
 
 import config
-from bot_app.helpers import detect_platform, extract_url_from_entities, extract_first_url_from_text
+from bot_app.helpers import (
+    detect_platform,
+    extract_url_from_entities,
+    extract_first_url_from_text,
+    resolve_chat_title,
+)
 from bot_app.runtime import bot, dp, global_download_semaphore, logger
 from bot_app import state
 from bot_app.ui import status as status_ui
@@ -88,6 +93,18 @@ async def universal_handler(message: types.Message):
             logger.exception("Не удалось отправить сообщение об отказе в доступе")
         await check_and_log_access(message)
         return
+
+    if config.ENABLE_HISTORY:
+        try:
+            from db import upsert_chat
+
+            upsert_chat(
+                chat_id=message.chat.id,
+                title=resolve_chat_title(message.chat),
+                chat_type=getattr(message.chat, "type", None),
+            )
+        except Exception:
+            logger.debug("Не удалось обновить сведения о чате", exc_info=True)
 
     chat_type = getattr(message.chat, "type", "")
     if chat_type in ("group", "supergroup"):

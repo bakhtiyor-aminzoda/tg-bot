@@ -11,7 +11,7 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import FSInputFile
 
 import config
-from bot_app.helpers import detect_platform
+from bot_app.helpers import detect_platform, resolve_chat_title
 from bot_app.runtime import bot, dp, global_download_semaphore, logger
 from bot_app import state
 from bot_app.ui import status as status_ui
@@ -62,6 +62,18 @@ async def handle_download_callback(callback: types.CallbackQuery):
     initiator_id = entry.get("initiator_id")
     source_chat_id = entry.get("source_chat_id")
     source_message_id = entry.get("source_message_id")
+
+    if config.ENABLE_HISTORY and getattr(callback, "message", None):
+        try:
+            from db import upsert_chat
+
+            upsert_chat(
+                chat_id=callback.message.chat.id,
+                title=resolve_chat_title(callback.message.chat),
+                chat_type=getattr(callback.message.chat, "type", None),
+            )
+        except Exception:
+            logger.debug("Не удалось обновить сведения о чате (callback)", exc_info=True)
 
     if not await is_user_allowed(callback.message):
         await callback.answer(get_access_denied_message(), show_alert=True)

@@ -63,6 +63,7 @@ class MetricsRegistry:
 
 
 _metrics = MetricsRegistry()
+_PROCESS_STARTED_AT = time.time()
 
 
 def get_metrics_registry() -> MetricsRegistry:
@@ -75,6 +76,19 @@ def increment_metric(name: str, value: int = 1) -> None:
 
 def set_metric_gauge(name: str, value: float) -> None:
     _metrics.set_gauge(name, value)
+
+
+def get_health_snapshot() -> Dict[str, object]:
+    """Return in-process health data for embedding in admin panel."""
+
+    now = time.time()
+    snapshot = get_metrics_registry().snapshot()
+    return {
+        "status": "ok",
+        "timestamp": now,
+        "uptime_seconds": int(now - _PROCESS_STARTED_AT),
+        "metrics": snapshot,
+    }
 
 
 def setup_logging(

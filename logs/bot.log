@@ -2537,3 +2537,288 @@ TypeError: ensure_aiogram_stub.<locals>.DummyInlineKeyboardButton.__init__() got
 2025-12-11 06:13:07,826 | INFO | aiogram.dispatcher | Polling stopped
 2025-12-11 06:13:08,079 | INFO | bot_app.maintenance | Cleanup loop cancelled
 2025-12-11 06:13:08,080 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 06:18:53,783 | WARNING | utils.access_control | Пользователь 6 не администратор
+2025-12-11 06:18:53,785 | WARNING | utils.access_control | Пользователь 99 не в whitelist
+2025-12-11 06:18:53,789 | INFO | bot_app.runtime | Received callback_query: download:valid from 42
+2025-12-11 06:18:53,789 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 06:18:53,789 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 06:18:53,789 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-11 06:18:53,790 | INFO | bot_app.runtime | Received callback_query: download:expired from 42
+2025-12-11 06:18:53,791 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-11 06:18:53,791 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp7qdkcxgb/video.mp4 (0.00 MB)
+2025-12-11 06:18:53,791 | INFO | utils.downloader | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-11 06:18:53,792 | INFO | utils.downloader | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp7qdkcxgb/audio.m4a
+2025-12-11 06:18:53,792 | INFO | utils.downloader | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp7qdkcxgb/video_merged.mp4
+2025-12-11 06:18:53,793 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-11 06:18:53,793 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp3q3r3tlq/sample.mp4 (0.00 MB)
+2025-12-11 06:18:53,794 | INFO | bot_app.runtime | Waiting for global download slot...
+2025-12-11 06:18:53,794 | INFO | bot_app.runtime | Acquired global download slot
+2025-12-11 06:18:53,794 | INFO | bot_app.runtime | Released global download slot
+2025-12-11 06:20:43,093 | WARNING | utils.access_control | Пользователь 6 не администратор
+2025-12-11 06:20:43,094 | WARNING | utils.access_control | Пользователь 99 не в whitelist
+2025-12-11 06:20:43,099 | INFO | bot_app.runtime | Received callback_query: download:valid from 42
+2025-12-11 06:20:43,099 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 06:20:43,099 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 06:20:43,099 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-11 06:20:43,100 | INFO | bot_app.runtime | Received callback_query: download:expired from 42
+2025-12-11 06:20:43,101 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-11 06:20:43,101 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp03dj_yjc/video.mp4 (0.00 MB)
+2025-12-11 06:20:43,101 | INFO | utils.downloader | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-11 06:20:43,101 | INFO | utils.downloader | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp03dj_yjc/audio.m4a
+2025-12-11 06:20:43,101 | INFO | utils.downloader | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp03dj_yjc/video_merged.mp4
+2025-12-11 06:20:43,102 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-11 06:20:43,102 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp_16igqb7/sample.mp4 (0.00 MB)
+2025-12-11 06:20:43,103 | INFO | bot_app.runtime | Waiting for global download slot...
+2025-12-11 06:20:43,103 | INFO | bot_app.runtime | Acquired global download slot
+2025-12-11 06:20:43,103 | INFO | bot_app.runtime | Released global download slot
+2025-12-11 06:21:01,542 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 06:21:01,543 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 06:21:01,543 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 06:21:01,544 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 06:21:01,545 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 06:21:01,908 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 06:21:01,908 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 06:21:02,023 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:24:56,688 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 06:24:56,691 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:24:56,691 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 06:24:56,943 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 06:24:56,944 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 06:26:00,655 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 06:26:00,655 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 06:26:00,656 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 06:26:00,656 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 06:26:00,657 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 06:26:01,027 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 06:26:01,027 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 06:26:01,149 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:26:23,904 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:06:26:23 +0500] "GET / HTTP/1.1" 404 174 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 06:26:23,961 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:06:26:23 +0500] "GET /favicon.ico HTTP/1.1" 404 174 "http://0.0.0.0:8080/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 06:26:40,103 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 06:26:40,105 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:26:40,105 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 06:26:40,357 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 06:26:40,358 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 06:26:49,286 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 06:26:49,286 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 06:26:49,287 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 06:26:49,287 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 06:26:49,287 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 06:26:49,680 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 06:26:49,681 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 06:26:49,800 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:27:38,634 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 06:27:38,636 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:27:38,636 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 06:27:38,888 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 06:27:38,890 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 06:27:41,588 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 06:27:41,588 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 06:27:41,588 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 06:27:41,589 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 06:27:41,589 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 06:27:41,953 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 06:27:41,954 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 06:27:42,074 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:29:00,115 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 06:29:00,118 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:29:00,118 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 06:29:00,369 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 06:29:00,370 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 06:29:04,240 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 06:29:04,240 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 06:29:04,240 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 06:29:04,241 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 06:29:04,241 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 06:29:04,652 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 06:29:04,653 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 06:29:04,774 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:29:28,111 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:06:29:28 +0500] "GET / HTTP/1.1" 404 174 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 06:30:46,279 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 06:30:46,281 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:30:46,281 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 06:30:46,498 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 06:30:46,533 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 06:30:46,533 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 06:30:48,005 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 06:30:48,006 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 06:30:48,006 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 06:30:48,006 | INFO | admin_panel_web | Admin panel server listening on 127.0.0.1:8090
+2025-12-11 06:30:48,006 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 06:30:48,007 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 06:30:48,358 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 06:30:48,358 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 06:30:48,474 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:31:00,846 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:06:31:00 +0500] "GET /?token=7636144709:AAFuv7ecNV57b33-UCyURK_pC3BBIXRvgKw HTTP/1.1" 404 174 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 06:31:00,896 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:06:31:00 +0500] "GET /favicon.ico HTTP/1.1" 404 174 "http://127.0.0.1:8090/?token=7636144709:AAFuv7ecNV57b33-UCyURK_pC3BBIXRvgKw" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 06:31:02,123 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:06:31:02 +0500] "GET /?token=7636144709:AAFuv7ecNV57b33-UCyURK_pC3BBIXRvgKw HTTP/1.1" 404 174 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 06:31:06,874 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:06:31:06 +0500] "GET /admin?token=7636144709:AAFuv7ecNV57b33-UCyURK_pC3BBIXRvgKw HTTP/1.1" 200 10805 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 06:31:33,069 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:06:31:33 +0500] "GET /admin?chat_id= HTTP/1.1" 200 10805 "http://127.0.0.1:8090/admin?token=7636144709:AAFuv7ecNV57b33-UCyURK_pC3BBIXRvgKw" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 06:31:34,289 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:06:31:34 +0500] "GET /admin?chat_id= HTTP/1.1" 200 10805 "http://127.0.0.1:8090/admin?chat_id=" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 06:34:23,490 | INFO | aiogram.event | Update id=198325141 is not handled. Duration 1 ms by bot id=7636144709
+2025-12-11 06:34:30,812 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:06:34:30 +0500] "GET /admin?chat_id=-1002327428407 HTTP/1.1" 200 8664 "http://127.0.0.1:8090/admin?chat_id=" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 06:34:36,535 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:06:34:36 +0500] "GET /admin?chat_id= HTTP/1.1" 200 10805 "http://127.0.0.1:8090/admin?chat_id=-1002327428407" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 06:39:22,199 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 06:39:22,201 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:39:22,201 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 06:39:22,453 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 06:39:22,455 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 06:39:24,716 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 06:39:24,716 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 06:39:24,716 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 06:39:24,717 | INFO | admin_panel_web | Admin panel server listening on 127.0.0.1:8090
+2025-12-11 06:39:24,717 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 06:39:24,718 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 06:39:25,080 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 06:39:25,080 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 06:39:25,198 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:39:30,568 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:06:39:30 +0500] "GET /admin?chat_id= HTTP/1.1" 200 10805 "http://127.0.0.1:8090/admin?chat_id=-1002327428407" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 06:39:32,277 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:06:39:32 +0500] "GET /admin?chat_id= HTTP/1.1" 200 10805 "http://127.0.0.1:8090/admin?chat_id=-1002327428407" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 06:39:33,154 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:06:39:33 +0500] "GET /admin?chat_id= HTTP/1.1" 200 10805 "http://127.0.0.1:8090/admin?chat_id=-1002327428407" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 06:39:36,527 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:06:39:36 +0500] "GET /admin?chat_id= HTTP/1.1" 200 10805 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 06:39:47,131 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:06:39:47 +0500] "GET /admin HTTP/1.1" 200 10805 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 06:40:38,107 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 06:40:38,108 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:40:38,109 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 06:40:38,360 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 06:40:38,361 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 13:17:06,135 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 13:17:06,136 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 13:17:06,136 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 13:17:06,136 | INFO | admin_panel_web | Admin panel server listening on 127.0.0.1:8090
+2025-12-11 13:17:06,138 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 13:17:06,138 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 13:17:36,142 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 13:17:36,144 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 13:30:32,896 | WARNING | utils.access_control | Пользователь 6 не администратор
+2025-12-11 13:30:32,898 | WARNING | utils.access_control | Пользователь 99 не в whitelist
+2025-12-11 13:30:32,904 | INFO | bot_app.runtime | Received callback_query: download:valid from 42
+2025-12-11 13:30:32,905 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 13:30:32,905 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 13:30:32,905 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-11 13:30:32,906 | INFO | bot_app.runtime | Received callback_query: download:expired from 42
+2025-12-11 13:30:32,907 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-11 13:30:32,908 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp18aw5pnn/video.mp4 (0.00 MB)
+2025-12-11 13:30:32,908 | INFO | utils.downloader | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-11 13:30:32,908 | INFO | utils.downloader | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp18aw5pnn/audio.m4a
+2025-12-11 13:30:32,908 | INFO | utils.downloader | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp18aw5pnn/video_merged.mp4
+2025-12-11 13:30:32,909 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-11 13:30:32,909 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmprrnoggnn/sample.mp4 (0.00 MB)
+2025-12-11 13:30:32,910 | INFO | bot_app.runtime | Waiting for global download slot...
+2025-12-11 13:30:32,910 | INFO | bot_app.runtime | Acquired global download slot
+2025-12-11 13:30:32,910 | INFO | bot_app.runtime | Released global download slot
+2025-12-11 13:34:03,478 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 13:34:03,479 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 13:34:03,479 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 13:34:03,479 | INFO | admin_panel_web | Admin panel server listening on 127.0.0.1:8090
+2025-12-11 13:34:03,480 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 13:34:03,481 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 13:34:03,939 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 13:34:03,939 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 13:34:04,113 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 13:34:19,287 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 13:34:19,289 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 13:34:19,289 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 13:34:19,541 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 13:34:19,542 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 13:35:15,136 | WARNING | utils.access_control | Пользователь 6 не администратор
+2025-12-11 13:35:15,137 | WARNING | utils.access_control | Пользователь 99 не в whitelist
+2025-12-11 13:35:15,143 | INFO | bot_app.runtime | Received callback_query: download:valid from 42
+2025-12-11 13:35:15,144 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 13:35:15,144 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 13:35:15,144 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-11 13:35:15,145 | INFO | bot_app.runtime | Received callback_query: download:expired from 42
+2025-12-11 13:35:15,146 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-11 13:35:15,146 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpwje5ce9t/video.mp4 (0.00 MB)
+2025-12-11 13:35:15,146 | INFO | utils.downloader | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-11 13:35:15,146 | INFO | utils.downloader | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpwje5ce9t/audio.m4a
+2025-12-11 13:35:15,147 | INFO | utils.downloader | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpwje5ce9t/video_merged.mp4
+2025-12-11 13:35:15,148 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-11 13:35:15,148 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp4lsmb6bc/sample.mp4 (0.00 MB)
+2025-12-11 13:35:15,149 | INFO | bot_app.runtime | Waiting for global download slot...
+2025-12-11 13:35:15,149 | INFO | bot_app.runtime | Acquired global download slot
+2025-12-11 13:35:15,149 | INFO | bot_app.runtime | Released global download slot
+2025-12-11 13:37:26,819 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 13:37:26,819 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 13:37:26,819 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 13:37:26,820 | INFO | admin_panel_web | Admin panel server listening on 127.0.0.1:8090
+2025-12-11 13:37:26,820 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 13:37:26,821 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 13:37:27,284 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 13:37:27,285 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 13:37:27,422 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 13:37:33,551 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:37:33 +0500] "GET /admin HTTP/1.1" 200 25882 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:38:00,886 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:38:00 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 25882 "http://127.0.0.1:8090/admin" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:38:01,239 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:38:01 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 25882 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:38:02,423 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:38:02 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 25882 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:38:03,382 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:38:03 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 25882 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:38:04,091 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:38:04 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 25882 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:38:05,248 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:38:05 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 25882 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:38:05,881 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:38:05 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 25882 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:38:06,120 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:38:06 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 25882 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:38:06,301 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:38:06 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 25882 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:38:06,561 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:38:06 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 25882 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:38:06,764 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:38:06 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 25882 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:38:07,225 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:38:07 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 25882 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:40:15,377 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:40:15 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 25882 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:44:38,903 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 13:44:38,906 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 13:44:38,906 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 13:44:39,130 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 13:44:39,158 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 13:44:39,158 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 13:44:42,708 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 13:44:42,709 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 13:44:42,709 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 13:44:42,709 | INFO | admin_panel_web | Admin panel server listening on 127.0.0.1:8090
+2025-12-11 13:44:42,709 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 13:44:42,710 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 13:44:43,178 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 13:44:43,179 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 13:44:43,314 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 13:44:49,696 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:44:49 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 26227 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:44:50,533 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:44:50 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 26227 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:44:51,159 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:44:51 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 26227 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:44:51,598 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:44:51 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 26227 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:48:42,021 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 13:48:42,024 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 13:48:42,024 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 13:48:42,276 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 13:48:42,277 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 13:48:44,802 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 13:48:44,803 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 13:48:44,803 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 13:48:44,803 | INFO | admin_panel_web | Admin panel server listening on 127.0.0.1:8090
+2025-12-11 13:48:44,804 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 13:48:44,804 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 13:48:45,258 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 13:48:45,259 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 13:48:45,411 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 13:48:50,129 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:48:50 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 28269 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:48:50,915 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:48:50 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 28269 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:48:51,445 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:48:51 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 28269 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:48:51,792 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:48:51 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 28269 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:48:52,046 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:48:52 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 28269 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:48:52,236 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:48:52 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 28269 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:48:52,385 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:48:52 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 28269 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:49:01,421 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:49:01 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 28269 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:52:57,021 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 13:52:57,022 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 13:52:57,022 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 13:52:57,274 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 13:52:57,275 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 13:52:59,210 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 13:52:59,210 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 13:52:59,210 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 13:52:59,211 | INFO | admin_panel_web | Admin panel server listening on 127.0.0.1:8090
+2025-12-11 13:52:59,211 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 13:52:59,212 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 13:52:59,698 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 13:52:59,699 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 13:52:59,954 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 13:53:03,763 | INFO | aiohttp.access | 127.0.0.1 [11/Dec/2025:13:53:03 +0500] "GET /admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads HTTP/1.1" 200 28731 "http://127.0.0.1:8090/admin?chat_sort=recent&top_sort=downloads&platform_sort=downloads" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+2025-12-11 13:55:58,905 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 13:55:58,906 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 13:55:58,907 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 13:55:59,158 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 13:55:59,159 | INFO | monitoring | Healthcheck server stopped

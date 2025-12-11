@@ -70,6 +70,16 @@ def init_db():
                 added_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )
         """)
+
+        # Таблица чатов для веб-админки
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chats (
+                chat_id INTEGER PRIMARY KEY,
+                title TEXT,
+                chat_type TEXT,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
         
         conn.commit()
         # ----- Миграции: добавим колонку chat_id в downloads если её нет -----
@@ -145,6 +155,34 @@ def add_download(
     except Exception as e:
         logger.error(f"Ошибка при добавлении записи в БД: {e}", exc_info=True)
         return False
+
+
+def upsert_chat(chat_id: int, title: Optional[str], chat_type: Optional[str]) -> None:
+    """Сохранить или обновить информацию о чате."""
+
+    if not chat_id:
+        return
+
+    clean_title = (title or "").strip() or None
+    clean_type = (chat_type or "").strip() or None
+
+    try:
+        with sqlite3.connect(str(DB_PATH)) as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+            """
+            INSERT INTO chats (chat_id, title, chat_type, updated_at)
+            VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT(chat_id) DO UPDATE SET
+                title = COALESCE(excluded.title, chats.title),
+                chat_type = COALESCE(excluded.chat_type, chats.chat_type),
+                updated_at = CURRENT_TIMESTAMP
+            """,
+                (chat_id, clean_title, clean_type),
+            )
+            conn.commit()
+    except Exception as e:
+        logger.debug("Не удалось обновить информацию о чате %s: %s", chat_id, e)
 
 
 def get_user_stats(user_id: int) -> Optional[Dict]:
