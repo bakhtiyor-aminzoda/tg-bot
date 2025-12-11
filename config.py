@@ -119,7 +119,7 @@ CLEANUP_OLD_RECORDS_DAYS = int(os.environ.get("CLEANUP_OLD_RECORDS_DAYS", "30"))
 
 # === Веб-админка ===
 ADMIN_PANEL_ENABLED = os.environ.get("ADMIN_PANEL_ENABLED", "true").lower() in ("true", "1", "yes")
-ADMIN_PANEL_HOST = os.environ.get("ADMIN_PANEL_HOST", "127.0.0.1")
+ADMIN_PANEL_HOST = os.environ.get("ADMIN_PANEL_HOST", "0.0.0.0")
 _admin_panel_port_raw = os.environ.get("ADMIN_PANEL_PORT", "8090")
 if _admin_panel_port_raw.startswith("$"):
 	# Railway/Render: allow referencing another env var like $PORT

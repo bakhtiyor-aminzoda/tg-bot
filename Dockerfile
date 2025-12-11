@@ -35,12 +35,14 @@ RUN ffmpeg -version | head -n 1
 ENV PYTHONUNBUFFERED=1 \
     LOG_FILE=/app/logs/bot.log \
     DOWNLOAD_TIMEOUT=1200 \
-    MAX_GLOBAL_CONCURRENT_DOWNLOADS=4
+    MAX_GLOBAL_CONCURRENT_DOWNLOADS=4 \
+    HEALTHCHECK_HOST=0.0.0.0 \
+    HEALTHCHECK_PORT=8079
 
 # Health check (проверяет, что бот работает)
 # Примечание: это базовая проверка; для полного health check нужен дополнительный механизм
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8080/health 2>/dev/null || exit 1 || true
+    CMD ["/bin/sh", "-c", "curl -sf http://${HEALTHCHECK_HOST:-localhost}:${HEALTHCHECK_PORT:-8079}/health || exit 1"]
 
 # Команда запуска бота
 CMD ["python", "main.py"]

@@ -153,7 +153,7 @@ docker run --rm tg-video-downloader:latest ffprobe -version | head -n 1
 - `DOWNLOAD_TIMEOUT` — таймаут скачивания в секундах (по умолчанию 1200 = 20 минут).
 - `STRUCTURED_LOGS` — если `true`, включает JSON-логи (подходит для централизованного сбора логов). По умолчанию `false`.
 - `HEALTHCHECK_ENABLED` — включает лёгкий HTTP-сервер `/health` (статус) и `/metrics` (снимок внутренних метрик). По умолчанию `true`.
-- `HEALTHCHECK_HOST`/`HEALTHCHECK_PORT` — адрес и порт healthcheck-сервера (по умолчанию `0.0.0.0:8080`).
+- `HEALTHCHECK_HOST`/`HEALTHCHECK_PORT` — адрес и порт healthcheck-сервера (по умолчанию `0.0.0.0:8079`, ставьте отличный от порта админ-панели).
 - `ADMIN_PANEL_HOST`/`ADMIN_PANEL_PORT`/`ADMIN_PANEL_TOKEN` — параметры HTML-админки. Для Railway/Render ставьте `ADMIN_PANEL_HOST=0.0.0.0` и `ADMIN_PANEL_PORT=$PORT`, иначе панель останется доступна только локально.
 - `VIDEO_CACHE_ENABLED`, `VIDEO_CACHE_DIR`, `VIDEO_CACHE_TTL_SECONDS`, `VIDEO_CACHE_MAX_ITEMS` — управляют файловым кэшем скачанных видео. При повторных запросах к тем же ссылкам бот просто копирует уже готовый файл и не запускает `yt-dlp`.
 - `IG_COOKIES_AUTO_REFRESH`, `IG_LOGIN`, `IG_PASSWORD`, `IG_COOKIES_PATH`, `IG_COOKIES_REFRESH_INTERVAL_HOURS`, `IG_2FA_BACKUP_CODES` — включают автоматический логин в Instagram и сохранение cookies, чтобы yt-dlp всегда использовал свежую авторизованную сессию.
@@ -373,7 +373,7 @@ python main.py
 1. В `.env` задайте переменные:
   ```bash
   ADMIN_PANEL_ENABLED=true
-  ADMIN_PANEL_HOST=127.0.0.1      # опционально, по умолчанию localhost
+  ADMIN_PANEL_HOST=0.0.0.0        # по умолчанию 0.0.0.0, чтобы панель была доступна снаружи
   ADMIN_PANEL_PORT=8090          # порт сервера
   ADMIN_PANEL_TOKEN=supersecret  # токен для доступа
   ```
