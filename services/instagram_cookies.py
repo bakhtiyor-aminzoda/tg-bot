@@ -52,29 +52,35 @@ class InstagramCookieRefresher:
 		self._cookies_path = Path(config.IG_COOKIES_PATH) if config.IG_COOKIES_PATH else None
 		self._backup_codes: Deque[str] = deque(config.IG_2FA_BACKUP_CODES)
 
+	def _has_credentials(self) -> bool:
+		return bool(config.IG_LOGIN and config.IG_PASSWORD and self._cookies_path)
+
 	@property
 	def enabled(self) -> bool:
-		return bool(
-			config.IG_COOKIES_AUTO_REFRESH
-			and config.IG_LOGIN
-			and config.IG_PASSWORD
-			and self._cookies_path
-		)
+		return bool(config.IG_COOKIES_AUTO_REFRESH and self._has_credentials())
 
 	@property
 	def refresh_interval_seconds(self) -> float:
 		return float(config.IG_COOKIES_REFRESH_INTERVAL_HOURS) * 3600.0
 
 	def should_refresh(self) -> bool:
-		if not self.enabled or not self._cookies_path:
+		if not self._has_credentials() or not self._cookies_path:
 			return False
 		if not self._cookies_path.exists():
 			return True
 		age_hours = (time.time() - self._cookies_path.stat().st_mtime) / 3600.0
 		return age_hours >= config.IG_COOKIES_REFRESH_INTERVAL_HOURS
 
-	async def refresh(self, *, force: bool = False, reason: Optional[str] = None) -> RefreshResult:
-		if not self.enabled:
+	async def refresh(
+		self,
+		*,
+		force: bool = False,
+		reason: Optional[str] = None,
+		allow_disabled: bool = False,
+	) -> RefreshResult:
+		if not self._has_credentials():
+			return RefreshResult(status="disabled", message="Instagram credentials are missing")
+		if not allow_disabled and not self.enabled:
 			return RefreshResult(status="disabled", message="Auto-refresh disabled")
 		if async_playwright is None:
 			logger.warning("Playwright is not installed; Instagram auto-refresh unavailable")
@@ -196,6 +202,7 @@ class InstagramCookieRefresher:
 	def state(self) -> Dict[str, Optional[float | str]]:
 		return {
 			"enabled": self.enabled,
+			"has_credentials": self._has_credentials(),
 			"last_status": self._last_status,
 			"last_error": self._last_error,
 			"last_refresh_ts": self._last_refresh_ts,
@@ -204,7 +211,7 @@ class InstagramCookieRefresher:
 
 	def should_retry_for_error(self, error_text: str) -> bool:
 		return bool(
-			self.enabled
+			self._has_credentials()
 			and error_text
 			and any(marker.lower() in error_text.lower() for marker in REFRESH_ERROR_MARKERS)
 		)
@@ -213,9 +220,14 @@ class InstagramCookieRefresher:
 _refresher = InstagramCookieRefresher()
 
 
-async def refresh_instagram_cookies(*, force: bool = False, reason: Optional[str] = None) -> RefreshResult:
+async def refresh_instagram_cookies(
+	*,
+	force: bool = False,
+	reason: Optional[str] = None,
+	allow_disabled: bool = False,
+) -> RefreshResult:
 	"""Public wrapper for forcing cookie refresh."""
-	return await _refresher.refresh(force=force, reason=reason)
+	return await _refresher.refresh(force=force, reason=reason, allow_disabled=allow_disabled)
 
 
 def is_enabled() -> bool:

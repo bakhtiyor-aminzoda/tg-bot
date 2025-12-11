@@ -284,7 +284,11 @@ async def _try_refresh_instagram(url: str, error_text: str, attempt: int) -> boo
     if not instagram_cookies.should_retry_for_error(error_text):
         return False
     logger.info("Instagram download failed (%s). Пытаемся обновить cookies...", error_text)
-    result = await instagram_cookies.refresh_instagram_cookies(force=True, reason="download-error")
+    result = await instagram_cookies.refresh_instagram_cookies(
+        force=True,
+        reason="download-error",
+        allow_disabled=True,
+    )
     if result.refreshed:
         logger.info("Instagram cookies обновлены, повторяем попытку")
         await asyncio.sleep(2)

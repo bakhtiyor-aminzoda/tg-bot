@@ -106,12 +106,19 @@ async def universal_handler(message: types.Message):
         except Exception:
             logger.debug("Не удалось обновить сведения о чате", exc_info=True)
 
+    uid = message.from_user.id
     chat_type = getattr(message.chat, "type", "")
+    platform = detect_platform(url)
+    if not platform:
+        if chat_type not in ("group", "supergroup"):
+            await message.reply("Неподдерживаемая ссылка. Доступно: YouTube, TikTok, Instagram.")
+        return
+
     if chat_type in ("group", "supergroup"):
         token = uuid4().hex
         state.pending_downloads[token] = {
             "url": url,
-            "initiator_id": message.from_user.id,
+            "initiator_id": uid,
             "ts": time.time(),
             "source_chat_id": message.chat.id,
             "source_message_id": getattr(message, "message_id", None),
@@ -129,7 +136,6 @@ async def universal_handler(message: types.Message):
                 pass
         return
 
-    uid = message.from_user.id
     now = time.time()
     active = state.user_active_downloads.get(uid, 0)
     max_per_user = getattr(config, "MAX_CONCURRENT_PER_USER", 2)
@@ -144,12 +150,6 @@ async def universal_handler(message: types.Message):
 
     state.user_last_request_ts[uid] = now
     state.user_active_downloads[uid] = active + 1
-
-    platform = detect_platform(url)
-    if not platform:
-        state.user_active_downloads[uid] = max(0, state.user_active_downloads.get(uid, 1) - 1)
-        await message.reply("Неподдерживаемая ссылка. Доступно: YouTube, TikTok, Instagram.")
-        return
 
     status_msg = await message.reply(
         status_ui.waiting(platform, state.user_active_downloads.get(uid, 0), max_per_user)

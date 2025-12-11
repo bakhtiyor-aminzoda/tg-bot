@@ -3043,3 +3043,18 @@ NameError: name '_try_cache_get' is not defined
 2025-12-11 18:46:43,816 | WARNING | aiogram.dispatcher | Received SIGINT signal
 2025-12-11 18:46:43,817 | INFO | bot_app.maintenance | Cleanup loop cancelled
 2025-12-11 18:46:43,818 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 20:00:02,750 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 20:00:02,751 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 20:00:02,751 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 20:00:02,751 | INFO | admin_panel_web | Admin panel server listening on 0.0.0.0:8090
+2025-12-11 20:00:02,752 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 20:00:02,752 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 20:00:02,772 | INFO | bot_app.maintenance | Instagram автообновление cookies отключено
+2025-12-11 20:00:03,221 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 20:00:03,222 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 20:00:03,372 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 20:00:34,227 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 20:00:34,229 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 20:00:34,230 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 20:00:34,481 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 20:00:34,483 | INFO | monitoring | Healthcheck server stopped
