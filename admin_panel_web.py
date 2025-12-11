@@ -451,18 +451,31 @@ class AdminPanelServer:
             "Объём данных": _format_bytes(int(total_bytes)),
         }
 
-        metrics_parts = list(
-            filter(
-                None,
-                [
-                    render_metrics_block("Счётчики", counters),
-                    render_metrics_block("Гейджи", gauges),
-                ],
+        metrics_parts = [
+            block
+            for block in (
+                render_metrics_block("Счётчики", counters),
+                render_metrics_block("Гейджи", gauges),
             )
-        )
+            if block
+        ]
         if not metrics_parts:
             metrics_parts.append(render_metrics_block("Базовые показатели", fallback_metrics))
         metrics_html = "".join(metrics_parts)
+
+        status_class = "danger" if health_status not in ("ok", "healthy", None) else ""
+        if health_info:
+            health_html = (
+                "<div class=\"health-grid\">"
+                f"<div><p class=\"label\">Статус</p><span class=\"status-pill {status_class}\">{html.escape(health_status or 'disabled')}</span></div>"
+                f"<div><p class=\"label\">Аптайм</p><p class=\"value\">{uptime_text}</p></div>"
+                f"<div><p class=\"label\">Последнее обновление</p><p>{health_timestamp or '—'}</p></div>"
+                f"<div><p class=\"label\">Endpoint</p><p>{html.escape(health_endpoint)}</p></div>"
+                "</div>"
+                f"<div class=\"health-grid\">{metrics_html}</div>"
+            )
+        else:
+            health_html = f"<p class=\"muted\">Healthcheck отключён в конфиге ({html.escape(health_endpoint)}).</p>"
 
         chat_value = html.escape(str(chat_id)) if chat_id is not None else ""
         search_value = html.escape(search_query)
@@ -826,15 +839,7 @@ class AdminPanelServer:
                 </section>
                 <section>
                     <h2>Healthcheck</h2>
-                    {(
-                        f"<div class=\"health-grid\">"
-                        f"<div><p class=\"label\">Статус</p><span class=\"status-pill{' danger' if health_status not in ('ok', 'healthy', None) else ''}\">{html.escape(health_status or 'disabled')}</span></div>"
-                        f"<div><p class=\"label\">Аптайм</p><p class=\"value\">{uptime_text}</p></div>"
-                        f"<div><p class=\"label\">Последнее обновление</p><p>{health_timestamp or '—'}</p></div>"
-                        f"<div><p class=\"label\">Endpoint</p><p>{html.escape(health_endpoint)}</p></div>"
-                        f"</div>"
-                        f"<div class=\"health-grid\">{metrics_html}</div>"
-                    ) if health_info else f"<p class=\"muted\">Healthcheck отключён в конфиге ({html.escape(health_endpoint)}).</p>"}
+                    {health_html}
                 </section>
                 <section>
                     <h2>Ошибки</h2>

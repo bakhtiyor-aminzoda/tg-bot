@@ -2822,3 +2822,18 @@ TypeError: ensure_aiogram_stub.<locals>.DummyInlineKeyboardButton.__init__() got
 2025-12-11 13:55:58,907 | INFO | aiogram.dispatcher | Polling stopped
 2025-12-11 13:55:59,158 | INFO | bot_app.maintenance | Cleanup loop cancelled
 2025-12-11 13:55:59,159 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 14:00:30,647 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 14:00:30,647 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 14:00:30,648 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 14:00:30,648 | INFO | admin_panel_web | Admin panel server listening on 127.0.0.1:8090
+2025-12-11 14:00:30,649 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 14:00:30,649 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 14:00:31,120 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 14:00:31,121 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 14:00:31,282 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 14:00:34,595 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 14:00:34,596 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 14:00:34,596 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 14:00:34,791 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 14:00:34,848 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 14:00:34,849 | INFO | monitoring | Healthcheck server stopped
