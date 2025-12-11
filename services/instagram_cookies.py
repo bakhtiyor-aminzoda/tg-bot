@@ -29,6 +29,11 @@ REFRESH_ERROR_MARKERS = (
 	"rate-limit",
 )
 
+DESKTOP_UA = (
+	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+	"AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+)
+
 
 @dataclass
 class RefreshResult:
@@ -115,9 +120,19 @@ class InstagramCookieRefresher:
 			raise RuntimeError("IG_COOKIES_PATH is not configured")
 
 		async with async_playwright() as pw:
-			browser = await pw.chromium.launch(headless=True)
-			context = await browser.new_context()
+			browser = await pw.chromium.launch(
+				headless=True,
+				args=["--disable-blink-features=AutomationControlled", "--disable-features=IsolateOrigins,site-per-process"],
+			)
+			context = await browser.new_context(
+				locale="en-US",
+				viewport={"width": 1280, "height": 720},
+				timezone_id="UTC",
+				user_agent=DESKTOP_UA,
+			)
+			await context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
 			page = await context.new_page()
+			page.set_default_timeout(40000)
 			try:
 				await page.goto("https://www.instagram.com/accounts/login/", wait_until="networkidle", timeout=30000)
 				await self._ensure_login_form(page)
@@ -166,34 +181,53 @@ class InstagramCookieRefresher:
 				continue
 
 	async def _ensure_login_form(self, page) -> None:
-		deadline = time.time() + 45  # seconds
-		selectors = [
+		deadline = time.time() + 60  # seconds
+		input_selectors = [
 			'input[name="username"]',
 			'input[aria-label="Phone number, username, or email"]',
 			'input[name="emailOrPhone"]',
+			'input[name="usernameOrEmail"]',
+		]
+		trigger_selectors = [
+			"button:has-text('Log in')",
+			"button:has-text('Log In')",
+			"button:has-text('Войти')",
+			"a:has-text('Log in')",
+			"text=Log in",
 		]
 		attempt = 0
 		while time.time() < deadline:
-			for selector in selectors:
+			for selector in input_selectors:
 				if await self._has_selector(page, selector):
-					if selector != 'input[name="username"]':
-						try:
-							await page.locator(selector).fill("")
-						except Exception:
-							pass
 					return
 			await self._maybe_accept_cookie_banner(page)
 			attempt += 1
-			if attempt % 3 == 0:
+			clicked = False
+			for trigger in trigger_selectors:
 				try:
-					await page.reload(wait_until="domcontentloaded")
+					locator = page.locator(trigger).first
+					if await locator.count() and await locator.is_visible():
+						await locator.click(timeout=1500)
+						clicked = True
+						break
+				except Exception:
+					continue
+			if clicked:
+				await page.wait_for_timeout(1200)
+				continue
+			if attempt % 4 == 0:
+				try:
+					await page.goto(
+						"https://www.instagram.com/accounts/login/?source=auth_switcher",
+						wait_until="domcontentloaded",
+						timeout=20000,
+					)
 				except Exception:
 					pass
-				try:
-					await page.get_by_role("button", name="Log in").click(timeout=1500)
-				except Exception:
-					pass
-			await page.wait_for_timeout(600)
+			await page.wait_for_timeout(700)
+		html_snippet = (await page.content())[:4000]
+		logger.error("Instagram login form not found (url=%s)", page.url)
+		logger.debug("Instagram login HTML snippet: %s", html_snippet)
 		raise RuntimeError("Не удалось отобразить форму входа Instagram")
 
 	async def _maybe_accept_cookie_banner(self, page) -> None:
@@ -205,6 +239,9 @@ class InstagramCookieRefresher:
 			"button:has-text('Only allow essential cookies')",
 			"button:has-text('Allow essential cookies')",
 			"button:has-text('Allow Cookies')",
+			"button:has-text('Accept all')",
+			"button:has-text('Accept All')",
+			"button:has-text('Принять все')",
 		]
 		for selector in selectors:
 			try:
