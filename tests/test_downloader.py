@@ -29,7 +29,7 @@ class DownloaderTests(unittest.IsolatedAsyncioTestCase):
 
         with mock.patch("utils.downloader._run_cmd", fake_run_cmd), mock.patch(
             "utils.downloader._ffprobe_has_audio_or_video", fake_ffprobe
-        ):
+        ), mock.patch.object(downloader, "video_cache", None):
             result_path = await downloader.download_video(
                 "https://example.com/video",
                 self.output_dir,
@@ -64,9 +64,11 @@ class DownloaderTests(unittest.IsolatedAsyncioTestCase):
 
         with mock.patch("utils.downloader._run_cmd", fake_run_cmd), mock.patch(
             "utils.downloader._ffprobe_has_audio_or_video", fake_ffprobe
-        ), mock.patch("utils.downloader._ffmpeg_merge", fake_merge):
+        ), mock.patch("utils.downloader._ffmpeg_merge", fake_merge), mock.patch.object(
+            downloader, "video_cache", None
+        ):
             result_path = await downloader.download_video(
-                "https://example.com/video",
+                "https://example.com/video2",
                 self.output_dir,
                 timeout=5,
             )

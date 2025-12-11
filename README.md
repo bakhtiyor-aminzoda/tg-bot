@@ -155,6 +155,8 @@ docker run --rm tg-video-downloader:latest ffprobe -version | head -n 1
 - `HEALTHCHECK_ENABLED` — включает лёгкий HTTP-сервер `/health` (статус) и `/metrics` (снимок внутренних метрик). По умолчанию `true`.
 - `HEALTHCHECK_HOST`/`HEALTHCHECK_PORT` — адрес и порт healthcheck-сервера (по умолчанию `0.0.0.0:8080`).
 - `ADMIN_PANEL_HOST`/`ADMIN_PANEL_PORT`/`ADMIN_PANEL_TOKEN` — параметры HTML-админки. Для Railway/Render ставьте `ADMIN_PANEL_HOST=0.0.0.0` и `ADMIN_PANEL_PORT=$PORT`, иначе панель останется доступна только локально.
+- `VIDEO_CACHE_ENABLED`, `VIDEO_CACHE_DIR`, `VIDEO_CACHE_TTL_SECONDS`, `VIDEO_CACHE_MAX_ITEMS` — управляют файловым кэшем скачанных видео. При повторных запросах к тем же ссылкам бот просто копирует уже готовый файл и не запускает `yt-dlp`.
+- `IG_COOKIES_AUTO_REFRESH`, `IG_LOGIN`, `IG_PASSWORD`, `IG_COOKIES_PATH`, `IG_COOKIES_REFRESH_INTERVAL_HOURS`, `IG_2FA_BACKUP_CODES` — включают автоматический логин в Instagram и сохранение cookies, чтобы yt-dlp всегда использовал свежую авторизованную сессию.
 
 **Пример** (Railway / Render): добавьте `SENTRY_DSN` в секреты проекта и остальные переменные в Environment.
 
@@ -217,6 +219,34 @@ docker-compose up -d
 # Откатиться к конкретной версии
 pip install yt-dlp==2023.12.0
 ```
+
+## Автообновление cookies Instagram
+
+Instagram всё чаще требует авторизованный доступ даже к публичным рилсам. Чтобы не выгружать cookies вручную, бот может сам логиниться и обновлять файл для yt-dlp.
+
+1. Установите Playwright вместе с Chromium: `pip install playwright` и `playwright install chromium`. В Docker обязательно добавьте `RUN playwright install --with-deps chromium`.
+2. В `.env` укажите:
+  ```dotenv
+  IG_COOKIES_AUTO_REFRESH=true
+  IG_LOGIN=ваш_логин
+  IG_PASSWORD=ваш_пароль
+  # по желанию: IG_COOKIES_PATH=/app/instagram_cookies.txt
+  # по желанию: IG_2FA_BACKUP_CODES=code1,code2
+  ```
+3. Перезапустите приложение. При первом запуске поднимется headless Chromium, выполнит вход на `instagram.com`, сохранит cookies в `IG_COOKIES_PATH` и автоматически пропишет путь в `YTDLP_COOKIES_FILE`.
+4. Раз в `IG_COOKIES_REFRESH_INTERVAL_HOURS` часов (по умолчанию 6) бот повторяет вход, чтобы избежать протухания cookies. Если Instagram запросит 2FA, бот запишет это в логи; добавьте резервные коды или выполните ручной логин, чтобы разблокировать процесс.
+
+Состояние обновления отражается в логах и health-дашборде админки (последнее успешное время, ошибки, причина автоперезапуска).
+
+## Кеширование скачанных видео
+
+Чтобы не ждать повторное скачивание крупных рилсов, бот записывает финальные MP4 в локальный кэш и переиспользует их, если ссылка запрашивается снова в течение `VIDEO_CACHE_TTL_SECONDS` (по умолчанию 1 час).
+
+- В `.env` параметры уже включены (`VIDEO_CACHE_ENABLED=true`). При необходимости можно увеличить `VIDEO_CACHE_MAX_ITEMS` или изменить директорию (`VIDEO_CACHE_DIR=/app/video_cache`).
+- Повторные скачивания теперь происходят мгновенно: бот копирует файл из кэша в личную временную папку пользователя и сразу начинает отправку в Telegram.
+- Состояние кэша (включён/выкл, количество попаданий/промахов, время последнего сохранения) видно в блоке Health админ-панели.
+
+Если дисковое пространство ограничено, уменьшите `VIDEO_CACHE_MAX_ITEMS` или отключите кэш, установив `VIDEO_CACHE_ENABLED=false`.
 
 ## CI и автоматические проверки
 

@@ -13,6 +13,7 @@ from bot_app import state
 logger = logging.getLogger(__name__)
 
 _cleanup_task: Optional[asyncio.Task[None]] = None
+_cookie_task: Optional[asyncio.Task[None]] = None
 
 
 def _purge_pending(now: float) -> int:
@@ -89,19 +90,50 @@ async def _cleanup_loop() -> None:
             logger.exception("Cleanup loop iteration failed; continuing")
 
 
+async def _cookie_refresh_loop() -> None:
+    try:
+        from services import instagram_cookies
+    except Exception:
+        logger.info("Instagram cookie refresher недоступен (не установлен playwright?)")
+        return
+
+    if not instagram_cookies.is_enabled():
+        logger.info("Instagram автообновление cookies отключено")
+        return
+
+    interval = max(900.0, instagram_cookies.refresh_interval_seconds())
+    logger.info("Starting Instagram cookie loop (interval=%.0fs)", interval)
+    while True:
+        try:
+            await instagram_cookies.refresh_instagram_cookies(reason="scheduled")
+        except asyncio.CancelledError:
+            logger.info("Instagram cookie loop cancelled")
+            raise
+        except Exception:
+            logger.exception("Instagram cookie refresh iteration failed")
+        await asyncio.sleep(interval)
+
+
 def start_background_tasks() -> None:
     """Ensure cleanup loop is running."""
-    global _cleanup_task
-    if _cleanup_task and not _cleanup_task.done():
-        return
+    global _cleanup_task, _cookie_task
     loop = asyncio.get_running_loop()
-    _cleanup_task = loop.create_task(_cleanup_loop(), name="state-cleanup")
+    if not _cleanup_task or _cleanup_task.done():
+        _cleanup_task = loop.create_task(_cleanup_loop(), name="state-cleanup")
+    if not _cookie_task or _cookie_task.done():
+        _cookie_task = loop.create_task(_cookie_refresh_loop(), name="instagram-cookie-refresh")
 
 
 async def stop_background_tasks() -> None:
     """Stop cleanup loop and wait for graceful shutdown."""
-    global _cleanup_task
-    task = _cleanup_task
+    global _cleanup_task, _cookie_task
+    await _cancel_task(_cleanup_task)
+    await _cancel_task(_cookie_task)
+    _cleanup_task = None
+    _cookie_task = None
+
+
+async def _cancel_task(task: Optional[asyncio.Task[None]]) -> None:
     if not task:
         return
     task.cancel()
@@ -109,8 +141,6 @@ async def stop_background_tasks() -> None:
         await task
     except asyncio.CancelledError:
         pass
-    finally:
-        _cleanup_task = None
 
 
 __all__ = [

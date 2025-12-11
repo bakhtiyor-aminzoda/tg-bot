@@ -14,6 +14,11 @@ from pathlib import Path
 import logging
 from typing import Optional
 
+try:
+    from services import video_cache
+except Exception:  # pragma: no cover - cache unavailable in some envs
+    video_cache = None  # type: ignore
+
 logger = logging.getLogger(__name__)
 
 class DownloadError(Exception):
@@ -91,47 +96,64 @@ async def _ffmpeg_merge(video_path: Path, audio_path: Path, output_path: Path, t
         raise DownloadError(f"ffmpeg merge failed: {stderr.splitlines()[-1] if stderr else 'unknown'}")
     return output_path
 
-async def download_video(url: str, output_dir: Path, timeout: int = 20*60, cookies_file: Optional[str] = None) -> Path:
-    """
-    Асинхронно скачивает видео через yt-dlp, возвращает путь к итоговому файлу.
-    - output_dir: папка, куда сохранять
-    - timeout: общий таймаут для операций yt-dlp (сек)
-    - cookies_file: необязательный путь к cookies.txt
-    """
+async def download_video(url: str, output_dir: Path, timeout: int = 20 * 60, cookies_file: Optional[str] = None) -> Path:
+    """Скачивает видео, пытаясь обновить Instagram-cookies при необходимости."""
     output_dir.mkdir(parents=True, exist_ok=True)
+    cached_path = await _try_cache_get(url, output_dir)
+    if cached_path:
+        return cached_path
+    attempts = 2
+    last_error: Optional[DownloadError] = None
+    for attempt in range(attempts):
+        try:
+            result = await _download_once(url, output_dir, timeout, cookies_file)
+            await _maybe_store_cache(url, result)
+            return result
+        except DownloadError as err:
+            last_error = err
+            if await _try_refresh_instagram(url, str(err), attempt):
+                continue
+            raise
+    if last_error:
+        raise last_error
+    raise DownloadError("Не удалось скачать видео по неизвестной причине.")
 
-    # Шаблон имени выходного файла
+
+async def _download_once(url: str, output_dir: Path, timeout: int, cookies_file: Optional[str]) -> Path:
     output_template = str(output_dir / "%(title).100s-%(id)s.%(ext)s")
-
-    # Настройки yt-dlp: приоритет mp4/m4a, мердж в mp4
-    # Добавим user agent и ретраи
-    user_agent = os.environ.get("YTDLP_USER_AGENT", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36")
+    user_agent = os.environ.get(
+        "YTDLP_USER_AGENT",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
+    )
     cmd = [
         "yt-dlp",
         "--no-playlist",
-        "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best",
-        "--merge-output-format", "mp4",
+        "-f",
+        "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best",
+        "--merge-output-format",
+        "mp4",
         "--no-warnings",
         "--restrict-filenames",
-        "--output", output_template,
-        "--retries", "3",
-        "--fragment-retries", "3",
-        "--user-agent", user_agent,
+        "--output",
+        output_template,
+        "--retries",
+        "3",
+        "--fragment-retries",
+        "3",
+        "--user-agent",
+        user_agent,
     ]
 
     if cookies_file:
         cmd += ["--cookies", cookies_file]
     else:
-        # Попробуем взять из переменной окружения, если задана
         cf = os.environ.get("YTDLP_COOKIES_FILE")
         if cf:
             cmd += ["--cookies", cf]
 
-    # Иногда полезно указать referer для instagram
     if "instagram.com" in url:
         cmd += ["--add-header", "Referer: https://www.instagram.com/"]
 
-    # Запускаем yt-dlp
     logger.info("Запускаем yt-dlp: %s ...", url)
     try:
         stdout, stderr, rc = await _run_cmd(cmd + [url], timeout=timeout)
@@ -144,10 +166,8 @@ async def download_video(url: str, output_dir: Path, timeout: int = 20*60, cooki
 
     if rc != 0:
         logger.error("yt-dlp завершился с кодом %s: %s", rc, stderr[:2000])
-        # Попробуем получить больше информации: запустить yt-dlp с --dump-single-json (коротко)
         raise DownloadError(f"Ошибка yt-dlp: {stderr.splitlines()[-1] if stderr else 'unknown error'}")
 
-    # Находим последнее созданное видео-файл в output_dir
     candidates = [p for p in output_dir.iterdir() if p.is_file()]
     if not candidates:
         raise DownloadError("Файл не найден после завершения yt-dlp.")
@@ -159,11 +179,9 @@ async def download_video(url: str, output_dir: Path, timeout: int = 20*60, cooki
     probes = await _ffprobe_has_audio_or_video(downloaded)
     logger.debug("ffprobe result: %s", probes)
 
-    # Если есть видео и аудио — возвращаем
     if probes.get("has_video") and probes.get("has_audio"):
         return downloaded
 
-    # Если есть видео, но нет аудио — пробуем скачать audio отдельно и смёрджить
     if probes.get("has_video") and not probes.get("has_audio"):
         logger.info("Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.")
         audio_template = str(output_dir / "%(title).100s-%(id)s.%(ext)s")
@@ -209,7 +227,6 @@ async def download_video(url: str, output_dir: Path, timeout: int = 20*60, cooki
         logger.info("Merge выполнен, итог: %s", merged)
         return merged
 
-    # Если есть аудио, но нет видео (редкий кейс) — скачиваем video отдельно
     if probes.get("has_audio") and not probes.get("has_video"):
         logger.info("Файл содержит только аудио. Пробуем скачать video отдельно и смержить.")
         video_template = str(output_dir / "%(title).100s-%(id)s.%(ext)s")
@@ -251,5 +268,38 @@ async def download_video(url: str, output_dir: Path, timeout: int = 20*60, cooki
         logger.info("Merge выполнен, итог: %s", merged)
         return merged
 
-    # Иначе — непонятный кейс
     raise DownloadError("Скачанный файл не содержит не аудио, ни видео или неизвестный формат.")
+
+
+async def _try_refresh_instagram(url: str, error_text: str, attempt: int) -> bool:
+    if "instagram.com" not in url.lower():
+        return False
+    if attempt > 0:
+        return False
+    try:
+        from services import instagram_cookies
+    except Exception:
+        logger.debug("Instagram refresher module unavailable", exc_info=True)
+        return False
+    if not instagram_cookies.should_retry_for_error(error_text):
+        return False
+    logger.info("Instagram download failed (%s). Пытаемся обновить cookies...", error_text)
+    result = await instagram_cookies.refresh_instagram_cookies(force=True, reason="download-error")
+    if result.refreshed:
+        logger.info("Instagram cookies обновлены, повторяем попытку")
+        await asyncio.sleep(2)
+        return True
+    logger.warning("Не удалось автоматически обновить Instagram cookies: %s", result.message)
+    return False
+
+
+async def _try_cache_get(url: str, output_dir: Path) -> Optional[Path]:
+    if not video_cache or not video_cache.is_enabled():
+        return None
+    return await video_cache.get_cached_copy(url, output_dir)
+
+
+async def _maybe_store_cache(url: str, file_path: Path) -> None:
+    if not video_cache or not video_cache.is_enabled():
+        return
+    await video_cache.store_copy(url, file_path)

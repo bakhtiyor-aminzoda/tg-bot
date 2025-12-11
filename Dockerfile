@@ -18,7 +18,8 @@ COPY requirements.txt .
 
 # Обновляем pip и устанавливаем Python зависимости
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt && \
+    python -m playwright install --with-deps chromium
 
 # Копируем весь исходный код проекта
 COPY . .

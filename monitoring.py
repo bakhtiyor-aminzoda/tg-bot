@@ -9,6 +9,7 @@ import logging.handlers
 import threading
 import time
 from collections import Counter
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -83,12 +84,19 @@ def get_health_snapshot() -> Dict[str, object]:
 
     now = time.time()
     snapshot = get_metrics_registry().snapshot()
-    return {
+    payload: Dict[str, object] = {
         "status": "ok",
         "timestamp": now,
         "uptime_seconds": int(now - _PROCESS_STARTED_AT),
         "metrics": snapshot,
     }
+    cookie_state = _get_instagram_cookie_state()
+    if cookie_state:
+        payload["instagram_cookies"] = cookie_state
+    cache_state = _get_video_cache_state()
+    if cache_state:
+        payload["video_cache"] = cache_state
+    return payload
 
 
 def setup_logging(
@@ -151,6 +159,43 @@ def capture_exception(exc: Exception) -> None:
         sentry_sdk.capture_exception(exc)
     except Exception:
         logging.getLogger(__name__).debug("Sentry capture failed or sentry_sdk not installed.")
+
+
+def _get_instagram_cookie_state() -> Optional[Dict[str, object]]:
+    try:
+        from services import instagram_cookies
+    except Exception:
+        return None
+
+    state = instagram_cookies.get_state()
+    if not state:
+        return None
+    ts = state.get("last_refresh_ts")
+    if ts:
+        try:
+            state["last_refresh_iso"] = datetime.fromtimestamp(float(ts)).isoformat(timespec="seconds")
+        except Exception:
+            pass
+    return state
+
+
+def _get_video_cache_state() -> Optional[Dict[str, object]]:
+    try:
+        from services import video_cache
+    except Exception:
+        return None
+
+    try:
+        state = video_cache.get_state()
+    except Exception:
+        return None
+    ts = state.get("last_store_ts")
+    if ts:
+        try:
+            state["last_store_iso"] = datetime.fromtimestamp(float(ts)).isoformat(timespec="seconds")
+        except Exception:
+            pass
+    return state
 
 
 class HealthCheckServer:

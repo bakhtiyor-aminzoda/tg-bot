@@ -2923,3 +2923,123 @@ TypeError: ensure_aiogram_stub.<locals>.DummyInlineKeyboardButton.__init__() got
 2025-12-11 16:12:34,325 | WARNING | aiogram.dispatcher | Received SIGINT signal
 2025-12-11 16:12:34,371 | INFO | bot_app.maintenance | Cleanup loop cancelled
 2025-12-11 16:12:34,372 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 17:20:13,469 | WARNING | utils.access_control | Пользователь 6 не администратор
+2025-12-11 17:20:13,470 | WARNING | utils.access_control | Пользователь 99 не в whitelist
+2025-12-11 17:20:13,480 | INFO | bot_app.runtime | Received callback_query: download:valid from 42
+2025-12-11 17:20:13,480 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 17:20:13,480 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 17:20:13,481 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-11 17:20:13,482 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=42, platform=youtube, status=success, chat_id=100
+2025-12-11 17:20:13,483 | INFO | bot_app.runtime | Received callback_query: download:expired from 42
+2025-12-11 17:20:13,486 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-11 17:20:13,486 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp_p5beywj/video.mp4 (0.00 MB)
+2025-12-11 17:20:13,486 | INFO | utils.downloader | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-11 17:20:13,487 | INFO | utils.downloader | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp_p5beywj/audio.m4a
+2025-12-11 17:20:13,487 | INFO | utils.downloader | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp_p5beywj/video_merged.mp4
+2025-12-11 17:20:13,488 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-11 17:20:13,488 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmponbv8ovp/sample.mp4 (0.00 MB)
+2025-12-11 17:20:13,490 | INFO | bot_app.runtime | Waiting for global download slot...
+2025-12-11 17:20:13,490 | INFO | bot_app.runtime | Acquired global download slot
+2025-12-11 17:20:13,490 | INFO | bot_app.runtime | Released global download slot
+2025-12-11 17:58:22,026 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 17:58:22,026 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 17:58:22,026 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 17:58:22,027 | INFO | admin_panel_web | Admin panel server listening on 127.0.0.1:8090
+2025-12-11 17:58:22,028 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 17:58:22,028 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 17:58:22,984 | INFO | bot_app.maintenance | Instagram автообновление cookies отключено
+2025-12-11 17:58:23,321 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 17:58:23,321 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 17:58:23,431 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 17:58:48,262 | INFO | aiogram.event | Update id=198325158 is handled. Duration 424 ms by bot id=7636144709
+2025-12-11 17:58:50,125 | INFO | bot_app.runtime | Received callback_query: download:e9e13daf75c94d1bb34a4c1d601f47bd from 1175046908
+2025-12-11 17:58:50,517 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 17:58:50,661 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 17:58:50,661 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DPg2Gl4jNXQ/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ== ...
+2025-12-11 17:59:01,595 | INFO | utils.downloader | Первичный файл: tmp/1175046908_1765457930/Video_by_belyanskiy1-DPg2Gl4jNXQ.mp4 (18.01 MB)
+2025-12-11 17:59:01,679 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-11 17:59:16,431 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=1175046908, platform=instagram, status=success, chat_id=-1002327428407
+2025-12-11 17:59:16,433 | INFO | aiogram.event | Update id=198325159 is handled. Duration 26308 ms by bot id=7636144709
+2025-12-11 17:59:24,224 | INFO | aiogram.event | Update id=198325160 is handled. Duration 162 ms by bot id=7636144709
+2025-12-11 17:59:25,999 | INFO | bot_app.runtime | Received callback_query: download:a2d43884ec714f2ab88172b2520f2a2f from 1175046908
+2025-12-11 17:59:26,315 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 17:59:26,452 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 17:59:26,452 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DPg2Gl4jNXQ/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ== ...
+2025-12-11 17:59:39,498 | INFO | utils.downloader | Первичный файл: tmp/1175046908_1765457966/Video_by_belyanskiy1-DPg2Gl4jNXQ.mp4 (18.01 MB)
+2025-12-11 17:59:39,566 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-11 17:59:56,976 | INFO | __main__ | Команда /stats от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 17:59:58,029 | INFO | aiogram.event | Update id=198325162 is handled. Duration 1053 ms by bot id=7636144709
+2025-12-11 18:00:13,017 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=1175046908, platform=instagram, status=success, chat_id=-1002327428407
+2025-12-11 18:00:13,018 | INFO | aiogram.event | Update id=198325161 is handled. Duration 47019 ms by bot id=7636144709
+2025-12-11 18:10:33,117 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 18:10:33,119 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 18:10:33,119 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 18:10:33,371 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 18:10:33,373 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 18:35:41,733 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 18:35:41,734 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 18:35:41,734 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 18:35:41,734 | INFO | admin_panel_web | Admin panel server listening on 127.0.0.1:8090
+2025-12-11 18:35:41,735 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 18:35:41,735 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 18:35:41,756 | INFO | bot_app.maintenance | Instagram автообновление cookies отключено
+2025-12-11 18:35:42,159 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 18:35:42,160 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 18:35:42,291 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 18:36:11,008 | INFO | aiogram.event | Update id=198325163 is handled. Duration 778 ms by bot id=7636144709
+2025-12-11 18:36:12,656 | INFO | bot_app.runtime | Received callback_query: download:e61b8fd6114545519e908a5d7ea53cee from 1175046908
+2025-12-11 18:36:13,188 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 18:36:13,380 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 18:36:13,381 | ERROR | bot_app.runtime | Ошибка при обработке callback: name '_try_cache_get' is not defined
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/bot_app/handlers/callbacks.py", line 119, in handle_download_callback
+    downloaded_path = await download_video(
+                      ^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/utils/downloader.py", line 102, in download_video
+    cached_path = await _try_cache_get(url, output_dir)
+                        ^^^^^^^^^^^^^^
+NameError: name '_try_cache_get' is not defined
+2025-12-11 18:36:13,418 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=1175046908, platform=instagram, status=error, chat_id=-1002327428407
+2025-12-11 18:36:13,628 | INFO | aiogram.event | Update id=198325164 is handled. Duration 971 ms by bot id=7636144709
+2025-12-11 18:39:39,320 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 18:39:39,322 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 18:39:39,322 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 18:39:39,575 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 18:39:39,576 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 18:39:59,755 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 18:39:59,755 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 18:39:59,755 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 18:39:59,756 | INFO | admin_panel_web | Admin panel server listening on 127.0.0.1:8090
+2025-12-11 18:39:59,756 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 18:39:59,757 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 18:39:59,772 | INFO | bot_app.maintenance | Instagram автообновление cookies отключено
+2025-12-11 18:40:00,522 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 18:40:00,522 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 18:40:00,648 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 18:40:06,756 | INFO | aiogram.event | Update id=198325165 is handled. Duration 0 ms by bot id=7636144709
+2025-12-11 18:40:12,112 | INFO | aiogram.event | Update id=198325166 is handled. Duration 443 ms by bot id=7636144709
+2025-12-11 18:40:13,593 | INFO | bot_app.runtime | Received callback_query: download:654ff0d902564dbbb676dedbf60e3844 from 1175046908
+2025-12-11 18:40:14,239 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 18:40:14,437 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 18:40:14,438 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DPg2Gl4jNXQ/?utm_source=ig_web_copy_link ...
+2025-12-11 18:40:43,721 | INFO | utils.downloader | Первичный файл: tmp/1175046908_1765460414/Video_by_belyanskiy1-DPg2Gl4jNXQ.mp4 (18.01 MB)
+2025-12-11 18:40:43,795 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-11 18:41:08,583 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=1175046908, platform=instagram, status=success, chat_id=-1002327428407
+2025-12-11 18:41:08,584 | INFO | aiogram.event | Update id=198325167 is handled. Duration 54991 ms by bot id=7636144709
+2025-12-11 18:41:18,361 | INFO | aiogram.event | Update id=198325168 is handled. Duration 225 ms by bot id=7636144709
+2025-12-11 18:41:21,939 | INFO | bot_app.runtime | Received callback_query: download:3b6c14aaca4a480dba0b7889f5afd46d from 1175046908
+2025-12-11 18:41:22,325 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 18:41:22,514 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 18:41:22,524 | INFO | services.video_cache | Video cache hit for https://www.instagram.com/reel/DPg2Gl4jNXQ/?utm_source=ig_web_copy_link (tmp/1175046908_1765460482/Video_by_belyanskiy1-DPg2Gl4jNXQ.mp4)
+2025-12-11 18:41:22,524 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-11 18:41:36,979 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=1175046908, platform=instagram, status=success, chat_id=-1002327428407
+2025-12-11 18:41:36,980 | INFO | aiogram.event | Update id=198325169 is handled. Duration 15041 ms by bot id=7636144709
+2025-12-11 18:46:43,564 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 18:46:43,565 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 18:46:43,565 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 18:46:43,816 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 18:46:43,817 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 18:46:43,818 | INFO | monitoring | Healthcheck server stopped

@@ -59,6 +59,41 @@ MAX_GLOBAL_CONCURRENT_DOWNLOADS = int(os.environ.get("MAX_GLOBAL_CONCURRENT_DOWN
 # опционально
 YTDLP_COOKIES_FILE = os.environ.get("YTDLP_COOKIES_FILE", None)
 
+# Кэш загруженных видео
+VIDEO_CACHE_ENABLED = os.environ.get("VIDEO_CACHE_ENABLED", "true").lower() in ("true", "1", "yes")
+VIDEO_CACHE_DIR = os.environ.get("VIDEO_CACHE_DIR", "./tmp/video_cache")
+try:
+	VIDEO_CACHE_TTL_SECONDS = max(60, int(os.environ.get("VIDEO_CACHE_TTL_SECONDS", "3600")))
+except ValueError:
+	VIDEO_CACHE_TTL_SECONDS = 3600
+try:
+	VIDEO_CACHE_MAX_ITEMS = max(10, int(os.environ.get("VIDEO_CACHE_MAX_ITEMS", "200")))
+except ValueError:
+	VIDEO_CACHE_MAX_ITEMS = 200
+if VIDEO_CACHE_ENABLED and VIDEO_CACHE_DIR:
+	_cache_path = Path(VIDEO_CACHE_DIR)
+	_cache_path.mkdir(parents=True, exist_ok=True)
+	VIDEO_CACHE_DIR = str(_cache_path)
+
+# === Instagram cookie auto-refresh ===
+IG_COOKIES_AUTO_REFRESH = os.environ.get("IG_COOKIES_AUTO_REFRESH", "false").lower() in ("true", "1", "yes")
+IG_LOGIN = os.environ.get("IG_LOGIN")
+IG_PASSWORD = os.environ.get("IG_PASSWORD")
+IG_COOKIES_PATH = os.environ.get("IG_COOKIES_PATH", "./tmp/instagram_cookies.txt")
+try:
+	IG_COOKIES_REFRESH_INTERVAL_HOURS = max(1.0, float(os.environ.get("IG_COOKIES_REFRESH_INTERVAL_HOURS", "6")))
+except ValueError:
+	IG_COOKIES_REFRESH_INTERVAL_HOURS = 6.0
+_ig_backup_codes = os.environ.get("IG_2FA_BACKUP_CODES", "")
+IG_2FA_BACKUP_CODES = [code.strip() for code in _ig_backup_codes.split(",") if code.strip()]
+
+if IG_COOKIES_AUTO_REFRESH and IG_COOKIES_PATH:
+	ig_path = Path(IG_COOKIES_PATH)
+	ig_path.parent.mkdir(parents=True, exist_ok=True)
+	IG_COOKIES_PATH = str(ig_path)
+	if not YTDLP_COOKIES_FILE:
+		YTDLP_COOKIES_FILE = IG_COOKIES_PATH
+
 # === Режимы ограничения доступа ===
 # WHITELIST_MODE: если True, только пользователи из ALLOWED_USER_IDS могут использовать бота
 WHITELIST_MODE = os.environ.get("WHITELIST_MODE", "false").lower() in ("true", "1", "yes")

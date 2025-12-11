@@ -264,6 +264,8 @@ class AdminPanelServer:
         counters: Dict[str, object] = {}
         gauges: Dict[str, object] = {}
         health_endpoint = f"{getattr(config, 'HEALTHCHECK_HOST', '0.0.0.0')}:{getattr(config, 'HEALTHCHECK_PORT', 8080)}"
+        cookie_info: Dict[str, object] = {}
+        video_cache_info: Dict[str, object] = {}
         if health_info:
             health_status = str(health_info.get("status", "unknown"))
             uptime_text = _format_duration(int(health_info.get("uptime_seconds") or 0))
@@ -275,6 +277,8 @@ class AdminPanelServer:
             metrics = health_info.get("metrics") or {}
             counters = dict(metrics.get("counters", {}))  # type: ignore[arg-type]
             gauges = dict(metrics.get("gauges", {}))  # type: ignore[arg-type]
+            cookie_info = dict(health_info.get("instagram_cookies") or {})  # type: ignore[arg-type]
+            video_cache_info = dict(health_info.get("video_cache") or {})  # type: ignore[arg-type]
 
         def render_options(options: Dict[str, str], current: str) -> str:
             return "".join(
@@ -463,7 +467,26 @@ class AdminPanelServer:
             metrics_parts.append(render_metrics_block("Базовые показатели", fallback_metrics))
         metrics_html = "".join(metrics_parts)
 
-        status_class = "danger" if health_status not in ("ok", "healthy", None) else ""
+        cookie_status = str(cookie_info.get("last_status", "disabled")) if cookie_info else "disabled"
+        cookie_status_class = "danger" if cookie_status not in ("ok", "never", "skipped") else ""
+        cookie_last = cookie_info.get("last_refresh_iso") or cookie_info.get("last_refresh_ts")
+        if cookie_last and isinstance(cookie_last, (int, float)):
+            try:
+                cookie_last = _format_timestamp(datetime.fromtimestamp(float(cookie_last)).isoformat(timespec="seconds"))
+            except Exception:
+                cookie_last = str(cookie_last)
+        elif not cookie_last:
+            cookie_last = "—"
+        cookie_path = cookie_info.get("cookies_path")
+        cookie_error = cookie_info.get("last_error") if cookie_info else None
+        cookie_last_text = html.escape(str(cookie_last))
+
+        vc_enabled = bool(video_cache_info.get("enabled")) if video_cache_info else False
+        vc_hits = video_cache_info.get("hits") if video_cache_info else "—"
+        vc_misses = video_cache_info.get("misses") if video_cache_info else "—"
+        vc_last_store = video_cache_info.get("last_store_iso") or video_cache_info.get("last_store_ts") or "—"
+        vc_dir = video_cache_info.get("dir") if video_cache_info else None
+
         if health_info:
             health_html = (
                 "<div class=\"health-grid\">"
@@ -473,6 +496,19 @@ class AdminPanelServer:
                 f"<div><p class=\"label\">Endpoint</p><p>{html.escape(health_endpoint)}</p></div>"
                 "</div>"
                 f"<div class=\"health-grid\">{metrics_html}</div>"
+                f"<div class=\"health-grid\">"
+                f"<div><p class=\"label\">IG cookies</p><span class=\"status-pill {cookie_status_class}\">{html.escape(cookie_status)}</span></div>"
+                f"<div><p class=\"label\">Файл</p><p>{html.escape(str(cookie_path or '—'))}</p></div>"
+                f"<div><p class=\"label\">Последнее обновление</p><p>{cookie_last_text}</p></div>"
+                f"<div><p class=\"label\">Ошибка</p><p>{html.escape(str(cookie_error or '—'))}</p></div>"
+                "</div>"
+                f"<div class=\"health-grid\">"
+                f"<div><p class=\"label\">Video cache</p><span class=\"status-pill {'danger' if not vc_enabled else ''}\">{'on' if vc_enabled else 'off'}</span></div>"
+                f"<div><p class=\"label\">🟢 hits</p><p>{vc_hits}</p></div>"
+                f"<div><p class=\"label\">🔴 misses</p><p>{vc_misses}</p></div>"
+                f"<div><p class=\"label\">Файл/dir</p><p>{html.escape(str(vc_dir or '—'))}</p></div>"
+                f"<div><p class=\"label\">Последнее сохранение</p><p>{html.escape(str(vc_last_store))}</p></div>"
+                "</div>"
             )
         else:
             health_html = f"<p class=\"muted\">Healthcheck отключён в конфиге ({html.escape(health_endpoint)}).</p>"
