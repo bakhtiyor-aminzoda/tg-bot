@@ -34,6 +34,24 @@ def _display_user_name(username: Optional[str], first_name: Optional[str], last_
     return f"user_{user_id}"
 
 
+async def _lookup_member_name(message: types.Message, chat_id: Optional[int], user_id: Optional[int]) -> tuple[Optional[str], Optional[str]]:
+    """Try to fetch first/last name via Telegram API for users without username."""
+
+    if not chat_id or not user_id:
+        return None, None
+    bot = getattr(message, "bot", None)
+    if bot is None:
+        return None, None
+    try:
+        member = await bot.get_chat_member(chat_id, user_id)
+    except Exception:
+        logger.debug("Не удалось получить данные участника %s в чате %s", user_id, chat_id, exc_info=True)
+        return None, None
+
+    user = getattr(member, "user", member)
+    return getattr(user, "first_name", None), getattr(user, "last_name", None)
+
+
 def _resolve_scope(message: types.Message) -> tuple[int, bool, Optional[str]]:
     """Return (chat_id, is_group, escaped_title)."""
 
@@ -138,6 +156,11 @@ async def cmd_top_users(message: types.Message):
         username = user.get('username')
         first = user.get('first_name') if 'first_name' in user else None
         last = user.get('last_name') if 'last_name' in user else None
+        if not username and not first and not last:
+            lookup_chat_id = getattr(message.chat, 'id', None) if getattr(message, 'chat', None) else chat_id
+            fetched_first, fetched_last = await _lookup_member_name(message, lookup_chat_id, user.get('user_id'))
+            first = first or fetched_first
+            last = last or fetched_last
         display = _display_user_name(username, first, last, user.get('user_id'))
         
         # Экранируем числовые значения

@@ -2883,3 +2883,43 @@ TypeError: ensure_aiogram_stub.<locals>.DummyInlineKeyboardButton.__init__() got
 2025-12-11 15:45:55,269 | INFO | bot_app.runtime | Waiting for global download slot...
 2025-12-11 15:45:55,269 | INFO | bot_app.runtime | Acquired global download slot
 2025-12-11 15:45:55,269 | INFO | bot_app.runtime | Released global download slot
+2025-12-11 16:04:53,687 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 16:04:53,687 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 16:04:53,687 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 16:04:53,688 | INFO | admin_panel_web | Admin panel server listening on 127.0.0.1:8090
+2025-12-11 16:04:53,688 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 16:04:53,689 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 16:04:54,063 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 16:04:54,064 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 16:04:54,184 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 16:08:01,030 | INFO | __main__ | Команда /top_users от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 16:08:01,429 | INFO | aiogram.event | Update id=198325144 is handled. Duration 400 ms by bot id=7636144709
+2025-12-11 16:08:10,643 | INFO | __main__ | Команда /top_users от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 16:08:11,018 | INFO | aiogram.event | Update id=198325145 is handled. Duration 375 ms by bot id=7636144709
+2025-12-11 16:08:37,631 | INFO | aiogram.event | Update id=198325146 is handled. Duration 166 ms by bot id=7636144709
+2025-12-11 16:08:56,763 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 16:08:56,941 | INFO | aiogram.event | Update id=198325147 is handled. Duration 178 ms by bot id=7636144709
+2025-12-11 16:12:12,292 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 16:12:12,296 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 16:12:12,296 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 16:12:12,549 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 16:12:12,550 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 16:12:14,575 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 16:12:14,575 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 16:12:14,575 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 16:12:14,576 | INFO | admin_panel_web | Admin panel server listening on 127.0.0.1:8090
+2025-12-11 16:12:14,576 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 16:12:14,577 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 16:12:22,070 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 16:12:22,071 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 16:12:22,897 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 16:12:23,031 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 16:12:23,459 | INFO | aiogram.event | Update id=198325148 is handled. Duration 427 ms by bot id=7636144709
+2025-12-11 16:12:29,770 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 16:12:29,937 | INFO | aiogram.event | Update id=198325149 is handled. Duration 167 ms by bot id=7636144709
+2025-12-11 16:12:34,116 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 16:12:34,117 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 16:12:34,118 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 16:12:34,325 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 16:12:34,371 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 16:12:34,372 | INFO | monitoring | Healthcheck server stopped

@@ -10,10 +10,11 @@ import admin_panel_clean as panel
 
 
 class DummyMessage:
-    def __init__(self, chat_type="private", chat_id=1, title="Chat", user_id=42, username="tester"):
+    def __init__(self, chat_type="private", chat_id=1, title="Chat", user_id=42, username="tester", bot=None):
         self.from_user = types.SimpleNamespace(id=user_id, username=username, first_name="Test", last_name="User")
         self.chat = types.SimpleNamespace(type=chat_type, id=chat_id, title=title)
         self._replies = []
+        self.bot = bot
 
     async def reply(self, text, **kwargs):
         self._replies.append((text, kwargs))
@@ -87,6 +88,29 @@ class AdminPanelTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(msg.replies), 1)
         text, _ = msg.replies[0]
         self.assertIn("группе", text.lower())
+
+    async def test_cmd_top_users_fetches_name_when_username_missing(self):
+        class BotStub:
+            async def get_chat_member(self, chat_id, user_id):
+                return types.SimpleNamespace(user=types.SimpleNamespace(first_name="Ivan", last_name="Petrov"))
+
+        msg = DummyMessage(chat_type="group", chat_id=777, title="Group", bot=BotStub())
+        users = [
+            {
+                "user_id": 101,
+                "username": None,
+                "total_downloads": 3,
+                "failed_count": 0,
+                "total_bytes": 0,
+            }
+        ]
+
+        with mock.patch.object(panel.stats_service, "get_top_users", return_value=users):
+            await panel.cmd_top_users(msg)
+
+        self.assertEqual(len(msg.replies), 1)
+        text, _ = msg.replies[0]
+        self.assertIn("Ivan Petrov", text)
 
 
 if __name__ == "__main__":
