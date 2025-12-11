@@ -120,6 +120,7 @@ class InstagramCookieRefresher:
 			page = await context.new_page()
 			try:
 				await page.goto("https://www.instagram.com/accounts/login/", wait_until="networkidle", timeout=30000)
+				await self._maybe_accept_cookie_banner(page)
 				await page.wait_for_selector('input[name="username"]', timeout=20000)
 				await page.fill('input[name="username"]', str(config.IG_LOGIN))
 				await page.fill('input[name="password"]', str(config.IG_PASSWORD))
@@ -162,6 +163,21 @@ class InstagramCookieRefresher:
 		for text in ("Not now", "Не сейчас", "Save info"):
 			try:
 				await page.get_by_text(text, exact=True).click(timeout=2000)
+			except Exception:
+				continue
+
+	async def _maybe_accept_cookie_banner(self, page) -> None:
+		selectors = [
+			"button:has-text('Allow essential and optional cookies')",
+			"button:has-text('Allow all cookies')",
+			"button:has-text('Разрешить все cookie')",
+			"button:has-text('Разрешить все файлы cookie')",
+		]
+		for selector in selectors:
+			try:
+				await page.locator(selector).click(timeout=2000)
+				logger.info("Instagram cookie banner accepted via selector %s", selector)
+				return
 			except Exception:
 				continue
 
