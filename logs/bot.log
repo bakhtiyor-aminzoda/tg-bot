@@ -2396,3 +2396,105 @@ TypeError: ensure_aiogram_stub.<locals>.DummyInlineKeyboardButton.__init__() got
 2025-12-11 05:52:05,653 | INFO | aiogram.dispatcher | Polling stopped
 2025-12-11 05:52:05,906 | INFO | bot_app.maintenance | Cleanup loop cancelled
 2025-12-11 05:52:05,907 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 06:04:21,110 | WARNING | utils.access_control | Пользователь 6 не администратор
+2025-12-11 06:04:21,111 | WARNING | utils.access_control | Пользователь 99 не в whitelist
+2025-12-11 06:04:21,113 | INFO | bot_app.runtime | Received callback_query: download:valid from 42
+2025-12-11 06:04:21,113 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 06:04:21,113 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 06:04:21,113 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-11 06:04:21,114 | INFO | bot_app.runtime | Received callback_query: download:expired from 42
+2025-12-11 06:04:21,115 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-11 06:04:21,115 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpaioldfd7/video.mp4 (0.00 MB)
+2025-12-11 06:04:21,115 | INFO | utils.downloader | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-11 06:04:21,116 | INFO | utils.downloader | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpaioldfd7/audio.m4a
+2025-12-11 06:04:21,116 | INFO | utils.downloader | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpaioldfd7/video_merged.mp4
+2025-12-11 06:04:21,117 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-11 06:04:21,117 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpkc2dbar5/sample.mp4 (0.00 MB)
+2025-12-11 06:04:21,118 | INFO | bot_app.runtime | Waiting for global download slot...
+2025-12-11 06:04:21,118 | INFO | bot_app.runtime | Acquired global download slot
+2025-12-11 06:04:21,118 | INFO | bot_app.runtime | Released global download slot
+2025-12-11 06:04:41,469 | WARNING | utils.access_control | Пользователь 6 не администратор
+2025-12-11 06:04:41,470 | WARNING | utils.access_control | Пользователь 99 не в whitelist
+2025-12-11 06:04:41,475 | INFO | bot_app.runtime | Received callback_query: download:valid from 42
+2025-12-11 06:04:41,475 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 06:04:41,475 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 06:04:41,475 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-11 06:04:41,476 | INFO | bot_app.runtime | Received callback_query: download:expired from 42
+2025-12-11 06:04:41,477 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-11 06:04:41,477 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpg_zrfzc5/video.mp4 (0.00 MB)
+2025-12-11 06:04:41,477 | INFO | utils.downloader | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-11 06:04:41,477 | INFO | utils.downloader | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpg_zrfzc5/audio.m4a
+2025-12-11 06:04:41,477 | INFO | utils.downloader | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpg_zrfzc5/video_merged.mp4
+2025-12-11 06:04:41,478 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-11 06:04:41,478 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmph29iv1oe/sample.mp4 (0.00 MB)
+2025-12-11 06:04:41,479 | INFO | bot_app.runtime | Waiting for global download slot...
+2025-12-11 06:04:41,479 | INFO | bot_app.runtime | Acquired global download slot
+2025-12-11 06:04:41,480 | INFO | bot_app.runtime | Released global download slot
+2025-12-11 06:05:45,255 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 06:05:45,256 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 06:05:45,256 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 06:05:45,257 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 06:05:45,257 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 06:05:45,648 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 06:05:45,649 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 06:05:45,770 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:05:54,659 | INFO | __main__ | Команда /my_stats от пользователя 1175046908 (starik713)
+2025-12-11 06:05:55,033 | INFO | aiogram.event | Update id=198325108 is handled. Duration 374 ms by bot id=7636144709
+2025-12-11 06:05:59,118 | INFO | __main__ | Команда /stats от пользователя 1175046908 (starik713)
+2025-12-11 06:05:59,256 | INFO | aiogram.event | Update id=198325109 is handled. Duration 137 ms by bot id=7636144709
+2025-12-11 06:06:01,529 | INFO | __main__ | Команда /top_users от пользователя 1175046908 (starik713)
+2025-12-11 06:06:01,666 | INFO | aiogram.event | Update id=198325110 is handled. Duration 137 ms by bot id=7636144709
+2025-12-11 06:06:16,490 | INFO | __main__ | Команда /stats от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 06:06:16,634 | INFO | aiogram.event | Update id=198325111 is handled. Duration 143 ms by bot id=7636144709
+2025-12-11 06:06:23,876 | INFO | __main__ | Команда /my_stats от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 06:06:24,035 | INFO | aiogram.event | Update id=198325112 is handled. Duration 160 ms by bot id=7636144709
+2025-12-11 06:06:29,338 | INFO | __main__ | Команда /top_users от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 06:06:29,475 | INFO | aiogram.event | Update id=198325113 is handled. Duration 137 ms by bot id=7636144709
+2025-12-11 06:06:43,545 | INFO | aiogram.event | Update id=198325114 is handled. Duration 157 ms by bot id=7636144709
+2025-12-11 06:06:45,186 | INFO | bot_app.runtime | Received callback_query: download:548d3c5f803240599a4733a927826969 from 1175046908
+2025-12-11 06:06:45,519 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 06:06:45,658 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 06:06:45,658 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRx5YHjiPCS/?igsh=MWcxZ2c5Njh6bnhuaA== ...
+2025-12-11 06:06:47,524 | INFO | aiogram.event | Update id=198325116 is handled. Duration 143 ms by bot id=7636144709
+2025-12-11 06:06:48,307 | INFO | utils.downloader | Первичный файл: tmp/1175046908_1765415205/Video_by_lis.skins-DRx5YHjiPCS.mp4 (2.20 MB)
+2025-12-11 06:06:48,373 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-11 06:06:50,207 | INFO | aiogram.event | Update id=198325115 is handled. Duration 5021 ms by bot id=7636144709
+2025-12-11 06:06:52,231 | INFO | bot_app.runtime | Received callback_query: download:d1010e15065d4f65a17ac57f25012f3f from 1175046908
+2025-12-11 06:06:52,353 | INFO | aiogram.event | Update id=198325117 is handled. Duration 122 ms by bot id=7636144709
+2025-12-11 06:06:58,103 | INFO | bot_app.runtime | Received callback_query: download:d1010e15065d4f65a17ac57f25012f3f from 1175046908
+2025-12-11 06:06:58,217 | INFO | aiogram.event | Update id=198325118 is handled. Duration 114 ms by bot id=7636144709
+2025-12-11 06:07:01,429 | INFO | bot_app.runtime | Received callback_query: download:d1010e15065d4f65a17ac57f25012f3f from 1175046908
+2025-12-11 06:07:01,548 | INFO | aiogram.event | Update id=198325119 is handled. Duration 118 ms by bot id=7636144709
+2025-12-11 06:07:04,034 | INFO | aiogram.event | Update id=198325120 is handled. Duration 138 ms by bot id=7636144709
+2025-12-11 06:07:05,518 | INFO | bot_app.runtime | Received callback_query: download:22405f8250504a89a6941e49773dea6e from 1175046908
+2025-12-11 06:07:05,795 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 06:07:05,937 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 06:07:05,937 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRx5YHjiPCS/?igsh=MWcxZ2c5Njh6bnhuaA== ...
+2025-12-11 06:07:06,799 | INFO | aiogram.event | Update id=198325122 is handled. Duration 141 ms by bot id=7636144709
+2025-12-11 06:07:08,129 | INFO | bot_app.runtime | Received callback_query: download:4d14058040314fbb922ef2d57246e83d from 1175046908
+2025-12-11 06:07:08,468 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 06:07:08,609 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 06:07:08,609 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRx5YHjiPCS/?igsh=MWcxZ2c5Njh6bnhuaA== ...
+2025-12-11 06:07:08,712 | INFO | utils.downloader | Первичный файл: tmp/1175046908_1765415225/Video_by_lis.skins-DRx5YHjiPCS.mp4 (2.20 MB)
+2025-12-11 06:07:08,782 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-11 06:07:12,257 | INFO | utils.downloader | Первичный файл: tmp/1175046908_1765415228/Video_by_lis.skins-DRx5YHjiPCS.mp4 (2.20 MB)
+2025-12-11 06:07:12,329 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-11 06:07:13,812 | INFO | aiogram.event | Update id=198325121 is handled. Duration 8294 ms by bot id=7636144709
+2025-12-11 06:07:14,879 | INFO | aiogram.event | Update id=198325123 is handled. Duration 6750 ms by bot id=7636144709
+2025-12-11 06:07:19,874 | INFO | __main__ | Команда /top_users от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 06:07:20,026 | INFO | aiogram.event | Update id=198325124 is handled. Duration 153 ms by bot id=7636144709
+2025-12-11 06:07:23,940 | INFO | __main__ | Команда /stats от пользователя 1087968824 (GroupAnonymousBot)
+2025-12-11 06:07:24,128 | INFO | aiogram.event | Update id=198325125 is handled. Duration 188 ms by bot id=7636144709
+2025-12-11 06:07:29,719 | INFO | __main__ | Команда /stats от пользователя 1175046908 (starik713)
+2025-12-11 06:07:29,881 | INFO | aiogram.event | Update id=198325126 is handled. Duration 162 ms by bot id=7636144709
+2025-12-11 06:07:32,677 | INFO | __main__ | Команда /top_users от пользователя 1175046908 (starik713)
+2025-12-11 06:07:32,810 | INFO | aiogram.event | Update id=198325127 is handled. Duration 133 ms by bot id=7636144709
+2025-12-11 06:07:43,865 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 06:07:44,111 | INFO | aiogram.event | Update id=198325128 is handled. Duration 246 ms by bot id=7636144709
+2025-12-11 06:07:48,181 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 06:07:48,329 | INFO | aiogram.event | Update id=198325129 is handled. Duration 148 ms by bot id=7636144709
+2025-12-11 06:08:01,365 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 06:08:01,367 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:08:01,367 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 06:08:01,620 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 06:08:01,622 | INFO | monitoring | Healthcheck server stopped

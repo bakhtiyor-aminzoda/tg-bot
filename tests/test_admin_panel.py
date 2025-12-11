@@ -27,32 +27,26 @@ class AdminPanelTests(unittest.IsolatedAsyncioTestCase):
     async def test_cmd_stats_private(self):
         msg = DummyMessage(chat_type="private")
 
-        async def fake_is_admin(unused):
-            return True
-
-        with mock.patch.object(panel, "is_admin", fake_is_admin), mock.patch.object(
-            panel,
-            "get_stats_summary",
+        with mock.patch.object(
+            panel.stats_service,
+            "get_summary",
             return_value={
                 "total_downloads": 10,
                 "successful_downloads": 8,
                 "failed_downloads": 2,
                 "total_bytes": 1024 * 1024,
-                "unique_users": 3,
+                "unique_users": 1,
             },
         ):
             await panel.cmd_stats(msg)
 
         self.assertEqual(len(msg.replies), 1)
         text, kwargs = msg.replies[0]
-        self.assertIn("Общая статистика бота", text)
+        self.assertIn("диалога", text.lower())
         self.assertEqual(kwargs.get("parse_mode"), "HTML")
 
     async def test_cmd_top_users_html_escape(self):
         msg = DummyMessage(chat_type="private")
-
-        async def fake_is_admin(unused):
-            return True
 
         users = [
             {
@@ -64,9 +58,7 @@ class AdminPanelTests(unittest.IsolatedAsyncioTestCase):
             }
         ]
 
-        with mock.patch.object(panel, "is_admin", fake_is_admin), mock.patch.object(
-            panel, "get_all_user_stats", return_value=users
-        ):
+        with mock.patch.object(panel.stats_service, "get_top_users", return_value=users):
             await panel.cmd_top_users(msg)
 
         self.assertEqual(len(msg.replies), 1)
@@ -76,10 +68,6 @@ class AdminPanelTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_cmd_stats_group_uses_group_summary(self):
         msg = DummyMessage(chat_type="group", chat_id=555, title="Группа")
-
-        async def fake_is_admin(unused):
-            return True
-
         recorder = {}
 
         def fake_group_stats(chat_id):
@@ -92,9 +80,7 @@ class AdminPanelTests(unittest.IsolatedAsyncioTestCase):
                 "unique_users": 1,
             }
 
-        with mock.patch.object(panel, "is_admin", fake_is_admin), mock.patch.object(
-            panel, "get_group_stats_summary", fake_group_stats
-        ):
+        with mock.patch.object(panel.stats_service, "get_summary", side_effect=fake_group_stats):
             await panel.cmd_stats(msg)
 
         self.assertEqual(recorder["chat_id"], 555)

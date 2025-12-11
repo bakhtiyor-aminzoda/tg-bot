@@ -11,20 +11,8 @@ from typing import Optional
 from aiogram import types
 
 import config
-from db import (
-    get_user_stats,
-    get_all_user_stats,
-    get_platform_stats,
-    get_recent_downloads,
-    get_stats_summary,
-    is_authorized_admin,
-)
-from db import (
-    get_group_top_users,
-    get_group_stats_summary,
-    get_group_recent_downloads,
-    get_group_platform_stats,
-)
+from db import is_authorized_admin
+from services import stats as stats_service
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +31,20 @@ def _display_user_name(username: Optional[str], first_name: Optional[str], last_
     if name_parts:
         return _escape_html(' '.join(name_parts))
     return f"user_{user_id}"
+
+
+def _resolve_scope(message: types.Message) -> tuple[int, bool, Optional[str]]:
+    """Return (chat_id, is_group, escaped_title)."""
+
+    chat = getattr(message, "chat", None)
+    if not chat:
+        return 0, False, None
+    chat_id = getattr(chat, "id", 0)
+    chat_type = getattr(chat, "type", "private")
+    if chat_type in ("group", "supergroup"):
+        title = _escape_html(getattr(chat, "title", str(chat_id)))
+        return chat_id, True, title
+    return chat_id, False, None
 
 
 async def is_admin(message: types.Message) -> bool:
@@ -68,17 +70,16 @@ async def is_admin(message: types.Message) -> bool:
 
 
 async def cmd_stats(message: types.Message):
-    if not await is_admin(message):
-        await message.reply('🔒 Только администраторы могут просматривать статистику.')
+    chat_id, is_group, chat_title = _resolve_scope(message)
+    stats = stats_service.get_summary(chat_id)
+
+    if (stats or {}).get('total_downloads', 0) == 0:
+        await message.reply('📊 В этом чате ещё не было загрузок.')
         return
 
-    if message.chat.type in ('group', 'supergroup'):
-        stats = get_group_stats_summary(message.chat.id)
-        chat_title = _escape_html(getattr(message.chat, 'title', str(message.chat.id)))
-        title = f"Статистика по группе ({chat_title})"
-    else:
-        stats = get_stats_summary()
-        title = 'Общая статистика бота'
+    title = (
+        f"Статистика по группе ({chat_title})" if is_group else "Статистика вашего диалога с ботом"
+    )
 
     if not stats:
         await message.reply('📊 Статистика недоступна или БД пуста.')
@@ -106,22 +107,18 @@ async def cmd_stats(message: types.Message):
 
 
 async def cmd_top_users(message: types.Message):
-    if not await is_admin(message):
-        await message.reply('🔒 Только администраторы могут просматривать топ.')
-        return
-
-    if message.chat.type in ('group', 'supergroup'):
-        users = get_group_top_users(message.chat.id, limit=10)
-        chat_title = _escape_html(getattr(message.chat, 'title', str(message.chat.id)))
-        header = f"👥 <b>Топ пользователей в группе ({chat_title})</b>:\n\n"
-    else:
-        users = get_all_user_stats(limit=10)
-        header = '👥 <b>Топ 10 пользователей</b>:\n\n'
+    chat_id, is_group, chat_title = _resolve_scope(message)
+    users = stats_service.get_top_users(chat_id, limit=10)
 
     if not users:
-        await message.reply('👥 Нет данных о пользователях.')
+        await message.reply('👥 В этом чате ещё не было загрузок.')
         return
 
+    if is_group:
+        header = f"👥 <b>Топ пользователей в группе ({chat_title})</b>:\n\n"
+    else:
+        header = '👥 <b>Ваша активность в этом диалоге</b>:\n\n'
+    
     lines = [header]
     for i, user in enumerate(users, 1):
         username = user.get('username')
@@ -144,21 +141,17 @@ async def cmd_top_users(message: types.Message):
 
 
 async def cmd_platform_stats(message: types.Message):
-    if not await is_admin(message):
-        await message.reply('🔒 Только администраторы могут просматривать статистику платформ.')
-        return
-
-    if message.chat.type in ('group', 'supergroup'):
-        platforms = get_group_platform_stats(message.chat.id)
-        chat_title = _escape_html(getattr(message.chat, 'title', str(message.chat.id)))
-        header = f"🌐 <b>Статистика по платформам (группа: {chat_title})</b>:\n\n"
-    else:
-        platforms = get_platform_stats()
-        header = '🌐 <b>Статистика по платформам</b>:\n\n'
+    chat_id, is_group, chat_title = _resolve_scope(message)
+    platforms = stats_service.get_platform_stats(chat_id)
 
     if not platforms:
-        await message.reply('🌐 Нет данных о платформах.')
+        await message.reply('🌐 В этом чате ещё нет загрузок по платформам.')
         return
+
+    if is_group:
+        header = f"🌐 <b>Статистика по платформам (группа: {chat_title})</b>:\n\n"
+    else:
+        header = '🌐 <b>Платформы в вашем диалоге</b>:\n\n'
 
     lines = [header]
     for p in platforms:
@@ -178,10 +171,11 @@ async def cmd_platform_stats(message: types.Message):
 
 async def cmd_user_stats(message: types.Message):
     user_id = message.from_user.id
-    stats = get_user_stats(user_id)
+    chat_id, is_group, _ = _resolve_scope(message)
+    stats = stats_service.get_user_stats(user_id, chat_id)
 
     if not stats:
-        await message.reply('📊 У вас пока нет загрузок.')
+        await message.reply('📊 В этом чате у вас пока нет загрузок.')
         return
 
     total_bytes = stats.get('total_bytes', 0)
@@ -209,13 +203,13 @@ async def cmd_recent(message: types.Message):
         await message.reply('🔒 Только администраторы могут просматривать последние загрузки.')
         return
 
-    if message.chat.type in ('group', 'supergroup'):
-        downloads = get_group_recent_downloads(message.chat.id, limit=15)
-        chat_title = _escape_html(getattr(message.chat, 'title', str(message.chat.id)))
+    chat_id, is_group, chat_title = _resolve_scope(message)
+    downloads = stats_service.get_recent_downloads(chat_id, limit=15)
+
+    if is_group:
         header = f"📥 <b>Последние загрузки в группе ({chat_title})</b>:\n\n"
     else:
-        downloads = get_recent_downloads(limit=15)
-        header = '📥 <b>Последние 15 загрузок</b>:\n\n'
+        header = '📥 <b>Последние загрузки в вашем диалоге</b>:\n\n'
 
     if not downloads:
         await message.reply('📥 История загрузок пуста.')
