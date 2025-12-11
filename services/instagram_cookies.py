@@ -120,8 +120,7 @@ class InstagramCookieRefresher:
 			page = await context.new_page()
 			try:
 				await page.goto("https://www.instagram.com/accounts/login/", wait_until="networkidle", timeout=30000)
-				await self._maybe_accept_cookie_banner(page)
-				await page.wait_for_selector('input[name="username"]', timeout=20000)
+				await self._ensure_login_form(page)
 				await page.fill('input[name="username"]', str(config.IG_LOGIN))
 				await page.fill('input[name="password"]', str(config.IG_PASSWORD))
 				await page.click('button[type="submit"]')
@@ -165,6 +164,15 @@ class InstagramCookieRefresher:
 				await page.get_by_text(text, exact=True).click(timeout=2000)
 			except Exception:
 				continue
+
+	async def _ensure_login_form(self, page) -> None:
+		deadline = time.time() + 40  # seconds
+		while time.time() < deadline:
+			if await self._has_selector(page, 'input[name="username"]'):
+				return
+			await self._maybe_accept_cookie_banner(page)
+			await page.wait_for_timeout(500)
+		raise RuntimeError("Не удалось отобразить форму входа Instagram")
 
 	async def _maybe_accept_cookie_banner(self, page) -> None:
 		selectors = [
