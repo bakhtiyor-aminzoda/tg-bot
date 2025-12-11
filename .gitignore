@@ -1,0 +1,35 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+*.egg
+*.log
+
+# Virtual environments
+venv/
+.env/
+.venv/
+
+# Local configuration
+.env
+.env.local
+.env.*
+!.env.example
+
+# Caches
+.jetbrains/
+.pytest_cache/
+.mypy_cache/
+ruff_cache/
+
+# Runtime directories
+logs/
+tmp/
+*.sqlite3
+
+# OS files
+.DS_Store
+Thumbs.db

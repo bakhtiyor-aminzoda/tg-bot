@@ -6,6 +6,15 @@
 import os
 from pathlib import Path
 
+try:
+	from dotenv import load_dotenv
+except ImportError:  # python-dotenv is optional but recommended
+	def load_dotenv(*_args, **_kwargs):  # type: ignore
+		return None
+
+
+load_dotenv()
+
 # Telegram token — читаем из окружения
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "<PUT_YOUR_TOKEN_HERE>")  # замените или экспортируйте переменную
 
@@ -19,6 +28,12 @@ DOWNLOAD_TIMEOUT_SECONDS = int(os.environ.get("DOWNLOAD_TIMEOUT", 20 * 60))  # �
 
 # Анти-спам: минимальный интервал (в секундах) между запросами от одного пользователя
 USER_COOLDOWN_SECONDS = 10
+# Максимальное время ожидания зависшей загрузки до принудительного сброса счётчиков
+DOWNLOAD_STUCK_TIMEOUT_SECONDS = int(os.environ.get("DOWNLOAD_STUCK_TIMEOUT_SECONDS", str(15 * 60)))
+# TTL для хранениия пользовательских таймстампов (после этого чистим словари)
+USER_STATE_TTL_SECONDS = int(os.environ.get("USER_STATE_TTL_SECONDS", str(60 * 60)))
+# Периодическая очистка ожидающих скачиваний (pending_downloads)
+PENDING_CLEANUP_INTERVAL_SECONDS = int(os.environ.get("PENDING_CLEANUP_INTERVAL_SECONDS", "60"))
 
 # Логирование (уровень и путь можно переопределить)
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
@@ -26,8 +41,13 @@ LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
 LOG_FILE = os.environ.get("LOG_FILE", "./logs/bot.log")
 LOG_MAX_BYTES = int(os.environ.get("LOG_MAX_BYTES", str(10 * 1024 * 1024)))  # 10 MB
 LOG_BACKUP_COUNT = int(os.environ.get("LOG_BACKUP_COUNT", "5"))
+STRUCTURED_LOGS = os.environ.get("STRUCTURED_LOGS", "false").lower() in ("true", "1", "yes")
 # Sentry DSN (опционально). Если не задано — Sentry не инициализируется.
 SENTRY_DSN = os.environ.get("SENTRY_DSN", None)
+# Healthcheck server configuration
+HEALTHCHECK_ENABLED = os.environ.get("HEALTHCHECK_ENABLED", "true").lower() in ("true", "1", "yes")
+HEALTHCHECK_HOST = os.environ.get("HEALTHCHECK_HOST", "0.0.0.0")
+HEALTHCHECK_PORT = int(os.environ.get("HEALTHCHECK_PORT", "8080"))
 # Глобальное ограничение одновременных загрузок (по всей программе)
 # Можно переопределить через окружение MAX_GLOBAL_CONCURRENT_DOWNLOADS
 MAX_GLOBAL_CONCURRENT_DOWNLOADS = int(os.environ.get("MAX_GLOBAL_CONCURRENT_DOWNLOADS", "4"))

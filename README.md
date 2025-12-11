@@ -39,17 +39,38 @@ pip install yt-dlp
 ```
 > Убедитесь, что `yt-dlp` доступен в PATH (из того же окружения, где запускаете бота).
 
-5. Задайте токен:
+5. Настройте переменные окружения через `.env`:
 ```bash
-export TELEGRAM_BOT_TOKEN="123456:ABCDEF..."   # Linux / macOS
-# setx TELEGRAM_BOT_TOKEN "123456:ABCDEF..."   # Windows (перезапуск терминала)
+cp .env.example .env
+echo "TELEGRAM_BOT_TOKEN=123456:ABCDEF..." >> .env
 ```
-Или замените `config.TOKEN` (не рекомендуется) или используйте `.env` с python-dotenv.
+Файл будет автоматически прочитан благодаря `python-dotenv`. При желании можно применять и прямое
+`export TELEGRAM_BOT_TOKEN=...` (Windows: `setx TELEGRAM_BOT_TOKEN ...`). Не коммитьте `.env` в git.
 
 6. Запустите бота:
 ```bash
 python main.py
 ```
+
+## Локальные проверки качества
+
+```bash
+make check   # Ruff lint (E/F/W/B/I/UP/N rules)
+make fmt     # Ruff formatter (переписывает файлы)
+make test    # python -m unittest discover
+```
+Команды опираются на установленный `ruff` (устанавливается автоматически в CI и может быть
+установлен локально через `pip install ruff`).
+
+## Управление секретами
+
+- **Локально:** копируйте шаблон `cp .env.example .env`, заполните `TELEGRAM_BOT_TOKEN` и другие
+  значения. Файл `.env` находится в `.gitignore`, поэтому реальные токены не попадут в git.
+- **Docker / docker-compose:** тот же `.env` подхватывается автоматически, можно переопределять
+  переменные через `docker run -e ...`.
+- **CI / GitHub Actions:** храните значения в `Repository Settings → Secrets and variables → Actions`
+  (например, `TELEGRAM_BOT_TOKEN`, `SENTRY_DSN`). Workflow берёт тестовый токен из переменных
+  окружения, для продакшн-сборок задайте секреты и считывайте их через `${{ secrets.NAME }}`.
 
 ## Пример использования
 - Отправьте в чат:
@@ -130,8 +151,21 @@ docker run --rm tg-video-downloader:latest ffprobe -version | head -n 1
 - `SENTRY_DSN` — если указан, бот попытается инициализировать Sentry (требует `sentry-sdk` в `requirements.txt`).
 - `MAX_GLOBAL_CONCURRENT_DOWNLOADS` — ограничение одновременных загрузок (по умолчанию 4).
 - `DOWNLOAD_TIMEOUT` — таймаут скачивания в секундах (по умолчанию 1200 = 20 минут).
+- `STRUCTURED_LOGS` — если `true`, включает JSON-логи (подходит для централизованного сбора логов). По умолчанию `false`.
+- `HEALTHCHECK_ENABLED` — включает лёгкий HTTP-сервер `/health` (статус) и `/metrics` (снимок внутренних метрик). По умолчанию `true`.
+- `HEALTHCHECK_HOST`/`HEALTHCHECK_PORT` — адрес и порт healthcheck-сервера (по умолчанию `0.0.0.0:8080`).
 
 **Пример** (Railway / Render): добавьте `SENTRY_DSN` в секреты проекта и остальные переменные в Environment.
+
+## Мониторинг и healthcheck
+
+- Установите `STRUCTURED_LOGS=true`, чтобы получать JSON-структурированные записи (подойдут для Loki/ELK). Поля включают timestamp, уровень, имя логгера и сообщение.
+- При `HEALTHCHECK_ENABLED=true` бот поднимает фоновый aiohttp-сервер с двумя endpoint'ами:
+  - `GET /health` — возвращает `{ "status": "ok" }`, пригодно для k8s liveness/readiness probe.
+  - `GET /metrics` — отдаёт JSON-снимок внутренних счётчиков и gauge-метрик (количество вызовов, кастомные показатели).
+- Настройте `HEALTHCHECK_HOST` и `HEALTHCHECK_PORT`, чтобы ограничить доступ (например, `127.0.0.1:9000` за reverse-proxy).
+
+Оба механизма работают независимо от Sentry и не блокируют основной event loop.
 
 ## Обновление yt-dlp
 
@@ -182,6 +216,17 @@ docker-compose up -d
 # Откатиться к конкретной версии
 pip install yt-dlp==2023.12.0
 ```
+
+## CI и автоматические проверки
+
+GitHub Actions workflow `.github/workflows/ci.yml` запускается на каждом push/pull request и выполняет:
+
+- базовую статическую проверку (`ruff` с критичными правилами E/F);
+- установку зависимостей и прогон `python -m unittest discover -s tests` через `make test`;
+- выгрузку `test.log` в артефакты для последующего анализа.
+
+Локально тот же сценарий можно повторить командой `make test` либо `python -m unittest`. Следите за
+актуальностью `.env` при прогоне тестов: токен можно оставить пустым, но файл должен существовать.
 
 ## Режимы ограничения доступа
 
@@ -351,6 +396,7 @@ sudo journalctl -u tgdownloader -f
 
 ## Зависимости
 - aiogram>=3.0.0b7,<4.0.0
+- aiohttp>=3.9.0
 - yt-dlp>=2023.12.0
 - python-dotenv>=1.0.0 (опционально)
 

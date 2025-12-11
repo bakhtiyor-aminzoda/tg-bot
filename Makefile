@@ -1,5 +1,10 @@
 .PHONY: help build run stop logs clean test check-deps update-ytdlp dev
 
+PYTHON := python3
+ifneq (,$(wildcard venv/bin/python))
+	PYTHON := venv/bin/python
+endif
+
 help:
 	@echo "Telegram Video Downloader Bot - Доступные команды:"
 	@echo ""
@@ -10,6 +15,8 @@ help:
 	@echo "  make clean          - Удаление контейнера и очистка"
 	@echo "  make check-deps     - Проверка зависимостей"
 	@echo "  make update-ytdlp   - Обновить yt-dlp до последней версии"
+	@echo "  make check          - Проверить стиль/линтеры"
+	@echo "  make fmt            - Отформатировать код ruff formatter'ом"
 	@echo "  make dev            - Запуск локально (requires yt-dlp, ffmpeg)"
 	@echo ""
 
@@ -73,11 +80,23 @@ check-deps:
 
 update-ytdlp:
 	@echo "🔄 Обновление yt-dlp..."
-	@python3 update_ytdlp.py
+	@$(PYTHON) update_ytdlp.py
+
+check:
+	@echo "🔍 Ruff lint..."
+	ruff check .
+
+fmt:
+	@echo "🪄 Ruff formatter..."
+	ruff format .
+
+test:
+	@echo "🧪 Запуск тестов..."
+	$(PYTHON) -m unittest discover -s tests -p "test_*.py"
 
 dev:
 	@echo "👨‍💻 Запуск локально..."
-	python main.py
+	$(PYTHON) main.py
 
 .DEFAULT_GOAL := help
 
