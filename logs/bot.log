@@ -2837,3 +2837,49 @@ TypeError: ensure_aiogram_stub.<locals>.DummyInlineKeyboardButton.__init__() got
 2025-12-11 14:00:34,791 | WARNING | aiogram.dispatcher | Received SIGINT signal
 2025-12-11 14:00:34,848 | INFO | bot_app.maintenance | Cleanup loop cancelled
 2025-12-11 14:00:34,849 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 14:23:19,430 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 14:23:19,431 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 14:23:19,431 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 14:23:19,431 | INFO | admin_panel_web | Admin panel server listening on 127.0.0.1:8090
+2025-12-11 14:23:19,432 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 14:23:19,432 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 14:23:19,937 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 14:23:19,938 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 14:23:20,079 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 14:23:26,410 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 14:23:26,413 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 14:23:26,414 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 14:23:26,666 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 14:23:26,667 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 15:45:46,014 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 15:45:46,015 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 15:45:46,015 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 15:45:46,015 | INFO | admin_panel_web | Admin panel server listening on 127.0.0.1:8090
+2025-12-11 15:45:46,016 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 15:45:46,017 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 15:45:46,397 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 15:45:46,398 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 15:45:46,514 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 15:45:48,830 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 15:45:48,832 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 15:45:48,832 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 15:45:49,084 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 15:45:49,085 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 15:45:55,255 | WARNING | utils.access_control | Пользователь 6 не администратор
+2025-12-11 15:45:55,256 | WARNING | utils.access_control | Пользователь 99 не в whitelist
+2025-12-11 15:45:55,262 | INFO | bot_app.runtime | Received callback_query: download:valid from 42
+2025-12-11 15:45:55,263 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 15:45:55,263 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 15:45:55,263 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-11 15:45:55,264 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=42, platform=youtube, status=success, chat_id=100
+2025-12-11 15:45:55,266 | INFO | bot_app.runtime | Received callback_query: download:expired from 42
+2025-12-11 15:45:55,267 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-11 15:45:55,267 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp0_vwlqo9/video.mp4 (0.00 MB)
+2025-12-11 15:45:55,267 | INFO | utils.downloader | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-11 15:45:55,267 | INFO | utils.downloader | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp0_vwlqo9/audio.m4a
+2025-12-11 15:45:55,267 | INFO | utils.downloader | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp0_vwlqo9/video_merged.mp4
+2025-12-11 15:45:55,268 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-11 15:45:55,268 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpx70jxkt0/sample.mp4 (0.00 MB)
+2025-12-11 15:45:55,269 | INFO | bot_app.runtime | Waiting for global download slot...
+2025-12-11 15:45:55,269 | INFO | bot_app.runtime | Acquired global download slot
+2025-12-11 15:45:55,269 | INFO | bot_app.runtime | Released global download slot

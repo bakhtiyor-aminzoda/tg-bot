@@ -172,6 +172,22 @@ async def handle_download_callback(callback: types.CallbackQuery):
         )
         await _safe_delete_original_message(source_chat_id, source_message_id)
 
+        if config.ENABLE_HISTORY:
+            try:
+                from db import add_download
+
+                add_download(
+                    user_id=uid,
+                    username=username,
+                    platform=platform,
+                    url=url,
+                    chat_id=callback.message.chat.id,
+                    status="success",
+                    file_size_bytes=size,
+                )
+            except Exception as log_err:
+                logger.debug("Failed to log success to DB: %s", log_err)
+
     except DownloadError as e:
         await _log_and_report_callback_error(callback, status_msg, e, url, uid, username, platform)
     except Exception as e:
