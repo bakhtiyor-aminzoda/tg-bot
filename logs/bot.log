@@ -2498,3 +2498,42 @@ TypeError: ensure_aiogram_stub.<locals>.DummyInlineKeyboardButton.__init__() got
 2025-12-11 06:08:01,367 | INFO | aiogram.dispatcher | Polling stopped
 2025-12-11 06:08:01,620 | INFO | bot_app.maintenance | Cleanup loop cancelled
 2025-12-11 06:08:01,622 | INFO | monitoring | Healthcheck server stopped
+2025-12-11 06:11:36,749 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-11 06:11:36,750 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-11 06:11:36,750 | INFO | monitoring | Healthcheck server thread started
+2025-12-11 06:11:36,751 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-11 06:11:36,751 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-11 06:11:37,093 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-11 06:11:37,094 | INFO | aiogram.dispatcher | Start polling
+2025-12-11 06:11:37,206 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:11:44,285 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 06:11:44,711 | INFO | aiogram.event | Update id=198325130 is handled. Duration 426 ms by bot id=7636144709
+2025-12-11 06:11:50,815 | INFO | __main__ | Команда /my_stats от пользователя 7319778914 (None)
+2025-12-11 06:11:50,956 | INFO | aiogram.event | Update id=198325131 is handled. Duration 141 ms by bot id=7636144709
+2025-12-11 06:11:57,211 | INFO | __main__ | Команда /recent от пользователя 7319778914 (None)
+2025-12-11 06:11:57,348 | INFO | aiogram.event | Update id=198325132 is handled. Duration 137 ms by bot id=7636144709
+2025-12-11 06:12:01,054 | INFO | aiogram.event | Update id=198325133 is handled. Duration 136 ms by bot id=7636144709
+2025-12-11 06:12:03,073 | INFO | bot_app.runtime | Received callback_query: download:ba56b0b897044691a36ae16387337e12 from 7319778914
+2025-12-11 06:12:03,339 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-11 06:12:03,475 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-11 06:12:03,475 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRx5YHjiPCS/?igsh=MWcxZ2c5Njh6bnhuaA== ...
+2025-12-11 06:12:06,275 | INFO | utils.downloader | Первичный файл: tmp/7319778914_1765415523/Video_by_lis.skins-DRx5YHjiPCS.mp4 (2.20 MB)
+2025-12-11 06:12:06,341 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-11 06:12:08,120 | INFO | aiogram.event | Update id=198325134 is handled. Duration 5047 ms by bot id=7636144709
+2025-12-11 06:12:10,622 | INFO | __main__ | Команда /top_users от пользователя 7319778914 (None)
+2025-12-11 06:12:10,746 | INFO | aiogram.event | Update id=198325135 is handled. Duration 124 ms by bot id=7636144709
+2025-12-11 06:12:17,359 | INFO | __main__ | Команда /recent от пользователя 7319778914 (None)
+2025-12-11 06:12:17,505 | INFO | aiogram.event | Update id=198325136 is handled. Duration 147 ms by bot id=7636144709
+2025-12-11 06:12:29,152 | INFO | __main__ | Команда /platform_stats от пользователя 7319778914 (None)
+2025-12-11 06:12:29,281 | INFO | aiogram.event | Update id=198325137 is handled. Duration 130 ms by bot id=7636144709
+2025-12-11 06:12:33,839 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 06:12:33,969 | INFO | aiogram.event | Update id=198325138 is handled. Duration 130 ms by bot id=7636144709
+2025-12-11 06:12:42,849 | INFO | __main__ | Команда /my_stats от пользователя 7319778914 (None)
+2025-12-11 06:12:42,984 | INFO | aiogram.event | Update id=198325139 is handled. Duration 134 ms by bot id=7636144709
+2025-12-11 06:12:56,211 | INFO | __main__ | Команда /stats от пользователя 7319778914 (None)
+2025-12-11 06:12:56,349 | INFO | aiogram.event | Update id=198325140 is handled. Duration 138 ms by bot id=7636144709
+2025-12-11 06:13:07,824 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-11 06:13:07,826 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-11 06:13:07,826 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-11 06:13:08,079 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-11 06:13:08,080 | INFO | monitoring | Healthcheck server stopped

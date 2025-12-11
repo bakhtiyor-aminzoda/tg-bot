@@ -96,11 +96,13 @@ async def cmd_stats(message: types.Message):
     unique_users = _escape_html(str(stats.get('unique_users', 0)))
 
     text = (
-        f"📊 <b>{title}</b>\n\n"
-        f"✓ Всего загрузок: <b>{total_downloads}</b>\n"
-        f"✓ Успешных: <b>{successful}</b>\n"
-        f"✗ Ошибок: <b>{failed_count}</b>\n\n"
-        f"📈 Загруженные данные:\n   • <b>{total_mb_escaped} MB</b>\n\n"
+        f"📊 <b>{title}</b>\n"
+        "------------------------\n"
+        f"• Всего загрузок: <b>{total_downloads}</b>\n"
+        f"• Успешных: <b>{successful}</b>\n"
+        f"• Ошибок: <b>{failed_count}</b>\n"
+        "------------------------\n"
+        f"📈 Объём данных: <b>{total_mb_escaped} MB</b>\n"
         f"👥 Уникальных пользователей: <b>{unique_users}</b>"
     )
     await message.reply(text, parse_mode='HTML')
@@ -115,10 +117,13 @@ async def cmd_top_users(message: types.Message):
         return
 
     if is_group:
-        header = f"👥 <b>Топ пользователей в группе ({chat_title})</b>:\n\n"
+        header = (
+            f"👥 <b>Активность участников ({chat_title})</b>\n"
+            "------------------------"
+        )
     else:
-        header = '👥 <b>Ваша активность в этом диалоге</b>:\n\n'
-    
+        header = '👥 <b>Ваша активность в этом диалоге</b>\n------------------------'
+
     lines = [header]
     for i, user in enumerate(users, 1):
         username = user.get('username')
@@ -133,8 +138,8 @@ async def cmd_top_users(message: types.Message):
         failed = _escape_html(str(user.get('failed_count', 0)))
 
         lines.append(f"<b>{i}. {display}</b>")
-        lines.append(f"&nbsp;&nbsp;↪ Загрузок: <b>{downloads}</b> (ошибок: <b>{failed}</b>)")
-        lines.append(f"&nbsp;&nbsp;↪ Данные: <b>{total_mb} MB</b>\n")
+        lines.append(f"   • Загрузок: <b>{downloads}</b> (ошибок: <b>{failed}</b>)")
+        lines.append(f"   • Данные: <b>{total_mb} MB</b>\n")
 
     text = '\n'.join(lines)
     await message.reply(text, parse_mode='HTML')
@@ -149,9 +154,12 @@ async def cmd_platform_stats(message: types.Message):
         return
 
     if is_group:
-        header = f"🌐 <b>Статистика по платформам (группа: {chat_title})</b>:\n\n"
+        header = (
+            f"🌐 <b>Платформы в чате ({chat_title})</b>\n"
+            "------------------------"
+        )
     else:
-        header = '🌐 <b>Платформы в вашем диалоге</b>:\n\n'
+        header = '🌐 <b>Платформы в вашем диалоге</b>\n------------------------'
 
     lines = [header]
     for p in platforms:
@@ -162,8 +170,8 @@ async def cmd_platform_stats(message: types.Message):
         failed = _escape_html(str(p.get('failed_count', 0)))
 
         lines.append(f"<b>{name}</b>")
-        lines.append(f"&nbsp;&nbsp;↪ Загрузок: <b>{count}</b> (ошибок: <b>{failed}</b>)")
-        lines.append(f"&nbsp;&nbsp;↪ Данные: <b>{total_mb} MB</b>\n")
+        lines.append(f"   • Загрузок: <b>{count}</b> (ошибок: <b>{failed}</b>)")
+        lines.append(f"   • Данные: <b>{total_mb} MB</b>\n")
 
     text = '\n'.join(lines)
     await message.reply(text, parse_mode='HTML')
@@ -188,10 +196,12 @@ async def cmd_user_stats(message: types.Message):
     failed_count = _escape_html(str(stats.get('failed_count', 0)))
 
     text = (
-        f"📊 <b>Ваша статистика</b>:\n\n"
-        f"✓ Загрузок: <b>{total_downloads}</b>\n"
-        f"✗ Ошибок: <b>{failed_count}</b>\n\n"
-        f"📈 Загруженные данные: <b>{total_mb} MB</b>\n\n"
+        "📊 <b>Ваша статистика</b>\n"
+        "------------------------\n"
+        f"• Загрузок: <b>{total_downloads}</b>\n"
+        f"• Ошибок: <b>{failed_count}</b>\n"
+        f"• Данные: <b>{total_mb} MB</b>\n"
+        "------------------------\n"
         f"📅 Первая загрузка: <code>{first}</code>\n"
         f"📅 Последняя загрузка: <code>{last}</code>"
     )
@@ -207,9 +217,12 @@ async def cmd_recent(message: types.Message):
     downloads = stats_service.get_recent_downloads(chat_id, limit=15)
 
     if is_group:
-        header = f"📥 <b>Последние загрузки в группе ({chat_title})</b>:\n\n"
+        header = (
+            f"📥 <b>Последние загрузки ({chat_title})</b>\n"
+            "------------------------"
+        )
     else:
-        header = '📥 <b>Последние загрузки в вашем диалоге</b>:\n\n'
+        header = '📥 <b>Последние загрузки в вашем диалоге</b>\n------------------------'
 
     if not downloads:
         await message.reply('📥 История загрузок пуста.')
@@ -227,10 +240,10 @@ async def cmd_recent(message: types.Message):
         timestamp = _escape_html(dl.get('timestamp', 'N/A'))
         err = _escape_html(dl.get('error_message')) if dl.get('error_message') else None
 
-        lines.append(f"{status} <b>{display}</b> ({platform}) — <b>{size_mb} MB</b>")
-        lines.append(f"&nbsp;&nbsp;🕐 <code>{timestamp}</code>")
+        lines.append(f"{status} <b>{display}</b> - {platform} - <b>{size_mb} MB</b>")
+        lines.append(f"   🕐 <code>{timestamp}</code>")
         if err:
-            lines.append(f"&nbsp;&nbsp;⚠️ Ошибка: <i>{err}</i>")
+            lines.append(f"   ⚠️ Ошибка: <i>{err}</i>")
         lines.append('')
 
     text = '\n'.join(lines)
