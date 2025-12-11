@@ -166,12 +166,34 @@ class InstagramCookieRefresher:
 				continue
 
 	async def _ensure_login_form(self, page) -> None:
-		deadline = time.time() + 40  # seconds
+		deadline = time.time() + 45  # seconds
+		selectors = [
+			'input[name="username"]',
+			'input[aria-label="Phone number, username, or email"]',
+			'input[name="emailOrPhone"]',
+		]
+		attempt = 0
 		while time.time() < deadline:
-			if await self._has_selector(page, 'input[name="username"]'):
-				return
+			for selector in selectors:
+				if await self._has_selector(page, selector):
+					if selector != 'input[name="username"]':
+						try:
+							await page.locator(selector).fill("")
+						except Exception:
+							pass
+					return
 			await self._maybe_accept_cookie_banner(page)
-			await page.wait_for_timeout(500)
+			attempt += 1
+			if attempt % 3 == 0:
+				try:
+					await page.reload(wait_until="domcontentloaded")
+				except Exception:
+					pass
+				try:
+					await page.get_by_role("button", name="Log in").click(timeout=1500)
+				except Exception:
+					pass
+			await page.wait_for_timeout(600)
 		raise RuntimeError("Не удалось отобразить форму входа Instagram")
 
 	async def _maybe_accept_cookie_banner(self, page) -> None:
@@ -180,6 +202,9 @@ class InstagramCookieRefresher:
 			"button:has-text('Allow all cookies')",
 			"button:has-text('Разрешить все cookie')",
 			"button:has-text('Разрешить все файлы cookie')",
+			"button:has-text('Only allow essential cookies')",
+			"button:has-text('Allow essential cookies')",
+			"button:has-text('Allow Cookies')",
 		]
 		for selector in selectors:
 			try:
