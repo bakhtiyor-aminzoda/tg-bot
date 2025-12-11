@@ -280,6 +280,14 @@ class AdminPanelServer:
             cookie_info = dict(health_info.get("instagram_cookies") or {})  # type: ignore[arg-type]
             video_cache_info = dict(health_info.get("video_cache") or {})  # type: ignore[arg-type]
 
+        status_class = ""
+        if health_status:
+            normalized_status = str(health_status).lower()
+            if normalized_status in ("warn", "warning"):
+                status_class = "warning"
+            elif normalized_status not in ("ok", "healthy"):
+                status_class = "danger"
+
         def render_options(options: Dict[str, str], current: str) -> str:
             return "".join(
                 f"<option value=\"{html.escape(key)}\"{' selected' if key == current else ''}>{html.escape(label)}</option>"
@@ -729,6 +737,7 @@ class AdminPanelServer:
                     background: rgba(88,242,156,0.15);
                 }}
                 .status-pill.danger {{ background: rgba(248,113,113,0.2); color: #fecaca; }}
+                .status-pill.warning {{ background: rgba(252,211,77,0.25); color: #fef3c7; }}
                 .metrics-block {{
                     background: rgba(0,0,0,0.2);
                     border-radius: 12px;
