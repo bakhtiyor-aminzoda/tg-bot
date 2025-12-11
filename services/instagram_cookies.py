@@ -134,7 +134,7 @@ class InstagramCookieRefresher:
 			page = await context.new_page()
 			page.set_default_timeout(40000)
 			try:
-				await page.goto("https://www.instagram.com/accounts/login/", wait_until="networkidle", timeout=30000)
+				await page.goto("https://www.instagram.com/", wait_until="networkidle", timeout=30000)
 				await self._ensure_login_form(page)
 				await page.fill('input[name="username"]', str(config.IG_LOGIN))
 				await page.fill('input[name="password"]', str(config.IG_PASSWORD))
@@ -218,7 +218,7 @@ class InstagramCookieRefresher:
 			if attempt % 4 == 0:
 				try:
 					await page.goto(
-						"https://www.instagram.com/accounts/login/?source=auth_switcher",
+						"https://www.instagram.com/",
 						wait_until="domcontentloaded",
 						timeout=20000,
 					)
