@@ -18,6 +18,10 @@ load_dotenv()
 # Telegram token — читаем из окружения
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "<PUT_YOUR_TOKEN_HERE>")  # замените или экспортируйте переменную
 
+# Хранилище истории: если DATABASE_URL не задан, используется локальная SQLite по пути HISTORY_DB_PATH
+DATABASE_URL = os.environ.get("DATABASE_URL")
+HISTORY_DB_PATH = Path(os.environ.get("HISTORY_DB_PATH", "./data/history.db"))
+
 # Папка для временных файлов (если не существует, будет создана)
 TEMP_DIR = Path(os.environ.get("TEMP_DIR", "./tmp"))
 TEMP_DIR.mkdir(parents=True, exist_ok=True)

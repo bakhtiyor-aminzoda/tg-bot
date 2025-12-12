@@ -2,43 +2,46 @@
 
 from __future__ import annotations
 
-import sqlite3
 from typing import Dict, List, Optional
 
-from db import DB_PATH
+import sqlalchemy as sa
+from sqlalchemy import func, select
+
+from db import chats, downloads, get_engine
+
+_engine = get_engine()
 
 
-def _connect() -> sqlite3.Connection:
-    conn = sqlite3.connect(str(DB_PATH))
-    conn.row_factory = sqlite3.Row
-    return conn
+def _chat_filters(chat_id: Optional[int], column) -> List[sa.sql.ClauseElement]:
+    return [column == chat_id] if chat_id is not None else []
 
 
-def _chat_clause(chat_id: Optional[int], alias: str = "") -> tuple[str, List[object]]:
-    if chat_id is None:
-        return "", []
-    column = f"{alias + '.' if alias else ''}chat_id"
-    return f"WHERE {column} = ?", [chat_id]
+def _fetch_all(stmt) -> List[Dict]:
+    with _engine.connect() as conn:
+        return [dict(row) for row in conn.execute(stmt).mappings().all()]
+
+
+def _fetch_one(stmt) -> Optional[Dict]:
+    with _engine.connect() as conn:
+        row = conn.execute(stmt).mappings().first()
+        return dict(row) if row else None
 
 
 def get_summary(chat_id: Optional[int] = None) -> Dict[str, object]:
     """Return aggregated totals optionally scoped to a chat."""
 
-    where_clause, params = _chat_clause(chat_id)
-    query = f"""
-        SELECT
-            COUNT(*) AS total_downloads,
-            SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) AS successful_downloads,
-            SUM(CASE WHEN status != 'success' THEN 1 ELSE 0 END) AS failed_downloads,
-            COALESCE(SUM(file_size_bytes), 0) AS total_bytes,
-            COUNT(DISTINCT user_id) AS unique_users,
-            MAX(timestamp) AS last_activity
-        FROM downloads
-        {where_clause}
-    """
+    filters = _chat_filters(chat_id, downloads.c.chat_id)
+    stmt = select(
+        func.count().label("total_downloads"),
+        func.sum(sa.case((downloads.c.status == "success", 1), else_=0)).label("successful_downloads"),
+        func.sum(sa.case((downloads.c.status != "success", 1), else_=0)).label("failed_downloads"),
+        func.coalesce(func.sum(downloads.c.file_size_bytes), 0).label("total_bytes"),
+        func.count(sa.distinct(downloads.c.user_id)).label("unique_users"),
+        func.max(downloads.c.timestamp).label("last_activity"),
+    ).where(*filters)
 
-    with _connect() as conn:
-        row = conn.execute(query, params).fetchone()
+    with _engine.connect() as conn:
+        row = conn.execute(stmt).mappings().first()
 
     if not row:
         return {
@@ -78,25 +81,33 @@ def get_top_users(chat_id: Optional[int] = None, limit: int = 10, order_by: str 
     }
     order_clause = _resolve_order(orders, order_by, "downloads")
 
-    where_clause, params = _chat_clause(chat_id, alias="d")
-    query = f"""
-        SELECT
-            d.user_id,
-            MAX(d.username) AS username,
-            COUNT(*) AS total_downloads,
-            SUM(COALESCE(d.file_size_bytes, 0)) AS total_bytes,
-            SUM(CASE WHEN d.status != 'success' THEN 1 ELSE 0 END) AS failed_count
-        FROM downloads d
-        {where_clause}
-        GROUP BY d.user_id
-        ORDER BY {order_clause}
-        LIMIT ?
-    """
+    filters = _chat_filters(chat_id, downloads.c.chat_id)
+    total_downloads_col = func.count().label("total_downloads")
+    total_bytes_col = func.sum(func.coalesce(downloads.c.file_size_bytes, 0)).label("total_bytes")
+    failed_col = func.sum(sa.case((downloads.c.status != "success", 1), else_=0)).label("failed_count")
+    stmt = (
+        select(
+            downloads.c.user_id,
+            func.max(downloads.c.username).label("username"),
+            total_downloads_col,
+            total_bytes_col,
+            failed_col,
+        )
+        .where(*filters)
+        .group_by(downloads.c.user_id)
+        .limit(limit)
+    )
 
-    params = params + [limit]
-    with _connect() as conn:
-        rows = conn.execute(query, params).fetchall()
-    return [dict(row) for row in rows]
+    order_map = {
+        "downloads": (total_downloads_col.desc(), total_bytes_col.desc()),
+        "data": (total_bytes_col.desc(), total_downloads_col.desc()),
+        "errors": (failed_col.desc(), total_downloads_col.desc()),
+        "name": (func.coalesce(func.max(downloads.c.username), downloads.c.user_id).asc(),),
+    }
+    order_key = _resolve_order(orders, order_by, "downloads")
+    stmt = stmt.order_by(*order_map[order_key])
+
+    return _fetch_all(stmt)
 
 
 def get_platform_stats(chat_id: Optional[int] = None, order_by: str = "downloads") -> List[Dict]:
@@ -110,49 +121,46 @@ def get_platform_stats(chat_id: Optional[int] = None, order_by: str = "downloads
     }
     order_clause = _resolve_order(orders, order_by, "downloads")
 
-    where_clause, params = _chat_clause(chat_id, alias="d")
-    query = f"""
-        SELECT
-            COALESCE(d.platform, 'unknown') AS platform,
-            COUNT(*) AS download_count,
-            SUM(COALESCE(d.file_size_bytes, 0)) AS total_bytes,
-            SUM(CASE WHEN d.status != 'success' THEN 1 ELSE 0 END) AS failed_count
-        FROM downloads d
-        {where_clause}
-        GROUP BY platform
-        ORDER BY {order_clause}
-    """
-
-    with _connect() as conn:
-        rows = conn.execute(query, params).fetchall()
-    return [dict(row) for row in rows]
+    filters = _chat_filters(chat_id, downloads.c.chat_id)
+    download_count_col = func.count().label("download_count")
+    total_bytes_col = func.sum(func.coalesce(downloads.c.file_size_bytes, 0)).label("total_bytes")
+    failed_col = func.sum(sa.case((downloads.c.status != "success", 1), else_=0)).label("failed_count")
+    stmt = (
+        select(
+            func.coalesce(downloads.c.platform, "unknown").label("platform"),
+            download_count_col,
+            total_bytes_col,
+            failed_col,
+        )
+        .where(*filters)
+        .group_by(sa.text("platform"))
+    )
+    order_key = _resolve_order(orders, order_by, "downloads")
+    order_map = {
+        "downloads": (download_count_col.desc(),),
+        "data": (total_bytes_col.desc(),),
+        "errors": (failed_col.desc(),),
+        "name": (sa.text("platform ASC"),),
+    }
+    stmt = stmt.order_by(*order_map[order_key])
+    return _fetch_all(stmt)
 
 
 def get_user_stats(user_id: int, chat_id: Optional[int] = None) -> Optional[Dict]:
     """Return per-user stats scoped by chat (or globally)."""
 
-    where_clause, params = _chat_clause(chat_id, alias="d")
-    if where_clause:
-        where_clause += " AND d.user_id = ?"
-    else:
-        where_clause = "WHERE d.user_id = ?"
-    params.append(user_id)
+    filters = _chat_filters(chat_id, downloads.c.chat_id) + [downloads.c.user_id == user_id]
+    stmt = select(
+        downloads.c.user_id,
+        func.max(downloads.c.username).label("username"),
+        func.count().label("total_downloads"),
+        func.sum(func.coalesce(downloads.c.file_size_bytes, 0)).label("total_bytes"),
+        func.sum(sa.case((downloads.c.status != "success", 1), else_=0)).label("failed_count"),
+        func.min(downloads.c.timestamp).label("first_download"),
+        func.max(downloads.c.timestamp).label("last_download"),
+    ).where(*filters)
 
-    query = f"""
-        SELECT
-            d.user_id,
-            MAX(d.username) AS username,
-            COUNT(*) AS total_downloads,
-            SUM(COALESCE(d.file_size_bytes, 0)) AS total_bytes,
-            SUM(CASE WHEN d.status != 'success' THEN 1 ELSE 0 END) AS failed_count,
-            MIN(d.timestamp) AS first_download,
-            MAX(d.timestamp) AS last_download
-        FROM downloads d
-        {where_clause}
-    """
-
-    with _connect() as conn:
-        row = conn.execute(query, params).fetchone()
+    row = _fetch_one(stmt)
 
     if not row or (row["total_downloads"] or 0) == 0:
         return None
@@ -171,29 +179,14 @@ def get_user_stats(user_id: int, chat_id: Optional[int] = None) -> Optional[Dict
 def get_recent_downloads(chat_id: Optional[int] = None, limit: int = 20) -> List[Dict]:
     """Return latest downloads for the given scope."""
 
-    where_clause, params = _chat_clause(chat_id, alias="d")
-    query = f"""
-        SELECT
-            d.id,
-            d.user_id,
-            d.username,
-            d.platform,
-            d.url,
-            d.chat_id,
-            d.status,
-            d.file_size_bytes,
-            d.timestamp,
-            d.error_message
-        FROM downloads d
-        {where_clause}
-        ORDER BY d.timestamp DESC
-        LIMIT ?
-    """
-
-    params = params + [limit]
-    with _connect() as conn:
-        rows = conn.execute(query, params).fetchall()
-    return [dict(row) for row in rows]
+    filters = _chat_filters(chat_id, downloads.c.chat_id)
+    stmt = (
+        select(downloads)
+        .where(*filters)
+        .order_by(downloads.c.timestamp.desc())
+        .limit(limit)
+    )
+    return _fetch_all(stmt)
 
 
 def list_chats(order_by: str = "recent", search: Optional[str] = None, limit: int = 50) -> List[Dict]:
@@ -209,11 +202,11 @@ def list_chats(order_by: str = "recent", search: Optional[str] = None, limit: in
     order_clause = _resolve_order(orders, order_by, "recent")
 
     where = ""
-    params: List[object] = []
+    bind_params: Dict[str, object] = {"limit": limit}
     if search:
-        where = "WHERE (LOWER(COALESCE(c.title, '')) LIKE ? OR CAST(b.chat_id AS TEXT) LIKE ?)"
-        params.append(f"%{search.lower()}%")
-        params.append(f"%{search}%")
+        where = "WHERE (LOWER(COALESCE(c.title, '')) LIKE :search OR CAST(b.chat_id AS TEXT) LIKE :search_raw)"
+        bind_params["search"] = f"%{search.lower()}%"
+        bind_params["search_raw"] = f"%{search}%"
 
     query = f"""
         WITH stats AS (
@@ -250,10 +243,10 @@ def list_chats(order_by: str = "recent", search: Optional[str] = None, limit: in
         LEFT JOIN stats s ON s.chat_id = b.chat_id
         {where}
         ORDER BY {order_clause}
-        LIMIT ?
+        LIMIT :limit
     """
 
-    params.append(limit)
-    with _connect() as conn:
-        rows = conn.execute(query, params).fetchall()
+    stmt = sa.text(query)
+    with _engine.connect() as conn:
+        rows = conn.execute(stmt, bind_params).mappings().all()
     return [dict(row) for row in rows]
