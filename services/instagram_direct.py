@@ -178,5 +178,3 @@ async def _download_binary(
             async for chunk in resp.content.iter_chunked(65536):
                 fh.write(chunk)
     tmp_path.replace(destination)
-
-```}

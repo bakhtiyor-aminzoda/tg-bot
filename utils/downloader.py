@@ -14,6 +14,8 @@ from pathlib import Path
 import logging
 from typing import Optional
 
+import config
+
 try:
     from services import video_cache
 except Exception:  # pragma: no cover - cache unavailable in some envs
@@ -172,14 +174,15 @@ async def _download_once(url: str, output_dir: Path, timeout: int, cookies_file:
     if rc != 0:
         logger.error("yt-dlp завершился с кодом %s: %s", rc, stderr[:2000])
         last_line = stderr.splitlines()[-1] if stderr else "unknown error"
-        if _should_try_instagram_fallback(url, last_line, cookies_file):
+        cookies_path = _resolve_instagram_cookies_path(cookies_file)
+        if _should_try_instagram_fallback(url, last_line, cookies_path):
             logger.warning("Instagram reported restricted media, invoking API fallback")
             try:
                 assert instagram_direct is not None  # for type checkers
                 return await instagram_direct.download_sensitive_media(
                     url=url,
                     output_dir=output_dir,
-                    cookies_file=cookies_file or "",
+                    cookies_file=cookies_path,
                 )
             except Exception as fallback_err:
                 logger.warning("Instagram API fallback failed: %s", fallback_err)
@@ -327,12 +330,23 @@ async def _maybe_store_cache(url: str, file_path: Path) -> None:
     await video_cache.store_copy(url, file_path)
 
 
-def _should_try_instagram_fallback(url: str, error_line: str, cookies_file: Optional[str]) -> bool:
-    if not cookies_file or not error_line:
-        return False
-    if instagram_direct is None:
+def _resolve_instagram_cookies_path(explicit: Optional[str]) -> Optional[str]:
+    if explicit:
+        return explicit
+    fallback = getattr(config, "YTDLP_COOKIES_FILE", None) or getattr(config, "IG_COOKIES_PATH", None)
+    return fallback
+
+
+def _should_try_instagram_fallback(url: str, error_line: str, cookies_path: Optional[str]) -> bool:
+    if not error_line:
         return False
     if "instagram.com" not in url.lower():
+        return False
+    if instagram_direct is None:
+        logger.debug("Instagram direct module unavailable, skip fallback")
+        return False
+    if not cookies_path:
+        logger.warning("Instagram fallback skipped: cookies path unavailable")
         return False
     lowered = error_line.lower()
     return "inappropriate" in lowered or "certain audiences" in lowered

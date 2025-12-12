@@ -3118,3 +3118,62 @@ NameError: name '_try_cache_get' is not defined
 2025-12-12 06:09:39,488 | INFO | bot_app.runtime | Acquired global download slot
 2025-12-12 06:09:39,488 | INFO | bot_app.runtime | Released global download slot
 2025-12-12 06:09:39,509 | INFO | services.video_cache | Video cache hit for https://example.com/foo (/var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpxgo0r9yz/out/video.mp4)
+2025-12-12 06:19:01,918 | WARNING | utils.access_control | Пользователь 6 не администратор
+2025-12-12 06:19:01,920 | WARNING | utils.access_control | Пользователь 99 не в whitelist
+2025-12-12 06:19:01,932 | INFO | bot_app.runtime | Received callback_query: download:valid from 42
+2025-12-12 06:19:01,932 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-12 06:19:01,932 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-12 06:19:01,933 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-12 06:19:01,933 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=42, platform=youtube, status=success, chat_id=100
+2025-12-12 06:19:01,935 | INFO | bot_app.runtime | Received callback_query: download:expired from 42
+2025-12-12 06:19:01,936 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video2 ...
+2025-12-12 06:19:01,936 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp56un54de/video.mp4 (0.00 MB)
+2025-12-12 06:19:01,937 | INFO | utils.downloader | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-12 06:19:01,937 | INFO | utils.downloader | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp56un54de/audio.m4a
+2025-12-12 06:19:01,937 | INFO | utils.downloader | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp56un54de/video_merged.mp4
+2025-12-12 06:19:01,939 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-12 06:19:01,939 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpez3aieyf/sample.mp4 (0.00 MB)
+2025-12-12 06:19:01,940 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRQSTxVDKmh/ ...
+2025-12-12 06:19:01,940 | ERROR | utils.downloader | yt-dlp завершился с кодом 1: ERROR: [Instagram] DRQSTxVDKmh: This content may be inappropriate: It's unavailable for certain audiences.
+2025-12-12 06:19:01,940 | WARNING | utils.downloader | Instagram reported restricted media, invoking API fallback
+2025-12-12 06:19:01,942 | INFO | bot_app.runtime | Waiting for global download slot...
+2025-12-12 06:19:01,942 | INFO | bot_app.runtime | Acquired global download slot
+2025-12-12 06:19:01,942 | INFO | bot_app.runtime | Released global download slot
+2025-12-12 06:19:01,962 | INFO | services.video_cache | Video cache hit for https://example.com/foo (/var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpsndujj3q/out/video.mp4)
+2025-12-12 06:19:14,058 | WARNING | utils.access_control | Пользователь 6 не администратор
+2025-12-12 06:19:14,060 | WARNING | utils.access_control | Пользователь 99 не в whitelist
+2025-12-12 06:19:14,069 | INFO | bot_app.runtime | Received callback_query: download:valid from 42
+2025-12-12 06:19:14,070 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-12 06:19:14,070 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-12 06:19:14,070 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-12 06:19:14,071 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=42, platform=youtube, status=success, chat_id=100
+2025-12-12 06:19:14,073 | INFO | bot_app.runtime | Received callback_query: download:expired from 42
+2025-12-12 06:19:14,075 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video2 ...
+2025-12-12 06:19:14,075 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp20byzx6q/video.mp4 (0.00 MB)
+2025-12-12 06:19:14,075 | INFO | utils.downloader | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-12 06:19:14,076 | INFO | utils.downloader | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp20byzx6q/audio.m4a
+2025-12-12 06:19:14,076 | INFO | utils.downloader | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp20byzx6q/video_merged.mp4
+2025-12-12 06:19:14,077 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-12 06:19:14,077 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp186439b1/sample.mp4 (0.00 MB)
+2025-12-12 06:19:14,079 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRQSTxVDKmh/ ...
+2025-12-12 06:19:14,079 | ERROR | utils.downloader | yt-dlp завершился с кодом 1: ERROR: [Instagram] DRQSTxVDKmh: This content may be inappropriate: It's unavailable for certain audiences.
+2025-12-12 06:19:14,079 | WARNING | utils.downloader | Instagram reported restricted media, invoking API fallback
+2025-12-12 06:19:14,081 | INFO | bot_app.runtime | Waiting for global download slot...
+2025-12-12 06:19:14,081 | INFO | bot_app.runtime | Acquired global download slot
+2025-12-12 06:19:14,081 | INFO | bot_app.runtime | Released global download slot
+2025-12-12 06:19:14,101 | INFO | services.video_cache | Video cache hit for https://example.com/foo (/var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpa6x7ym0e/out/video.mp4)
+2025-12-12 06:20:22,815 | INFO | db | ✓ База данных инициализирована: data/history.db
+2025-12-12 06:20:22,815 | INFO | __main__ | Бот запущен (long-polling).
+2025-12-12 06:20:22,815 | INFO | monitoring | Healthcheck server thread started
+2025-12-12 06:20:22,816 | INFO | admin_panel_web | Admin panel server listening on 0.0.0.0:8090
+2025-12-12 06:20:22,816 | INFO | monitoring | Healthcheck server listening on 0.0.0.0:8080
+2025-12-12 06:20:22,817 | INFO | bot_app.maintenance | Starting cleanup loop (interval=60s, pending_ttl=600s, stuck_timeout=900s)
+2025-12-12 06:20:22,838 | INFO | bot_app.maintenance | Instagram автообновление cookies отключено
+2025-12-12 06:20:23,194 | INFO | __main__ | Старые апдейты удалены из очереди
+2025-12-12 06:20:23,195 | INFO | aiogram.dispatcher | Start polling
+2025-12-12 06:20:23,312 | INFO | aiogram.dispatcher | Run polling for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-12 06:20:41,726 | WARNING | aiogram.dispatcher | Received SIGINT signal
+2025-12-12 06:20:41,728 | INFO | aiogram.dispatcher | Polling stopped for bot @FaceItStats_off_bot id=7636144709 - 'FaceIt Stats'
+2025-12-12 06:20:41,728 | INFO | aiogram.dispatcher | Polling stopped
+2025-12-12 06:20:41,980 | INFO | bot_app.maintenance | Cleanup loop cancelled
+2025-12-12 06:20:41,981 | INFO | monitoring | Healthcheck server stopped
