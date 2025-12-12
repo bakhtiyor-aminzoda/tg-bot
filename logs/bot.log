@@ -3077,3 +3077,22 @@ NameError: name '_try_cache_get' is not defined
 2025-12-12 01:56:55,658 | INFO | bot_app.runtime | Acquired global download slot
 2025-12-12 01:56:55,658 | INFO | bot_app.runtime | Released global download slot
 2025-12-12 01:56:55,678 | INFO | services.video_cache | Video cache hit for https://example.com/foo (/var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpuo9klo49/out/video.mp4)
+2025-12-12 05:00:48,007 | WARNING | utils.access_control | Пользователь 6 не администратор
+2025-12-12 05:00:48,008 | WARNING | utils.access_control | Пользователь 99 не в whitelist
+2025-12-12 05:00:48,019 | INFO | bot_app.runtime | Received callback_query: download:valid from 42
+2025-12-12 05:00:48,019 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-12 05:00:48,019 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-12 05:00:48,019 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-12 05:00:48,020 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=42, platform=youtube, status=success, chat_id=100
+2025-12-12 05:00:48,022 | INFO | bot_app.runtime | Received callback_query: download:expired from 42
+2025-12-12 05:00:48,024 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video2 ...
+2025-12-12 05:00:48,024 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp4q6jecge/video.mp4 (0.00 MB)
+2025-12-12 05:00:48,024 | INFO | utils.downloader | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-12 05:00:48,024 | INFO | utils.downloader | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp4q6jecge/audio.m4a
+2025-12-12 05:00:48,025 | INFO | utils.downloader | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp4q6jecge/video_merged.mp4
+2025-12-12 05:00:48,026 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-12 05:00:48,026 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpb7_rclrb/sample.mp4 (0.00 MB)
+2025-12-12 05:00:48,027 | INFO | bot_app.runtime | Waiting for global download slot...
+2025-12-12 05:00:48,027 | INFO | bot_app.runtime | Acquired global download slot
+2025-12-12 05:00:48,028 | INFO | bot_app.runtime | Released global download slot
+2025-12-12 05:00:48,048 | INFO | services.video_cache | Video cache hit for https://example.com/foo (/var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpkkab9r0n/out/video.mp4)

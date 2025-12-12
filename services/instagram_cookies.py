@@ -160,9 +160,10 @@ class InstagramCookieRefresher:
 				code = self._get_backup_code()
 				if not code:
 					raise NeedTwoFactorCode("Instagram запросил 2FA, добавьте IG_2FA_BACKUP_CODES")
-					await page.fill(selector, code)
-					await page.click('button[type="submit"]')
-					return
+				await page.fill(selector, code)
+				await page.click('button[type="submit"]')
+				await page.wait_for_timeout(2000)
+				return
 
 	async def _wait_for_home(self, page) -> None:
 		try:
@@ -228,6 +229,12 @@ class InstagramCookieRefresher:
 		html_snippet = (await page.content())[:4000]
 		logger.error("Instagram login form not found (url=%s)", page.url)
 		logger.debug("Instagram login HTML snippet: %s", html_snippet)
+		screenshot_path = Path(config.TEMP_DIR) / f"instagram_login_failed_{int(time.time())}.png"
+		try:
+			await page.screenshot(path=str(screenshot_path), full_page=True)
+			logger.error("Instagram login screenshot saved to %s", screenshot_path)
+		except Exception:
+			logger.debug("Не удалось сохранить скриншот страницы входа", exc_info=True)
 		raise RuntimeError("Не удалось отобразить форму входа Instagram")
 
 	async def _maybe_accept_cookie_banner(self, page) -> None:
@@ -242,6 +249,7 @@ class InstagramCookieRefresher:
 			"button:has-text('Accept all')",
 			"button:has-text('Accept All')",
 			"button:has-text('Принять все')",
+			"button[data-testid='cookie-policy-banner-accept']",
 		]
 		for selector in selectors:
 			try:
