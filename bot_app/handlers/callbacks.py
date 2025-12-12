@@ -137,6 +137,7 @@ async def handle_download_callback(callback: types.CallbackQuery):
                 chat_id=callback.message.chat.id,
                 video=file_obj,
                 caption="Видео скачано — @MediaBanditbot",
+                supports_streaming=True,
             )
         except TelegramBadRequest as e:
             try:

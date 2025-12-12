@@ -185,6 +185,7 @@ async def universal_handler(message: types.Message):
                 chat_id=message.chat.id,
                 video=file_obj,
                 caption=f"Видео скачано с {platform} — @MediaBanditbot",
+                supports_streaming=True,
             )
         except TelegramBadRequest as e:
             logger.warning("send_video failed (%s), trying send_document", e)

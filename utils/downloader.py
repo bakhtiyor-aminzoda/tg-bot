@@ -343,7 +343,7 @@ def _should_try_instagram_fallback(url: str, error_line: str, cookies_path: Opti
     if "instagram.com" not in url.lower():
         return False
     if instagram_direct is None:
-        logger.debug("Instagram direct module unavailable, skip fallback")
+        logger.warning("Instagram fallback unavailable: services.instagram_direct not imported")
         return False
     if not cookies_path:
         logger.warning("Instagram fallback skipped: cookies path unavailable")
