@@ -5,6 +5,7 @@
 
 import os
 from pathlib import Path
+from typing import Optional
 
 try:
 	from dotenv import load_dotenv
@@ -15,11 +16,32 @@ except ImportError:  # python-dotenv is optional but recommended
 
 load_dotenv()
 
+
+def _normalize_database_url(raw: Optional[str]) -> Optional[str]:
+
+	if not raw:
+		return None
+
+	url = raw.strip()
+	if not url:
+		return None
+
+	psql_prefix = "psql "
+	if url.lower().startswith(psql_prefix):
+		url = url[len(psql_prefix) :].strip()
+
+	if url and url[0] in {'"', "'"}:
+		quote = url[0]
+		if url.endswith(quote):
+			url = url[1:-1].strip()
+
+	return url or None
+
 # Telegram token — читаем из окружения
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "<PUT_YOUR_TOKEN_HERE>")  # замените или экспортируйте переменную
 
 # Хранилище истории: если DATABASE_URL не задан, используется локальная SQLite по пути HISTORY_DB_PATH
-DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL = _normalize_database_url(os.environ.get("DATABASE_URL"))
 HISTORY_DB_PATH = Path(os.environ.get("HISTORY_DB_PATH", "./data/history.db"))
 
 # Папка для временных файлов (если не существует, будет создана)
