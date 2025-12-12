@@ -3096,3 +3096,25 @@ NameError: name '_try_cache_get' is not defined
 2025-12-12 05:00:48,027 | INFO | bot_app.runtime | Acquired global download slot
 2025-12-12 05:00:48,028 | INFO | bot_app.runtime | Released global download slot
 2025-12-12 05:00:48,048 | INFO | services.video_cache | Video cache hit for https://example.com/foo (/var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpkkab9r0n/out/video.mp4)
+2025-12-12 06:09:39,464 | WARNING | utils.access_control | Пользователь 6 не администратор
+2025-12-12 06:09:39,466 | WARNING | utils.access_control | Пользователь 99 не в whitelist
+2025-12-12 06:09:39,478 | INFO | bot_app.runtime | Received callback_query: download:valid from 42
+2025-12-12 06:09:39,478 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-12 06:09:39,479 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-12 06:09:39,479 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-12 06:09:39,480 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=42, platform=youtube, status=success, chat_id=100
+2025-12-12 06:09:39,481 | INFO | bot_app.runtime | Received callback_query: download:expired from 42
+2025-12-12 06:09:39,483 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video2 ...
+2025-12-12 06:09:39,483 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmplgkhqf7n/video.mp4 (0.00 MB)
+2025-12-12 06:09:39,483 | INFO | utils.downloader | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-12 06:09:39,483 | INFO | utils.downloader | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmplgkhqf7n/audio.m4a
+2025-12-12 06:09:39,483 | INFO | utils.downloader | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmplgkhqf7n/video_merged.mp4
+2025-12-12 06:09:39,484 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-12 06:09:39,485 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpmo47p32d/sample.mp4 (0.00 MB)
+2025-12-12 06:09:39,486 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRQSTxVDKmh/ ...
+2025-12-12 06:09:39,486 | ERROR | utils.downloader | yt-dlp завершился с кодом 1: ERROR: [Instagram] DRQSTxVDKmh: This content may be inappropriate: It's unavailable for certain audiences.
+2025-12-12 06:09:39,486 | WARNING | utils.downloader | Instagram reported restricted media, invoking API fallback
+2025-12-12 06:09:39,488 | INFO | bot_app.runtime | Waiting for global download slot...
+2025-12-12 06:09:39,488 | INFO | bot_app.runtime | Acquired global download slot
+2025-12-12 06:09:39,488 | INFO | bot_app.runtime | Released global download slot
+2025-12-12 06:09:39,509 | INFO | services.video_cache | Video cache hit for https://example.com/foo (/var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpxgo0r9yz/out/video.mp4)

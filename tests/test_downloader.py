@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import tempfile
+import types
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -75,6 +76,35 @@ class DownloaderTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertTrue(result_path.exists())
         self.assertEqual(result_path, merged_file)
+
+    async def test_instagram_fallback_invoked_on_sensitive_error(self) -> None:
+        fallback_file = self.output_dir / "instagram_fallback.mp4"
+
+        async def fake_run_cmd(cmd, timeout):
+            return (
+                "",
+                "ERROR: [Instagram] DRQSTxVDKmh: This content may be inappropriate: It's unavailable for certain audiences.",
+                1,
+            )
+
+        async def fake_fallback(url, output_dir, cookies_file):
+            fallback_file.write_bytes(b"fallback")
+            return fallback_file
+
+        fake_module = types.SimpleNamespace(download_sensitive_media=fake_fallback)
+
+        with mock.patch("utils.downloader._run_cmd", fake_run_cmd), mock.patch.object(
+            downloader, "video_cache", None
+        ), mock.patch("utils.downloader.instagram_direct", fake_module):
+            result_path = await downloader.download_video(
+                "https://www.instagram.com/reel/DRQSTxVDKmh/",
+                self.output_dir,
+                timeout=5,
+                cookies_file="tmp/instagram_cookies.txt",
+            )
+
+        self.assertTrue(fallback_file.exists())
+        self.assertEqual(result_path, fallback_file)
 
 
 if __name__ == "__main__":

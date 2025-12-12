@@ -19,6 +19,11 @@ try:
 except Exception:  # pragma: no cover - cache unavailable in some envs
     video_cache = None  # type: ignore
 
+try:
+    from services import instagram_direct
+except Exception:  # pragma: no cover - fallback unavailable in some envs
+    instagram_direct = None  # type: ignore
+
 logger = logging.getLogger(__name__)
 
 class DownloadError(Exception):
@@ -166,7 +171,20 @@ async def _download_once(url: str, output_dir: Path, timeout: int, cookies_file:
 
     if rc != 0:
         logger.error("yt-dlp завершился с кодом %s: %s", rc, stderr[:2000])
-        raise DownloadError(f"Ошибка yt-dlp: {stderr.splitlines()[-1] if stderr else 'unknown error'}")
+        last_line = stderr.splitlines()[-1] if stderr else "unknown error"
+        if _should_try_instagram_fallback(url, last_line, cookies_file):
+            logger.warning("Instagram reported restricted media, invoking API fallback")
+            try:
+                assert instagram_direct is not None  # for type checkers
+                return await instagram_direct.download_sensitive_media(
+                    url=url,
+                    output_dir=output_dir,
+                    cookies_file=cookies_file or "",
+                )
+            except Exception as fallback_err:
+                logger.warning("Instagram API fallback failed: %s", fallback_err)
+                last_line = f"{last_line} (fallback failed: {fallback_err})"
+        raise DownloadError(f"Ошибка yt-dlp: {last_line}")
 
     candidates = [p for p in output_dir.iterdir() if p.is_file()]
     if not candidates:
@@ -307,3 +325,14 @@ async def _maybe_store_cache(url: str, file_path: Path) -> None:
     if not video_cache or not video_cache.is_enabled():
         return
     await video_cache.store_copy(url, file_path)
+
+
+def _should_try_instagram_fallback(url: str, error_line: str, cookies_file: Optional[str]) -> bool:
+    if not cookies_file or not error_line:
+        return False
+    if instagram_direct is None:
+        return False
+    if "instagram.com" not in url.lower():
+        return False
+    lowered = error_line.lower()
+    return "inappropriate" in lowered or "certain audiences" in lowered
