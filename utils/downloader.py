@@ -226,8 +226,12 @@ async def _download_once(url: str, output_dir: Path, timeout: int, cookies_file:
 
         stdout_a, stderr_a, rc_a = await _run_cmd(audio_cmd + [url], timeout=timeout)
         if rc_a != 0:
-            logger.error("Не удалось скачать аудио отдельно: %s", stderr_a[:1000])
-            raise DownloadError("Не удалось скачать аудио для объединения.")
+            last_line = (stderr_a.splitlines()[-1].strip() if stderr_a else "unknown error")
+            logger.error("Не удалось скачать аудио отдельно: %s", last_line)
+            if "requested format is not available" in last_line.lower():
+                logger.warning("Аудио-трек недоступен как отдельный формат. Возвращаем исходный файл без доп. мерджа.")
+                return downloaded
+            raise DownloadError(f"Не удалось скачать аудио для объединения: {last_line}")
 
         # Найдём скачанный аудиофайл
         candidates2 = [p for p in output_dir.iterdir() if p.is_file() and p != downloaded]
@@ -271,8 +275,12 @@ async def _download_once(url: str, output_dir: Path, timeout: int, cookies_file:
 
         stdout_v, stderr_v, rc_v = await _run_cmd(video_cmd + [url], timeout=timeout)
         if rc_v != 0:
-            logger.error("Не удалось скачать video отдельно: %s", stderr_v[:1000])
-            raise DownloadError("Не удалось скачать видео для объединения.")
+            last_line = (stderr_v.splitlines()[-1].strip() if stderr_v else "unknown error")
+            logger.error("Не удалось скачать video отдельно: %s", last_line)
+            if "requested format is not available" in last_line.lower():
+                logger.warning("Видео-трек недоступен как отдельный формат. Возвращаем исходный файл без доп. мерджа.")
+                return downloaded
+            raise DownloadError(f"Не удалось скачать видео для объединения: {last_line}")
 
         # Найдём скачанный видеофайл
         candidates3 = [p for p in output_dir.iterdir() if p.is_file() and p != downloaded]
