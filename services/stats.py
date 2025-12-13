@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Mapping, Optional
 
 import sqlalchemy as sa
 from sqlalchemy import func, select
@@ -63,24 +63,15 @@ def get_summary(chat_id: Optional[int] = None) -> Dict[str, object]:
     }
 
 
-def _resolve_order(mapping: Dict[str, str], requested: Optional[str], default_key: str) -> str:
+def _resolve_order(mapping: Mapping[str, object], requested: Optional[str], default_key: str) -> str:
     key = (requested or "").lower()
     if key not in mapping:
         key = default_key
-    return mapping[key]
+    return key
 
 
 def get_top_users(chat_id: Optional[int] = None, limit: int = 10, order_by: str = "downloads") -> List[Dict]:
     """Return top users within the given chat (or globally)."""
-
-    orders = {
-        "downloads": "total_downloads DESC, total_bytes DESC",
-        "data": "total_bytes DESC, total_downloads DESC",
-        "errors": "failed_count DESC, total_downloads DESC",
-        "name": "COALESCE(username, user_id) ASC",
-    }
-    order_clause = _resolve_order(orders, order_by, "downloads")
-
     filters = _chat_filters(chat_id, downloads.c.chat_id)
     total_downloads_col = func.count().label("total_downloads")
     total_bytes_col = func.sum(func.coalesce(downloads.c.file_size_bytes, 0)).label("total_bytes")
@@ -104,7 +95,7 @@ def get_top_users(chat_id: Optional[int] = None, limit: int = 10, order_by: str 
         "errors": (failed_col.desc(), total_downloads_col.desc()),
         "name": (func.coalesce(func.max(downloads.c.username), downloads.c.user_id).asc(),),
     }
-    order_key = _resolve_order(orders, order_by, "downloads")
+    order_key = _resolve_order(order_map, order_by, "downloads")
     stmt = stmt.order_by(*order_map[order_key])
 
     return _fetch_all(stmt)
@@ -112,15 +103,6 @@ def get_top_users(chat_id: Optional[int] = None, limit: int = 10, order_by: str 
 
 def get_platform_stats(chat_id: Optional[int] = None, order_by: str = "downloads") -> List[Dict]:
     """Return platform breakdown scoped to chat."""
-
-    orders = {
-        "downloads": "download_count DESC",
-        "data": "total_bytes DESC",
-        "errors": "failed_count DESC",
-        "name": "platform ASC",
-    }
-    order_clause = _resolve_order(orders, order_by, "downloads")
-
     filters = _chat_filters(chat_id, downloads.c.chat_id)
     download_count_col = func.count().label("download_count")
     total_bytes_col = func.sum(func.coalesce(downloads.c.file_size_bytes, 0)).label("total_bytes")
@@ -135,13 +117,13 @@ def get_platform_stats(chat_id: Optional[int] = None, order_by: str = "downloads
         .where(*filters)
         .group_by(sa.text("platform"))
     )
-    order_key = _resolve_order(orders, order_by, "downloads")
     order_map = {
         "downloads": (download_count_col.desc(),),
         "data": (total_bytes_col.desc(),),
         "errors": (failed_col.desc(),),
         "name": (sa.text("platform ASC"),),
     }
+    order_key = _resolve_order(order_map, order_by, "downloads")
     stmt = stmt.order_by(*order_map[order_key])
     return _fetch_all(stmt)
 
@@ -199,7 +181,8 @@ def list_chats(order_by: str = "recent", search: Optional[str] = None, limit: in
         "errors": "failed_downloads DESC",
         "name": "title ASC",
     }
-    order_clause = _resolve_order(orders, order_by, "recent")
+    order_key = _resolve_order(orders, order_by, "recent")
+    order_clause = orders[order_key]
 
     where = ""
     bind_params: Dict[str, object] = {"limit": limit}

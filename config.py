@@ -35,6 +35,13 @@ def _normalize_database_url(raw: Optional[str]) -> Optional[str]:
 		if url.endswith(quote):
 			url = url[1:-1].strip()
 
+	prefix = url.split("://", 1)[0].lower() if "://" in url else ""
+	if prefix == "postgres":
+		url = "postgresql://" + url.split("://", 1)[1]
+		prefix = "postgresql"
+	if prefix == "postgresql" and "+" not in prefix:
+		url = "postgresql+psycopg://" + url.split("://", 1)[1]
+
 	return url or None
 
 # Telegram token — читаем из окружения
