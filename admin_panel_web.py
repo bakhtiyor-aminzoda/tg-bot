@@ -8,6 +8,7 @@ import hmac
 import html
 import logging
 import secrets
+import textwrap
 import threading
 import time
 from collections import deque
@@ -908,6 +909,55 @@ class AdminPanelServer:
         chat_sort_options_html = render_options(chat_sort_options, chat_sort)
         top_sort_options_html = render_options(metric_sort_options, top_sort)
         platform_sort_options_html = render_options(metric_sort_options, platform_sort)
+        dashboard_js = textwrap.dedent(
+            """
+            (() => {
+                const buttons = document.querySelectorAll('[data-action]');
+                buttons.forEach((btn) => {
+                    btn.addEventListener('click', async (event) => {
+                        const action = btn.dataset.action;
+                        if (!action) {
+                            return;
+                        }
+                        if (action === 'refresh') {
+                            event.preventDefault();
+                            window.location.reload();
+                            return;
+                        }
+                        if (btn.dataset.confirm && !window.confirm(btn.dataset.confirm)) {
+                            event.preventDefault();
+                            return;
+                        }
+                        const payload = {};
+                        if (btn.dataset.userId) {
+                            payload.user_id = Number(btn.dataset.userId);
+                        }
+                        if (btn.dataset.token) {
+                            payload.token = btn.dataset.token;
+                        }
+                        event.preventDefault();
+                        try {
+                            const response = await fetch(`/admin/api/actions/${action}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                credentials: 'same-origin',
+                                body: JSON.stringify(payload),
+                            });
+                            const body = await response.json().catch(() => ({}));
+                            if (!response.ok || !body.ok) {
+                                alert(body.error || 'Не удалось выполнить действие');
+                                return;
+                            }
+                            window.location.reload();
+                        } catch (err) {
+                            console.error(err);
+                            alert('Сетевая ошибка, попробуйте позже');
+                        }
+                    });
+                });
+            })();
+            """
+        ).strip()
 
         return f"""
         <!DOCTYPE html>
@@ -1314,51 +1364,7 @@ class AdminPanelServer:
                 </section>
             </main>
             <script>
-            (() => {
-                const buttons = document.querySelectorAll('[data-action]');
-                buttons.forEach((btn) => {
-                    btn.addEventListener('click', async (event) => {
-                        const action = btn.dataset.action;
-                        if (!action) {
-                            return;
-                        }
-                        if (action === 'refresh') {
-                            event.preventDefault();
-                            window.location.reload();
-                            return;
-                        }
-                        if (btn.dataset.confirm && !window.confirm(btn.dataset.confirm)) {
-                            event.preventDefault();
-                            return;
-                        }
-                        const payload = {};
-                        if (btn.dataset.userId) {
-                            payload.user_id = Number(btn.dataset.userId);
-                        }
-                        if (btn.dataset.token) {
-                            payload.token = btn.dataset.token;
-                        }
-                        event.preventDefault();
-                        try {
-                            const response = await fetch(`/admin/api/actions/${{action}}`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                credentials: 'same-origin',
-                                body: JSON.stringify(payload),
-                            });
-                            const body = await response.json().catch(() => ({}));
-                            if (!response.ok || !body.ok) {
-                                alert(body.error || 'Не удалось выполнить действие');
-                                return;
-                            }
-                            window.location.reload();
-                        } catch (err) {
-                            console.error(err);
-                            alert('Сетевая ошибка, попробуйте позже');
-                        }
-                    });
-                });
-            })();
+            {dashboard_js}
             </script>
         </body>
         </html>
