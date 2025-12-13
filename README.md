@@ -150,6 +150,8 @@ docker run --rm tg-video-downloader:latest ffprobe -version | head -n 1
 - `LOG_MAX_BYTES` и `LOG_BACKUP_COUNT` — параметры ротации (по умолчанию 10MB и 5 файлов).
 - `SENTRY_DSN` — если указан, бот попытается инициализировать Sentry (требует `sentry-sdk` в `requirements.txt`).
 - `MAX_GLOBAL_CONCURRENT_DOWNLOADS` — ограничение одновременных загрузок (по умолчанию 4).
+- `MAX_CONCURRENT_PER_USER` — сколько параллельных загрузок разрешено одному пользователю в личке (по умолчанию 2).
+- `USER_COOLDOWN_SECONDS` — минимальный интервал между запросами одного пользователя (по умолчанию 5 секунд).
 - `DOWNLOAD_TIMEOUT` — таймаут скачивания в секундах (по умолчанию 1200 = 20 минут).
 - `STRUCTURED_LOGS` — если `true`, включает JSON-логи (подходит для централизованного сбора логов). По умолчанию `false`.
 - `HEALTHCHECK_ENABLED` — включает лёгкий HTTP-сервер `/health` (статус) и `/metrics` (снимок внутренних метрик). По умолчанию `true`.

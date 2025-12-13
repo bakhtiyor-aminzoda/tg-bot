@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import shutil
 import time
 from pathlib import Path
@@ -86,12 +87,17 @@ async def handle_download_callback(callback: types.CallbackQuery):
         await callback.answer(f"У вас уже {active} активных загрузок (максимум {max_per_user}).", show_alert=True)
         return
 
-    last_ts = state.user_last_request_ts.get(uid, 0)
-    if active == 0 and (time.time() - last_ts) < config.USER_COOLDOWN_SECONDS:
-        await callback.answer("Слишком часто! Подождите немного.", show_alert=True)
-        return
+    cooldown = max(0, getattr(config, "USER_COOLDOWN_SECONDS", 5))
+    now = time.time()
+    last_ts = state.user_last_request_ts.get(uid, 0.0)
+    if cooldown and last_ts:
+        elapsed = now - last_ts
+        if elapsed < cooldown:
+            wait = max(1, math.ceil(cooldown - elapsed))
+            await callback.answer(f"Слишком часто! Подождите ещё {wait} с.", show_alert=True)
+            return
 
-    state.user_last_request_ts[uid] = time.time()
+    state.user_last_request_ts[uid] = now
     state.user_active_downloads[uid] = active + 1
 
     try:

@@ -12,6 +12,8 @@ services:
       LOG_BACKUP_COUNT: 5
       SENTRY_DSN: ${SENTRY_DSN:-}
       DOWNLOAD_TIMEOUT: 1200  # 20 минут
+      USER_COOLDOWN_SECONDS: 5
+      MAX_CONCURRENT_PER_USER: 2
       MAX_GLOBAL_CONCURRENT_DOWNLOADS: 4
       TEMP_DIR: /app/tmp
     volumes:

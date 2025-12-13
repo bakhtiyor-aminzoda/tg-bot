@@ -3,14 +3,16 @@
 from __future__ import annotations
 
 import asyncio
+import math
 import shutil
 import time
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Optional
 from uuid import uuid4
 
 from aiogram import types
 from aiogram.exceptions import TelegramBadRequest, TelegramAPIError
+from aiogram.filters import Command
 from aiogram.types import FSInputFile, InlineKeyboardMarkup, InlineKeyboardButton
 
 import config
@@ -57,36 +59,42 @@ async def _safe_delete_message(message: types.Message) -> None:
         logger.debug("Не удалось удалить сообщение пользователя", exc_info=True)
 
 
-@dp.message(lambda message: not ((message.text or message.caption or "").strip().startswith("/")))
-async def universal_handler(message: types.Message):
-    """Entry point for all download requests that are not commands."""
+@dp.message(Command("download"))
+async def download_command_handler(message: types.Message):
+    """Handle /download commands (optionally replying to a message)."""
     text = _choose_text_source(message)
-    if not text and not getattr(message, "reply_to_message", None):
-        return
-
-    url: Optional[str] = None
-    is_command = False
-
-    if text.split() and text.split()[0].startswith("/download"):
-        is_command = True
-        parts = text.split(None, 1)
-        if len(parts) > 1:
-            url = parts[1].strip()
-
-    if is_command and not url and getattr(message, "reply_to_message", None):
-        reply = message.reply_to_message
-        url = extract_url_from_entities(reply) or extract_first_url_from_text(reply.text or reply.caption or "")
-
-    if not is_command:
-        url = extract_url_from_entities(message) or extract_first_url_from_text(text)
+    parts = text.split(None, 1)
+    url = parts[1].strip() if len(parts) > 1 else None
 
     if not url and getattr(message, "reply_to_message", None):
         reply = message.reply_to_message
         url = extract_url_from_entities(reply) or extract_first_url_from_text(reply.text or reply.caption or "")
 
     if not url:
+        await message.reply(
+            "Пришлите ссылку после /download или ответьте этой командой на сообщение с ссылкой."
+        )
         return
 
+    await _process_download_flow(message, url)
+
+
+@dp.message(lambda message: not ((message.text or message.caption or "").strip().startswith("/")))
+async def universal_handler(message: types.Message):
+    """Entry point for all download requests that are not commands."""
+    text = _choose_text_source(message)
+    if not text:
+        return
+
+    url = extract_url_from_entities(message) or extract_first_url_from_text(text)
+
+    if not url:
+        return
+
+    await _process_download_flow(message, url)
+
+
+async def _process_download_flow(message: types.Message, url: str) -> None:
     if not await is_user_allowed(message):
         try:
             await message.reply(get_access_denied_message())
@@ -116,6 +124,22 @@ async def universal_handler(message: types.Message):
             await message.reply("Неподдерживаемая ссылка. Доступно: YouTube, TikTok, Instagram.")
         return
 
+    max_per_user = getattr(config, "MAX_CONCURRENT_PER_USER", 2)
+    active = state.user_active_downloads.get(uid, 0)
+    if active >= max_per_user and chat_type not in ("group", "supergroup"):
+        await message.reply(f"У вас уже {active} активных загрузок (максимум {max_per_user}). Подождите их завершения.")
+        return
+
+    cooldown = max(0, getattr(config, "USER_COOLDOWN_SECONDS", 5))
+    now = time.time()
+    last_ts = state.user_last_request_ts.get(uid, 0.0)
+    if cooldown and last_ts:
+        elapsed = now - last_ts
+        if elapsed < cooldown:
+            wait = max(1, math.ceil(cooldown - elapsed))
+            await message.reply(f"Слишком часто! Подождите ещё {wait} с.")
+            return
+
     if chat_type in ("group", "supergroup"):
         token = uuid4().hex
         state.pending_downloads[token] = {
@@ -136,18 +160,6 @@ async def universal_handler(message: types.Message):
                 capture_exception(e)
             except Exception:
                 pass
-        return
-
-    now = time.time()
-    active = state.user_active_downloads.get(uid, 0)
-    max_per_user = getattr(config, "MAX_CONCURRENT_PER_USER", 2)
-    if active >= max_per_user:
-        await message.reply(f"У вас уже {active} активных загрузок (максимум {max_per_user}). Подождите их завершения.")
-        return
-
-    last_ts = state.user_last_request_ts.get(uid, 0)
-    if active == 0 and (now - last_ts) < config.USER_COOLDOWN_SECONDS:
-        await message.reply("Слишком часто! Попробуйте через несколько секунд.")
         return
 
     state.user_last_request_ts[uid] = now

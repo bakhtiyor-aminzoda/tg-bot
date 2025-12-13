@@ -60,7 +60,9 @@ TELEGRAM_MAX_FILE_BYTES = 2 * 1024 * 1024 * 1024  # 2 GiB
 DOWNLOAD_TIMEOUT_SECONDS = int(os.environ.get("DOWNLOAD_TIMEOUT", 20 * 60))  # таймаут скачивания (по умолчанию 20 минут)
 
 # Анти-спам: минимальный интервал (в секундах) между запросами от одного пользователя
-USER_COOLDOWN_SECONDS = 10
+USER_COOLDOWN_SECONDS = int(os.environ.get("USER_COOLDOWN_SECONDS", "5"))
+# Максимум одновременных загрузок на одного пользователя (в личке)
+MAX_CONCURRENT_PER_USER = int(os.environ.get("MAX_CONCURRENT_PER_USER", "2"))
 # Максимальное время ожидания зависшей загрузки до принудительного сброса счётчиков
 DOWNLOAD_STUCK_TIMEOUT_SECONDS = int(os.environ.get("DOWNLOAD_STUCK_TIMEOUT_SECONDS", str(15 * 60)))
 # TTL для хранениия пользовательских таймстампов (после этого чистим словари)
