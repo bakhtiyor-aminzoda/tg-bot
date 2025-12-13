@@ -182,10 +182,15 @@ async def main():
         if getattr(config, "ADMIN_PANEL_ENABLED", False):
             if not getattr(config, "ENABLE_HISTORY", False):
                 logger.warning("Веб-админка включена, но ENABLE_HISTORY=false — панель покажет пустые данные.")
+            loop = asyncio.get_running_loop()
             admin_panel_server = AdminPanelServer(
                 host=getattr(config, "ADMIN_PANEL_HOST", "127.0.0.1"),
                 port=getattr(config, "ADMIN_PANEL_PORT", 8090),
                 access_token=getattr(config, "ADMIN_PANEL_TOKEN", None),
+                admin_accounts=getattr(config, "ADMIN_PANEL_ADMINS", {}),
+                cookie_secret=getattr(config, "ADMIN_PANEL_SESSION_SECRET", None),
+                session_ttl=getattr(config, "ADMIN_PANEL_SESSION_TTL_SECONDS", 6 * 60 * 60),
+                bot_loop=loop,
             )
             admin_panel_server.ensure_running()
         start_background_tasks()

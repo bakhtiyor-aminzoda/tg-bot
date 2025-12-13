@@ -5,7 +5,7 @@
 
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
 try:
 	from dotenv import load_dotenv
@@ -15,6 +15,41 @@ except ImportError:  # python-dotenv is optional but recommended
 
 
 load_dotenv()
+
+
+def _require_env_var(name: str, *, example: Optional[str] = None) -> str:
+	"""Read required env var with a helpful error if missing."""
+	value = os.environ.get(name, "")
+	if value is None:
+		raise RuntimeError(f"Environment variable {name} must be set.")
+	value = value.strip()
+	if not value:
+		hint = f"Provide it via .env or export {name}."
+		if example:
+			hint += f" Example: {name}={example}"
+		raise RuntimeError(hint)
+	return value
+
+
+def _int_setting(
+	name: str,
+	default: int,
+	*,
+	min_value: int,
+	max_value: Optional[int] = None,
+) -> int:
+	"""Parse bounded integer env vars with descriptive errors."""
+	raw = os.environ.get(name)
+	value = default if raw is None or not raw.strip() else raw.strip()
+	try:
+		parsed = int(value)
+	except (TypeError, ValueError):
+		raise ValueError(f"{name} must be an integer, got {value!r}") from None
+	if parsed < min_value:
+		raise ValueError(f"{name} must be >= {min_value}, got {parsed}")
+	if max_value is not None and parsed > max_value:
+		raise ValueError(f"{name} must be <= {max_value}, got {parsed}")
+	return parsed
 
 
 def _normalize_database_url(raw: Optional[str]) -> Optional[str]:
@@ -45,10 +80,13 @@ def _normalize_database_url(raw: Optional[str]) -> Optional[str]:
 	return url or None
 
 # Telegram token — читаем из окружения
-TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "<PUT_YOUR_TOKEN_HERE>")  # замените или экспортируйте переменную
+TOKEN = _require_env_var("TELEGRAM_BOT_TOKEN", example="123456:ABCDEF")
 
-# Хранилище истории: если DATABASE_URL не задан, используется локальная SQLite по пути HISTORY_DB_PATH
-DATABASE_URL = _normalize_database_url(os.environ.get("DATABASE_URL"))
+# Хранилище истории: DATABASE_URL обязателен (можно использовать sqlite DSN)
+_raw_db_url = _require_env_var("DATABASE_URL", example="postgresql+psycopg://user:pass@host/db")
+DATABASE_URL = _normalize_database_url(_raw_db_url)
+if not DATABASE_URL:
+	raise RuntimeError("DATABASE_URL is required and must be a valid SQLAlchemy URL")
 HISTORY_DB_PATH = Path(os.environ.get("HISTORY_DB_PATH", "./data/history.db"))
 
 # Папка для временных файлов (если не существует, будет создана)
@@ -57,18 +95,68 @@ TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
 # Ограничения
 TELEGRAM_MAX_FILE_BYTES = 2 * 1024 * 1024 * 1024  # 2 GiB
-DOWNLOAD_TIMEOUT_SECONDS = int(os.environ.get("DOWNLOAD_TIMEOUT", 20 * 60))  # таймаут скачивания (по умолчанию 20 минут)
+DOWNLOAD_TIMEOUT_SECONDS = _int_setting(
+	"DOWNLOAD_TIMEOUT",
+	default=20 * 60,
+	min_value=60,
+	max_value=6 * 60 * 60,
+)
 
 # Анти-спам: минимальный интервал (в секундах) между запросами от одного пользователя
-USER_COOLDOWN_SECONDS = int(os.environ.get("USER_COOLDOWN_SECONDS", "5"))
+USER_COOLDOWN_SECONDS = _int_setting(
+	"USER_COOLDOWN_SECONDS",
+	default=5,
+	min_value=1,
+	max_value=3600,
+)
 # Максимум одновременных загрузок на одного пользователя (в личке)
-MAX_CONCURRENT_PER_USER = int(os.environ.get("MAX_CONCURRENT_PER_USER", "2"))
+MAX_CONCURRENT_PER_USER = _int_setting(
+	"MAX_CONCURRENT_PER_USER",
+	default=2,
+	min_value=1,
+	max_value=8,
+)
+# Минимальный интервал между callback-запусками из одного чата
+CALLBACK_CHAT_COOLDOWN_SECONDS = _int_setting(
+	"CALLBACK_CHAT_COOLDOWN_SECONDS",
+	default=3,
+	min_value=0,
+	max_value=60,
+)
+# Глобальный лимит callback-запусков в окне по времени
+CALLBACK_GLOBAL_MAX_CALLS = _int_setting(
+	"CALLBACK_GLOBAL_MAX_CALLS",
+	default=30,
+	min_value=1,
+	max_value=500,
+)
+CALLBACK_GLOBAL_WINDOW_SECONDS = _int_setting(
+	"CALLBACK_GLOBAL_WINDOW_SECONDS",
+	default=60,
+	min_value=5,
+	max_value=600,
+)
 # Максимальное время ожидания зависшей загрузки до принудительного сброса счётчиков
-DOWNLOAD_STUCK_TIMEOUT_SECONDS = int(os.environ.get("DOWNLOAD_STUCK_TIMEOUT_SECONDS", str(15 * 60)))
+DOWNLOAD_STUCK_TIMEOUT_SECONDS = _int_setting(
+	"DOWNLOAD_STUCK_TIMEOUT_SECONDS",
+	default=15 * 60,
+	min_value=30,
+	max_value=6 * 60 * 60,
+)
 # TTL для хранениия пользовательских таймстампов (после этого чистим словари)
-USER_STATE_TTL_SECONDS = int(os.environ.get("USER_STATE_TTL_SECONDS", str(60 * 60)))
+USER_STATE_TTL_SECONDS = _int_setting(
+	"USER_STATE_TTL_SECONDS",
+	default=60 * 60,
+	min_value=60,
+	max_value=24 * 60 * 60,
+)
 # Периодическая очистка ожидающих скачиваний (pending_downloads)
-PENDING_CLEANUP_INTERVAL_SECONDS = int(os.environ.get("PENDING_CLEANUP_INTERVAL_SECONDS", "60"))
+PENDING_CLEANUP_INTERVAL_SECONDS = _int_setting(
+	"PENDING_CLEANUP_INTERVAL_SECONDS",
+	default=60,
+	min_value=10,
+	max_value=60 * 60,
+)
 
 # Логирование (уровень и путь можно переопределить)
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
@@ -79,20 +167,39 @@ if LOG_FILE:
 	log_path = Path(LOG_FILE)
 	log_path.parent.mkdir(parents=True, exist_ok=True)
 	LOG_FILE = str(log_path)
-LOG_MAX_BYTES = int(os.environ.get("LOG_MAX_BYTES", str(10 * 1024 * 1024)))  # 10 MB
-LOG_BACKUP_COUNT = int(os.environ.get("LOG_BACKUP_COUNT", "5"))
+LOG_MAX_BYTES = _int_setting(
+	"LOG_MAX_BYTES",
+	default=10 * 1024 * 1024,
+	min_value=1024,
+	max_value=500 * 1024 * 1024,
+)
+LOG_BACKUP_COUNT = _int_setting("LOG_BACKUP_COUNT", default=5, min_value=1, max_value=50)
 STRUCTURED_LOGS = os.environ.get("STRUCTURED_LOGS", "false").lower() in ("true", "1", "yes")
 # Sentry DSN (опционально). Если не задано — Sentry не инициализируется.
 SENTRY_DSN = os.environ.get("SENTRY_DSN", None)
 # Healthcheck server configuration
 HEALTHCHECK_ENABLED = os.environ.get("HEALTHCHECK_ENABLED", "true").lower() in ("true", "1", "yes")
 HEALTHCHECK_HOST = os.environ.get("HEALTHCHECK_HOST", "0.0.0.0")
-HEALTHCHECK_PORT = int(os.environ.get("HEALTHCHECK_PORT", "8080"))
+HEALTHCHECK_PORT = _int_setting("HEALTHCHECK_PORT", default=8080, min_value=1, max_value=65535)
 # Глобальное ограничение одновременных загрузок (по всей программе)
 # Можно переопределить через окружение MAX_GLOBAL_CONCURRENT_DOWNLOADS
-MAX_GLOBAL_CONCURRENT_DOWNLOADS = int(os.environ.get("MAX_GLOBAL_CONCURRENT_DOWNLOADS", "4"))
+MAX_GLOBAL_CONCURRENT_DOWNLOADS = _int_setting(
+	"MAX_GLOBAL_CONCURRENT_DOWNLOADS",
+	default=4,
+	min_value=1,
+	max_value=32,
+)
 # опционально
 YTDLP_COOKIES_FILE = os.environ.get("YTDLP_COOKIES_FILE", None)
+
+# Опциональная проверка файлов внешним сканером (например, clamscan)
+MEDIA_SCAN_COMMAND = os.environ.get("MEDIA_SCAN_COMMAND", "").strip()
+MEDIA_SCAN_TIMEOUT_SECONDS = _int_setting(
+	"MEDIA_SCAN_TIMEOUT_SECONDS",
+	default=45,
+	min_value=5,
+	max_value=5 * 60,
+)
 
 # Кэш загруженных видео
 VIDEO_CACHE_ENABLED = os.environ.get("VIDEO_CACHE_ENABLED", "true").lower() in ("true", "1", "yes")
@@ -166,4 +273,39 @@ except ValueError:
 		f"ADMIN_PANEL_PORT must be an integer, got {_admin_panel_port_raw!r}. "
 		"Set ADMIN_PANEL_PORT to \"$PORT\" only if the PORT env var is defined."
 	)
+def _parse_admin_accounts(raw: Optional[str]) -> Dict[str, Dict[str, str]]:
+	"""Parse ADMIN_PANEL_ADMINS env string into structured accounts."""
+	accounts: Dict[str, Dict[str, str]] = {}
+	if not raw:
+		return accounts
+	for chunk in raw.split(","):
+		item = chunk.strip()
+		if not item or ":" not in item:
+			continue
+		key, token = item.split(":", 1)
+		slug_part = key.strip()
+		secret = token.strip()
+		if not slug_part or not secret:
+			continue
+		if "|" in slug_part:
+			slug, display = [part.strip() for part in slug_part.split("|", 1)]
+			if not slug:
+				slug = display
+		else:
+			slug = slug_part
+			display = slug_part
+		if not slug:
+			continue
+		accounts[slug] = {"token": secret, "display": display or slug}
+	return accounts
+
+
 ADMIN_PANEL_TOKEN = os.environ.get("ADMIN_PANEL_TOKEN")
+ADMIN_PANEL_ADMINS = _parse_admin_accounts(os.environ.get("ADMIN_PANEL_ADMINS"))
+ADMIN_PANEL_SESSION_SECRET = os.environ.get("ADMIN_PANEL_SESSION_SECRET")
+ADMIN_PANEL_SESSION_TTL_SECONDS = _int_setting(
+	"ADMIN_PANEL_SESSION_TTL_SECONDS",
+	default=6 * 60 * 60,
+	min_value=300,
+	max_value=7 * 24 * 60 * 60,
+)

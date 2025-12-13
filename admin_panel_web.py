@@ -3,18 +3,25 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
+import hmac
 import html
 import logging
+import secrets
 import threading
+import time
 from collections import deque
+from concurrent.futures import Future
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set
 from urllib.parse import quote_plus
 
 from aiohttp import web
 
 import config
+from bot_app import admin_runtime
 from services import stats as stats_service
 from monitoring import get_health_snapshot
 
@@ -26,6 +33,7 @@ CHAT_TYPE_LABELS = {
     "supergroup": "👥 Супергруппа",
     "channel": "📣 Канал",
 }
+SESSION_COOKIE_NAME = "mb_admin_session"
 
 
 def _format_chat_type_label(chat_type: Optional[str]) -> str:
@@ -67,10 +75,33 @@ def _format_duration(value: Optional[int]) -> str:
     return " ".join(parts)
 
 
+@dataclass(frozen=True)
+class AdminIdentity:
+    slug: str
+    display: str
+    token: str
+
+
+@dataclass
+class AuthResult:
+    ok: bool
+    identity: Optional[AdminIdentity] = None
+    set_cookie: Optional[str] = None
+
+
 class AdminPanelServer:
     """Отдельный поток с aiohttp-приложением для просмотра статистики."""
 
-    def __init__(self, host: str, port: int, access_token: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        host: str,
+        port: int,
+        access_token: Optional[str] = None,
+        admin_accounts: Optional[Dict[str, Dict[str, str]]] = None,
+        cookie_secret: Optional[str] = None,
+        session_ttl: int = 6 * 60 * 60,
+        bot_loop: Optional[asyncio.AbstractEventLoop] = None,
+    ) -> None:
         self._host = host
         self._port = port
         self._token = access_token
@@ -80,6 +111,140 @@ class AdminPanelServer:
         self._shutdown_event: asyncio.Event | None = None
         self._logger = logging.getLogger(__name__)
         self._log_tail = 50
+        self._session_cookie = SESSION_COOKIE_NAME
+        self._session_ttl = max(300, session_ttl)
+        self._bot_loop = bot_loop
+        self._accounts = self._build_accounts(admin_accounts or {})
+        self._token_lookup: Dict[str, AdminIdentity] = {acc.token: acc for acc in self._accounts.values()}
+        self._cookie_secret = None
+        if self._token_lookup:
+            seed = cookie_secret or access_token or secrets.token_hex(32)
+            self._cookie_secret = seed
+
+    # ---------- Внутренние помощники ----------
+    def _build_accounts(self, raw_accounts: Dict[str, Dict[str, str]]) -> Dict[str, AdminIdentity]:
+        accounts: Dict[str, AdminIdentity] = {}
+        for slug, payload in raw_accounts.items():
+            token = (payload or {}).get("token")
+            display = (payload or {}).get("display") or slug
+            normalized_slug = (slug or "").strip()
+            if not normalized_slug or not token:
+                continue
+            accounts[normalized_slug] = AdminIdentity(normalized_slug, display, token)
+        return accounts
+
+    def _multi_admin_enabled(self) -> bool:
+        return bool(self._token_lookup)
+
+    def _authorize(self, request: web.Request) -> AuthResult:
+        if self._multi_admin_enabled():
+            return self._authorize_multi(request)
+        return self._authorize_single(request)
+
+    def _authorize_single(self, request: web.Request) -> AuthResult:
+        if not self._token:
+            return AuthResult(ok=True)
+        header_token = request.headers.get("X-Admin-Token")
+        query_token = request.rel_url.query.get("token")
+        if header_token == self._token or query_token == self._token:
+            return AuthResult(ok=True)
+        return AuthResult(ok=False)
+
+    def _authorize_multi(self, request: web.Request) -> AuthResult:
+        cookie_value = request.cookies.get(self._session_cookie)
+        identity = self._validate_session_cookie(cookie_value)
+        if identity:
+            return AuthResult(ok=True, identity=identity)
+
+        header_token = request.headers.get("X-Admin-Token")
+        token = header_token or request.rel_url.query.get("token")
+        if not token:
+            return AuthResult(ok=False)
+        identity = self._token_lookup.get(token)
+        if not identity:
+            return AuthResult(ok=False)
+        cookie_payload = self._build_session_cookie(identity)
+        return AuthResult(ok=True, identity=identity, set_cookie=cookie_payload)
+
+    def _build_session_cookie(self, identity: AdminIdentity) -> Optional[str]:
+        if not self._cookie_secret:
+            return None
+        expires_at = int(time.time()) + self._session_ttl
+        payload = f"{identity.slug}:{expires_at}"
+        signature = hmac.new(self._cookie_secret.encode(), payload.encode(), hashlib.sha256).hexdigest()
+        return f"{payload}:{signature}"
+
+    def _validate_session_cookie(self, cookie_value: Optional[str]) -> Optional[AdminIdentity]:
+        if not cookie_value or not self._cookie_secret:
+            return None
+        try:
+            slug, expires_raw, signature = cookie_value.split(":", 2)
+            expires_at = int(expires_raw)
+        except ValueError:
+            return None
+        if expires_at < int(time.time()):
+            return None
+        payload = f"{slug}:{expires_at}"
+        expected = hmac.new(self._cookie_secret.encode(), payload.encode(), hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(expected, signature):
+            return None
+        return self._accounts.get(slug)
+
+    def _attach_auth_cookies(self, response: web.StreamResponse, auth: AuthResult) -> None:
+        if not self._multi_admin_enabled():
+            return
+        if auth.set_cookie:
+            response.set_cookie(
+                self._session_cookie,
+                auth.set_cookie,
+                max_age=self._session_ttl,
+                httponly=True,
+                samesite="Lax",
+            )
+
+    def _logout_response(self) -> web.Response:
+        response = web.Response(status=302, headers={"Location": "/admin"})
+        response.del_cookie(self._session_cookie)
+        return response
+
+    def _call_on_bot_loop(self, func, *args, **kwargs):
+        if not self._bot_loop:
+            return func(*args, **kwargs)
+        future: Future = Future()
+
+        def runner():
+            try:
+                future.set_result(func(*args, **kwargs))
+            except Exception as exc:  # pragma: no cover - defensive
+                future.set_exception(exc)
+
+        self._bot_loop.call_soon_threadsafe(runner)
+        return future.result(timeout=5)
+
+    def _runtime_snapshot(self) -> Dict[str, Any]:
+        try:
+            return self._call_on_bot_loop(admin_runtime.get_runtime_snapshot, 12, 12)
+        except Exception:
+            self._logger.debug("Не удалось получить снимок очереди", exc_info=True)
+            return {}
+
+    def _perform_runtime_action(self, action: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+        if action == "cancel_user":
+            if payload.get("user_id") is None:
+                raise ValueError("user_id is required")
+            user_id = int(payload.get("user_id"))
+            cancelled = self._call_on_bot_loop(admin_runtime.cancel_user_downloads, user_id)
+            return {"cancelled": bool(cancelled)}
+        if action == "drop_token":
+            token = payload.get("token")
+            if not token:
+                raise ValueError("token is required")
+            dropped = self._call_on_bot_loop(admin_runtime.drop_pending_token, str(token))
+            return {"dropped": bool(dropped)}
+        if action == "flush_tokens":
+            dropped = self._call_on_bot_loop(admin_runtime.flush_pending_tokens)
+            return {"dropped": int(dropped)}
+        raise ValueError("unknown action")
 
     # ---------- Публичные методы ----------
     def ensure_running(self) -> None:
@@ -116,6 +281,7 @@ class AdminPanelServer:
         app = web.Application()
         app.router.add_get("/admin", self._handle_dashboard)
         app.router.add_get("/admin/api/dashboard", self._handle_dashboard_json)
+        app.router.add_post("/admin/api/actions/{action}", self._handle_action)
         self._runner = web.AppRunner(app)
         await self._runner.setup()
         site = web.TCPSite(self._runner, host=self._host, port=self._port)
@@ -127,14 +293,18 @@ class AdminPanelServer:
             await self._runner.cleanup()
             self._runner = None
 
-    def _authorize(self, request: web.Request) -> bool:
-        if not self._token:
-            return True
-        header_token = request.headers.get("X-Admin-Token")
-        query_token = request.rel_url.query.get("token")
-        return header_token == self._token or query_token == self._token
-
     def _unauthorized(self) -> web.Response:
+        if self._multi_admin_enabled():
+            body = """
+            <!DOCTYPE html>
+            <html><head><title>Admin login</title></head>
+            <body style="font-family: sans-serif; padding: 2rem;">
+                <h2>Admin authentication required</h2>
+                <p>Укажите свой персональный токен в параметре <code>?token=...</code>
+                или добавьте заголовок <code>X-Admin-Token</code>.</p>
+            </body></html>
+            """
+            return web.Response(status=401, text=body, content_type="text/html")
         return web.Response(status=401, text="unauthorized", content_type="text/plain")
 
     def _parse_chat_id(self, request: web.Request) -> Optional[int]:
@@ -153,11 +323,13 @@ class AdminPanelServer:
         top_sort: str,
         platform_sort: str,
         search_query: Optional[str],
+        admin_identity: Optional[AdminIdentity],
     ) -> Dict[str, object]:
         summary = stats_service.get_summary(chat_id)
         top_users = stats_service.get_top_users(chat_id, limit=10, order_by=top_sort)
         platforms = stats_service.get_platform_stats(chat_id, order_by=platform_sort)
         recent = stats_service.get_recent_downloads(chat_id, limit=20)
+        failures = stats_service.get_recent_failures(chat_id, limit=10)
         chat_list = stats_service.list_chats(order_by=chat_sort, search=search_query, limit=100)
         scope = "Глобальная статистика" if chat_id is None else f"Чат #{chat_id}"
         health_data: Optional[Dict[str, object]] = None
@@ -166,11 +338,13 @@ class AdminPanelServer:
                 health_data = get_health_snapshot()
             except Exception:
                 self._logger.debug("Не удалось получить health snapshot", exc_info=True)
+        runtime_state = self._runtime_snapshot()
         return {
             "summary": summary,
             "top_users": top_users,
             "platforms": platforms,
             "recent": recent,
+            "failures": failures,
             "scope": scope,
             "chat_id": chat_id,
             "chat_list": chat_list,
@@ -180,6 +354,9 @@ class AdminPanelServer:
             "search_query": search_query or "",
             "error_logs": self._read_error_logs(self._log_tail),
             "health": health_data,
+            "runtime": runtime_state,
+            "admin_identity": admin_identity.display if admin_identity else None,
+            "multi_admin": self._multi_admin_enabled(),
         }
 
     def _resolve_sort(self, value: Optional[str], allowed: Set[str], default: str) -> str:
@@ -188,10 +365,13 @@ class AdminPanelServer:
         return value if value in allowed else default
 
     async def _handle_dashboard(self, request: web.Request) -> web.Response:
-        if not self._authorize(request):
-            return self._unauthorized()
-
         query = request.rel_url.query
+        if self._multi_admin_enabled() and query.get("logout") == "1":
+            return self._logout_response()
+
+        auth = self._authorize(request)
+        if not auth.ok:
+            return self._unauthorized()
         chat_id = self._parse_chat_id(request)
         chat_sort = self._resolve_sort(query.get("chat_sort"), CHAT_SORT_FIELDS, "recent")
         top_sort = self._resolve_sort(query.get("top_sort"), METRIC_SORT_FIELDS, "downloads")
@@ -209,16 +389,19 @@ class AdminPanelServer:
             top_sort=top_sort,
             platform_sort=platform_sort,
             search_query=search_query,
+            admin_identity=auth.identity,
         )
-        token = query.get("token") if query.get("token") else None
-        html_body = self._render_dashboard(dashboard, token)
-        return web.Response(text=html_body, content_type="text/html")
+        token_param = query.get("token") if (query.get("token") and not self._multi_admin_enabled()) else None
+        html_body = self._render_dashboard(dashboard, token_param)
+        response = web.Response(text=html_body, content_type="text/html")
+        self._attach_auth_cookies(response, auth)
+        return response
 
     async def _handle_dashboard_json(self, request: web.Request) -> web.Response:
-        if not self._authorize(request):
-            return self._unauthorized()
-
         query = request.rel_url.query
+        auth = self._authorize(request)
+        if not auth.ok:
+            return self._unauthorized()
         chat_id = self._parse_chat_id(request)
         chat_sort = self._resolve_sort(query.get("chat_sort"), CHAT_SORT_FIELDS, "recent")
         top_sort = self._resolve_sort(query.get("top_sort"), METRIC_SORT_FIELDS, "downloads")
@@ -233,8 +416,31 @@ class AdminPanelServer:
             top_sort=top_sort,
             platform_sort=platform_sort,
             search_query=search_query,
+            admin_identity=auth.identity,
         )
-        return web.json_response(dashboard)
+        response = web.json_response(dashboard)
+        self._attach_auth_cookies(response, auth)
+        return response
+
+    async def _handle_action(self, request: web.Request) -> web.Response:
+        auth = self._authorize(request)
+        if not auth.ok:
+            return self._unauthorized()
+        action = request.match_info.get("action", "")
+        try:
+            payload = await request.json()
+        except Exception:
+            payload = {}
+        try:
+            result = self._perform_runtime_action(action, payload)
+        except ValueError as exc:
+            return web.json_response({"ok": False, "error": str(exc)}, status=400)
+        except Exception:
+            self._logger.exception("Admin action %s failed", action)
+            return web.json_response({"ok": False, "error": "internal error"}, status=500)
+        response = web.json_response({"ok": True, **result})
+        self._attach_auth_cookies(response, auth)
+        return response
 
     # ---------- HTML ----------
     def _render_dashboard(self, data: Dict[str, object], access_token: Optional[str]) -> str:
@@ -251,6 +457,10 @@ class AdminPanelServer:
         search_query = str(data.get("search_query") or "")
         error_logs: List[Dict[str, str]] = data.get("error_logs", [])  # type: ignore[assignment]
         health_info: Optional[Dict[str, object]] = data.get("health")  # type: ignore[assignment]
+        runtime_state: Dict[str, object] = data.get("runtime", {})  # type: ignore[assignment]
+        failures: List[Dict[str, object]] = data.get("failures", [])  # type: ignore[assignment]
+        admin_identity_label = data.get("admin_identity")
+        multi_admin = bool(data.get("multi_admin"))
 
         total_downloads = summary.get("total_downloads", 0)
         successful = summary.get("successful_downloads", 0)
@@ -280,6 +490,14 @@ class AdminPanelServer:
             cookie_info = dict(health_info.get("instagram_cookies") or {})  # type: ignore[arg-type]
             video_cache_info = dict(health_info.get("video_cache") or {})  # type: ignore[arg-type]
 
+        semaphore_state: Dict[str, object] = runtime_state.get("semaphore") or {}
+        runtime_active_total = int(runtime_state.get("active_total", 0) or 0)
+        runtime_pending_total = int(runtime_state.get("pending_total", 0) or 0)
+        runtime_max_slots = int(semaphore_state.get("max_slots", 0) or 0)
+        runtime_in_use = int(semaphore_state.get("in_use", 0) or 0)
+        active_rows = runtime_state.get("active_rows") or []
+        pending_rows_preview = runtime_state.get("pending_rows") or []
+
         status_class = ""
         if health_status:
             normalized_status = str(health_status).lower()
@@ -293,6 +511,20 @@ class AdminPanelServer:
                 f"<option value=\"{html.escape(key)}\"{' selected' if key == current else ''}>{html.escape(label)}</option>"
                 for key, label in options.items()
             )
+
+        def format_since(seconds: Optional[float]) -> str:
+            if seconds is None:
+                return "—"
+            if seconds < 60:
+                return f"{int(seconds)} с назад"
+            minutes = int(seconds // 60)
+            if minutes < 60:
+                return f"{minutes} м назад"
+            hours = int(minutes // 60)
+            if hours < 24:
+                return f"{hours} ч назад"
+            days = int(hours // 24)
+            return f"{days} д назад"
 
         def build_query(overrides: Dict[str, Optional[str]]) -> str:
             base = {
@@ -330,6 +562,20 @@ class AdminPanelServer:
             "name": "По имени",
         }
 
+        logout_link = build_link({"logout": "1"})
+        identity_html = ""
+        if admin_identity_label:
+            logout_button = (
+                f"<a class=\"ghost-btn\" href=\"{logout_link}\">Выйти</a>"
+                if multi_admin
+                else ""
+            )
+            extra = f" {logout_button}" if logout_button else ""
+            identity_html = (
+                "<div class=\"identity-badge\">Вошли как "
+                f"<strong>{html.escape(str(admin_identity_label))}</strong>{extra}</div>"
+            )
+
         cards_html = f"""
         <div class=\"cards\">
             <article class=\"card\">
@@ -352,6 +598,93 @@ class AdminPanelServer:
                 <p class=\"hint\">Пользователей: {unique_users}</p>
             </article>
         </div>
+        """
+
+        queue_cards_html = f"""
+        <div class=\"queue-grid\">
+            <article class=\"card mini\">
+                <p class=\"label\">Активных</p>
+                <p class=\"value\">{runtime_active_total}</p>
+            </article>
+            <article class=\"card mini\">
+                <p class=\"label\">Pending</p>
+                <p class=\"value\">{runtime_pending_total}</p>
+            </article>
+            <article class=\"card mini\">
+                <p class=\"label\">Слоты</p>
+                <p class=\"value\">{runtime_in_use}/{runtime_max_slots}</p>
+            </article>
+        </div>
+        """
+
+        queue_actions_html = """
+        <div class="queue-actions">
+            <button type="button" class="action-btn" data-action="refresh">Обновить</button>
+            <button type="button" class="action-btn danger" data-action="flush_tokens" data-confirm="Сбросить все pending кнопки?">Очистить pending</button>
+        </div>
+        """
+
+        queue_section_html = f"""
+        <section>
+            <h2>Очередь и управление</h2>
+            {queue_cards_html}
+            {queue_actions_html}
+            <div class=\"two-columns\">
+                <div>
+                    <h3>Активные пользователи</h3>
+                    <table>
+                        <thead>
+                            <td>
+                                <button type="button" class="action-btn danger" data-action="cancel_user" data-user-id="{row.get('user_id')}" data-confirm="Сбросить активные загрузки пользователя {row.get('user_id')}?">Сбросить</button>
+                            </td>
+                                <th>Последняя активность</th>
+                                <th>Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {active_queue_rows}
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <h3>Pending кнопки</h3>
+                    <table>
+                        <thead>
+                            <td>
+                                <button type="button" class="action-btn danger" data-action="drop_token" data-token="{html.escape(str(row.get('token')))}" data-confirm="Удалить pending кнопку?">Удалить</button>
+                            </td>
+                                <th>Чат</th>
+                                <th>Возраст</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {pending_queue_rows}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        """
+
+        failures_section_html = f"""
+        <section>
+            <h2>Неудачные загрузки</h2>
+            <table class=\"failure-table\">
+                <thead>
+                    <tr>
+                        <th>Пользователь</th>
+                        <th>Платформа</th>
+                        <th>Ошибка</th>
+                        <th>Время</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {failure_rows_html}
+                </tbody>
+            </table>
+        </section>
         """
 
         top_rows = "".join(
@@ -391,6 +724,50 @@ class AdminPanelServer:
             """
             for item in recent
         ) or "<tr><td colspan=\"5\">История пуста</td></tr>"
+
+        active_queue_rows = "".join(
+            f"""
+            <tr>
+                <td>{row.get('user_id')}</td>
+                <td>{row.get('active')}</td>
+                <td class=\"{'danger-text' if row.get('is_stuck') else ''}\">{format_since(row.get('seconds_since_last'))}</td>
+                <td>
+                    <button class=\"action-btn danger\" data-action=\"cancel_user\" data-user-id=\"{row.get('user_id')}\" data-confirm=\"Сбросить активные загрузки пользователя {row.get('user_id')}?\">Сбросить</button>
+                </td>
+            </tr>
+            """
+            for row in active_rows
+        ) or "<tr><td colspan=\"4\">Нет активных загрузок</td></tr>"
+
+        pending_queue_rows = "".join(
+            f"""
+            <tr>
+                <td><code>{html.escape(str(row.get('token')))}</code></td>
+                <td>{row.get('initiator_id') or '—'}</td>
+                <td>{row.get('source_chat_id') or '—'}</td>
+                <td>{format_since(row.get('age_seconds'))}</td>
+                <td>
+                    <button class=\"action-btn danger\" data-action=\"drop_token\" data-token=\"{html.escape(str(row.get('token')))}\" data-confirm=\"Удалить pending кнопку?\">Удалить</button>
+                </td>
+            </tr>
+            """
+            for row in pending_rows_preview
+        ) or "<tr><td colspan=\"5\">Pending кнопок нет</td></tr>"
+
+        failure_rows_html = "".join(
+            f"""
+            <tr>
+                <td>{html.escape(str(item.get('username') or item.get('user_id')))}</td>
+                <td>{html.escape(str(item.get('platform', 'unknown')).upper())}</td>
+                <td class=\"error\">{html.escape(str(item.get('error_message') or '—'))}</td>
+                <td>{_format_timestamp(item.get('timestamp'))}</td>
+                <td>
+                    <span class=\"status-pill danger\">{html.escape(str(item.get('status')))}</span>
+                </td>
+            </tr>
+            """
+            for item in failures
+        ) or "<tr><td colspan=\"5\">Ошибок нет</td></tr>"
 
         chat_rows: List[str] = []
         global_link = build_link({"chat_id": None})
@@ -525,7 +902,7 @@ class AdminPanelServer:
         search_value = html.escape(search_query)
         token_input = (
             f"<input type=\"hidden\" name=\"token\" value=\"{html.escape(access_token)}\" />"
-            if access_token
+            if (access_token and not multi_admin)
             else ""
         )
         chat_sort_options_html = render_options(chat_sort_options, chat_sort)
@@ -663,6 +1040,42 @@ class AdminPanelServer:
                     color: var(--text);
                 }}
                 .ghost-btn:hover {{ border-color: var(--accent); color: var(--accent); }}
+                .identity-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 8px 18px;
+                    border-radius: 999px;
+                    background: rgba(255,255,255,0.08);
+                    font-size: 14px;
+                }
+                .queue-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                    gap: 12px;
+                    margin-bottom: 12px;
+                }
+                .queue-actions {
+                    display: flex;
+                    gap: 12px;
+                    flex-wrap: wrap;
+                    margin-bottom: 16px;
+                }
+                .action-btn {
+                    background: var(--surface);
+                    color: var(--text);
+                    border: 1px solid rgba(255,255,255,0.25);
+                    border-radius: 8px;
+                    padding: 8px 14px;
+                    cursor: pointer;
+                    font-weight: 500;
+                }
+                .action-btn:hover { border-color: var(--accent); }
+                .action-btn.danger {
+                    background: var(--danger);
+                    border-color: transparent;
+                    color: #fff;
+                }
                 section {{
                     background: var(--surface-alt);
                     border-radius: 18px;
@@ -744,6 +1157,10 @@ class AdminPanelServer:
                     padding: 12px;
                     border: 1px solid rgba(255,255,255,0.05);
                 }}
+                .card.mini .value {{ font-size: 30px; }}
+                .danger-text {{ color: var(--danger); font-weight: 600; }}
+                .failure-table .error {{ color: var(--danger); }}
+                .failure-table .status-pill {{ font-size: 12px; padding: 4px 10px; }}
                 .metrics-block ul {{
                     list-style: none;
                     display: flex;
@@ -777,6 +1194,7 @@ class AdminPanelServer:
                         <h1>Media Bandit · Админ-панель</h1>
                         <span class=\"scope-chip\">{html.escape(scope)}</span>
                     </div>
+                    {identity_html}
                     <form method=\"get\" action=\"/admin\" class=\"controls\">
                         <div class=\"control-group\">
                             <label>ID чата</label>
@@ -810,6 +1228,7 @@ class AdminPanelServer:
                     </form>
                 </header>
                 {cards_html}
+                {queue_section_html}
                 <section>
                     <h2>Чаты</h2>
                     <table class=\"chat-table\">
@@ -882,6 +1301,7 @@ class AdminPanelServer:
                         </tbody>
                     </table>
                 </section>
+                {failures_section_html}
                 <section>
                     <h2>Healthcheck</h2>
                     {health_html}
@@ -893,6 +1313,53 @@ class AdminPanelServer:
                     </ul>
                 </section>
             </main>
+            <script>
+            (() => {
+                const buttons = document.querySelectorAll('[data-action]');
+                buttons.forEach((btn) => {
+                    btn.addEventListener('click', async (event) => {
+                        const action = btn.dataset.action;
+                        if (!action) {
+                            return;
+                        }
+                        if (action === 'refresh') {
+                            event.preventDefault();
+                            window.location.reload();
+                            return;
+                        }
+                        if (btn.dataset.confirm && !window.confirm(btn.dataset.confirm)) {
+                            event.preventDefault();
+                            return;
+                        }
+                        const payload = {};
+                        if (btn.dataset.userId) {
+                            payload.user_id = Number(btn.dataset.userId);
+                        }
+                        if (btn.dataset.token) {
+                            payload.token = btn.dataset.token;
+                        }
+                        event.preventDefault();
+                        try {
+                            const response = await fetch(`/admin/api/actions/${{action}}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                credentials: 'same-origin',
+                                body: JSON.stringify(payload),
+                            });
+                            const body = await response.json().catch(() => ({}));
+                            if (!response.ok || !body.ok) {
+                                alert(body.error || 'Не удалось выполнить действие');
+                                return;
+                            }
+                            window.location.reload();
+                        } catch (err) {
+                            console.error(err);
+                            alert('Сетевая ошибка, попробуйте позже');
+                        }
+                    });
+                });
+            })();
+            </script>
         </body>
         </html>
         """

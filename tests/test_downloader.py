@@ -3,6 +3,7 @@ from __future__ import annotations
 import tempfile
 import types
 import unittest
+import logging
 from pathlib import Path
 from unittest import mock
 
@@ -13,14 +14,20 @@ class DownloaderTests(unittest.IsolatedAsyncioTestCase):
     def setUp(self) -> None:
         self._tmpdir = tempfile.TemporaryDirectory()
         self.output_dir = Path(self._tmpdir.name)
+        self._downloader_log_level = downloader.logger.level
+        downloader.logger.setLevel(logging.CRITICAL)
+        self.addCleanup(self._restore_logger_level)
 
     def tearDown(self) -> None:
         self._tmpdir.cleanup()
 
+    def _restore_logger_level(self) -> None:
+        downloader.logger.setLevel(self._downloader_log_level)
+
     async def test_download_video_success_path(self) -> None:
         target_file = self.output_dir / "sample.mp4"
 
-        async def fake_run_cmd(cmd, timeout):
+        async def fake_run_yt_dlp(cmd, timeout, progress_cb=None):
             if cmd and cmd[0] == "yt-dlp" and not target_file.exists():
                 target_file.write_bytes(b"video")
             return ("", "", 0)
@@ -28,7 +35,7 @@ class DownloaderTests(unittest.IsolatedAsyncioTestCase):
         async def fake_ffprobe(*_args, **_kwargs):
             return {"has_audio": True, "has_video": True}
 
-        with mock.patch("utils.downloader._run_cmd", fake_run_cmd), mock.patch(
+        with mock.patch("utils.downloader._run_yt_dlp", fake_run_yt_dlp), mock.patch(
             "utils.downloader._ffprobe_has_audio_or_video", fake_ffprobe
         ), mock.patch.object(downloader, "video_cache", None):
             result_path = await downloader.download_video(
@@ -45,7 +52,7 @@ class DownloaderTests(unittest.IsolatedAsyncioTestCase):
         audio_file = self.output_dir / "audio.m4a"
         merged_file = video_file.with_name(video_file.stem + "_merged.mp4")
 
-        async def fake_run_cmd(cmd, timeout):
+        async def fake_run_yt_dlp(cmd, timeout, progress_cb=None):
             if cmd and cmd[0] == "yt-dlp":
                 format_arg = cmd[cmd.index("-f") + 1] if "-f" in cmd else ""
                 if "bestvideo" in format_arg and not video_file.exists():
@@ -63,7 +70,7 @@ class DownloaderTests(unittest.IsolatedAsyncioTestCase):
             out_path.write_bytes(b"merged")
             return out_path
 
-        with mock.patch("utils.downloader._run_cmd", fake_run_cmd), mock.patch(
+        with mock.patch("utils.downloader._run_yt_dlp", fake_run_yt_dlp), mock.patch(
             "utils.downloader._ffprobe_has_audio_or_video", fake_ffprobe
         ), mock.patch("utils.downloader._ffmpeg_merge", fake_merge), mock.patch.object(
             downloader, "video_cache", None
@@ -80,7 +87,7 @@ class DownloaderTests(unittest.IsolatedAsyncioTestCase):
     async def test_instagram_fallback_invoked_on_sensitive_error(self) -> None:
         fallback_file = self.output_dir / "instagram_fallback.mp4"
 
-        async def fake_run_cmd(cmd, timeout):
+        async def fake_run_yt_dlp(cmd, timeout, progress_cb=None):
             return (
                 "",
                 "ERROR: [Instagram] DRQSTxVDKmh: This content may be inappropriate: It's unavailable for certain audiences.",
@@ -93,7 +100,7 @@ class DownloaderTests(unittest.IsolatedAsyncioTestCase):
 
         fake_module = types.SimpleNamespace(download_sensitive_media=fake_fallback)
 
-        with mock.patch("utils.downloader._run_cmd", fake_run_cmd), mock.patch.object(
+        with mock.patch("utils.downloader._run_yt_dlp", fake_run_yt_dlp), mock.patch.object(
             downloader, "video_cache", None
         ), mock.patch("utils.downloader.instagram_direct", fake_module):
             result_path = await downloader.download_video(

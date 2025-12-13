@@ -171,6 +171,19 @@ def get_recent_downloads(chat_id: Optional[int] = None, limit: int = 20) -> List
     return _fetch_all(stmt)
 
 
+def get_recent_failures(chat_id: Optional[int] = None, limit: int = 10) -> List[Dict]:
+    """Return the latest failed downloads for the given scope."""
+
+    filters = _chat_filters(chat_id, downloads.c.chat_id) + [downloads.c.status != "success"]
+    stmt = (
+        select(downloads)
+        .where(*filters)
+        .order_by(downloads.c.timestamp.desc())
+        .limit(limit)
+    )
+    return _fetch_all(stmt)
+
+
 def list_chats(order_by: str = "recent", search: Optional[str] = None, limit: int = 50) -> List[Dict]:
     """Return known chats with aggregated stats for admin panel."""
 

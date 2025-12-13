@@ -9,11 +9,16 @@ import logging.handlers
 import threading
 import time
 from collections import Counter
+from contextlib import contextmanager
+from contextvars import ContextVar
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 
 from aiohttp import web
+
+
+_REQUEST_CONTEXT: ContextVar[Dict[str, Any]] = ContextVar("REQUEST_CONTEXT", default={})
 
 
 class JsonFormatter(logging.Formatter):
@@ -32,7 +37,26 @@ class JsonFormatter(logging.Formatter):
             log["stack"] = record.stack_info
         if record.__dict__.get("extra_data"):
             log["extra"] = record.__dict__["extra_data"]
+        ctx = _REQUEST_CONTEXT.get({})
+        if ctx:
+            log["context"] = ctx
         return json.dumps(log, ensure_ascii=True)
+
+
+class RequestContextFilter(logging.Filter):
+    """Inject request context fields into every log record."""
+
+    def filter(self, record: logging.LogRecord) -> bool:  # noqa: D401
+        ctx = _REQUEST_CONTEXT.get({})
+        record.request_id = ctx.get("request_id", "-")
+        record.user_id = ctx.get("user_id")
+        record.chat_id = ctx.get("chat_id")
+        if ctx:
+            extra = dict(ctx)
+            if record.__dict__.get("extra_data"):
+                extra.update(record.__dict__["extra_data"])
+            record.extra_data = extra
+        return True
 
 
 class MetricsRegistry:
@@ -116,13 +140,17 @@ def setup_logging(
         root.removeHandler(handler)
 
     formatter: logging.Formatter
+    ctx_filter = RequestContextFilter()
     if structured:
         formatter = JsonFormatter()
     else:
-        formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s")
+        formatter = logging.Formatter(
+            "%(asctime)s | %(levelname)s | %(name)s | request=%(request_id)s | %(message)s"
+        )
 
     sh = logging.StreamHandler()
     sh.setFormatter(formatter)
+    sh.addFilter(ctx_filter)
     root.addHandler(sh)
 
     if log_file:
@@ -136,6 +164,7 @@ def setup_logging(
                 encoding="utf-8",
             )
             fh.setFormatter(formatter)
+            fh.addFilter(ctx_filter)
             root.addHandler(fh)
         except Exception:
             root.exception("Не удалось настроить файл логов %s", log_file)
@@ -159,6 +188,35 @@ def capture_exception(exc: Exception) -> None:
         sentry_sdk.capture_exception(exc)
     except Exception:
         logging.getLogger(__name__).debug("Sentry capture failed or sentry_sdk not installed.")
+
+
+def add_breadcrumb(message: str, category: str = "app", level: str = "info", **data: Any) -> None:
+    """Add breadcrumb to Sentry timeline if enabled."""
+
+    try:
+        import sentry_sdk
+
+        sentry_sdk.add_breadcrumb(message=message, category=category, level=level, data=data or None)
+    except Exception:
+        logging.getLogger(__name__).debug("Sentry breadcrumb skipped (sentry_sdk absent?).")
+
+
+@contextmanager
+def request_context(**fields: Any):
+    """Bind request-specific fields to logging/Sentry context."""
+
+    parent = _REQUEST_CONTEXT.get({})
+    context = dict(parent)
+    context.update({k: v for k, v in fields.items() if v is not None})
+    token = _REQUEST_CONTEXT.set(context)
+    try:
+        yield context
+    finally:
+        _REQUEST_CONTEXT.reset(token)
+
+
+def get_request_context() -> Dict[str, Any]:
+    return _REQUEST_CONTEXT.get({}).copy()
 
 
 def _get_instagram_cookie_state() -> Optional[Dict[str, object]]:

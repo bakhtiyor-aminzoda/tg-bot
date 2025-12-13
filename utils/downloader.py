@@ -10,9 +10,11 @@
 import asyncio
 import shlex
 import os
+import re
+from dataclasses import dataclass
 from pathlib import Path
 import logging
-from typing import Optional
+from typing import Awaitable, Callable, Optional
 
 import config
 
@@ -27,6 +29,93 @@ except Exception:  # pragma: no cover - fallback unavailable in some envs
     instagram_direct = None  # type: ignore
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class DownloadProgress:
+    percent: Optional[float] = None
+    downloaded_bytes: Optional[int] = None
+    total_bytes: Optional[int] = None
+    speed_bytes_per_sec: Optional[float] = None
+    eta_seconds: Optional[int] = None
+
+
+ProgressCallback = Callable[[DownloadProgress], Awaitable[None]]
+
+_PERCENT_RE = re.compile(r"(\d+(?:\.\d+)?)%")
+_TOTAL_RE = re.compile(r"of\s+(?:~)?([\d\.]+)([KMGTP]?iB)", re.IGNORECASE)
+_SPEED_RE = re.compile(r"at\s+([\d\.]+)([KMGTP]?iB/s)", re.IGNORECASE)
+_ETA_RE = re.compile(r"ETA\s+([0-9:]+)")
+
+
+def _convert_unit(value: str, unit: str) -> Optional[float]:
+    try:
+        amount = float(value)
+    except ValueError:
+        return None
+    normalized = unit.lower().rstrip("/s")
+    multiplier_map = {
+        "b": 1,
+        "kib": 1024,
+        "mib": 1024 ** 2,
+        "gib": 1024 ** 3,
+        "tib": 1024 ** 4,
+    }
+    factor = multiplier_map.get(normalized, 1)
+    return amount * factor
+
+
+def _parse_eta(raw: str) -> Optional[int]:
+    parts = raw.split(":")
+    if not parts or any(not segment.isdigit() for segment in parts):
+        return None
+    seconds = 0
+    for segment in parts:
+        seconds = seconds * 60 + int(segment)
+    return seconds
+
+
+def _parse_progress_line(line: str) -> Optional[DownloadProgress]:
+    clean = line.replace("\r", "").strip()
+    if not clean.startswith("[download]"):
+        return None
+    percent = None
+    percent_match = _PERCENT_RE.search(clean)
+    if percent_match:
+        try:
+            percent = float(percent_match.group(1))
+        except ValueError:
+            percent = None
+
+    total_bytes = None
+    total_match = _TOTAL_RE.search(clean)
+    if total_match:
+        total_bytes = _convert_unit(total_match.group(1), total_match.group(2))
+
+    downloaded_bytes = None
+    if percent is not None and total_bytes:
+        downloaded_bytes = int(total_bytes * (percent / 100))
+
+    speed = None
+    speed_match = _SPEED_RE.search(clean)
+    if speed_match:
+        speed = _convert_unit(speed_match.group(1), speed_match.group(2))
+
+    eta_seconds = None
+    eta_match = _ETA_RE.search(clean)
+    if eta_match:
+        eta_seconds = _parse_eta(eta_match.group(1))
+
+    if all(value is None for value in (percent, downloaded_bytes, total_bytes, speed, eta_seconds)):
+        return None
+
+    return DownloadProgress(
+        percent=percent,
+        downloaded_bytes=downloaded_bytes,
+        total_bytes=int(total_bytes) if total_bytes is not None else None,
+        speed_bytes_per_sec=speed,
+        eta_seconds=eta_seconds,
+    )
 
 class DownloadError(Exception):
     pass
@@ -46,6 +135,56 @@ async def _run_cmd(cmd: list[str], timeout: int):
         await proc.communicate()
         raise DownloadError("Таймаут выполнения внешней команды.")
     return stdout.decode(errors="ignore"), stderr.decode(errors="ignore"), proc.returncode
+
+
+async def _run_yt_dlp(
+    cmd: list[str], timeout: int, progress_cb: Optional[ProgressCallback] = None
+) -> tuple[str, str, int]:
+    """Run yt-dlp command while streaming stdout for progress updates."""
+
+    proc = await asyncio.create_subprocess_exec(
+        *cmd,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    loop = asyncio.get_running_loop()
+    deadline = loop.time() + timeout
+    stdout_chunks: list[bytes] = []
+    stderr_chunks: list[bytes] = []
+
+    async def _drain_stream(stream: Optional[asyncio.StreamReader], chunks: list[bytes], parse_progress: bool) -> None:
+        if stream is None:
+            return
+        while True:
+            remaining = deadline - loop.time()
+            if remaining <= 0:
+                raise asyncio.TimeoutError
+            line = await asyncio.wait_for(stream.readline(), remaining)
+            if not line:
+                break
+            chunks.append(line)
+            if parse_progress and progress_cb:
+                event = _parse_progress_line(line.decode(errors="ignore"))
+                if event:
+                    await progress_cb(event)
+
+    try:
+        await asyncio.gather(
+            _drain_stream(proc.stdout, stdout_chunks, True),
+            _drain_stream(proc.stderr, stderr_chunks, False),
+        )
+        remaining = deadline - loop.time()
+        if remaining <= 0:
+            raise asyncio.TimeoutError
+        await asyncio.wait_for(proc.wait(), remaining)
+    except asyncio.TimeoutError:
+        proc.kill()
+        await proc.communicate()
+        raise DownloadError("Таймаут выполнения внешней команды.")
+
+    stdout = b"".join(stdout_chunks).decode(errors="ignore")
+    stderr = b"".join(stderr_chunks).decode(errors="ignore")
+    return stdout, stderr, proc.returncode
 
 async def _ffprobe_has_audio_or_video(path: Path, timeout: int = 30) -> dict:
     """
@@ -103,8 +242,17 @@ async def _ffmpeg_merge(video_path: Path, audio_path: Path, output_path: Path, t
         raise DownloadError(f"ffmpeg merge failed: {stderr.splitlines()[-1] if stderr else 'unknown'}")
     return output_path
 
-async def download_video(url: str, output_dir: Path, timeout: int = 20 * 60, cookies_file: Optional[str] = None) -> Path:
-    """Скачивает видео, пытаясь обновить Instagram-cookies при необходимости."""
+async def download_video(
+    url: str,
+    output_dir: Path,
+    timeout: int = 20 * 60,
+    cookies_file: Optional[str] = None,
+    progress_cb: Optional[ProgressCallback] = None,
+    format_spec: Optional[str] = None,
+    expect_audio: bool = True,
+    expect_video: bool = True,
+) -> Path:
+    """Скачивает видео, транслируя прогресс и обновляя Instagram-cookies при необходимости."""
     output_dir.mkdir(parents=True, exist_ok=True)
     cached_path = await _try_cache_get(url, output_dir)
     if cached_path:
@@ -113,7 +261,16 @@ async def download_video(url: str, output_dir: Path, timeout: int = 20 * 60, coo
     last_error: Optional[DownloadError] = None
     for attempt in range(attempts):
         try:
-            result = await _download_once(url, output_dir, timeout, cookies_file)
+            result = await _download_once(
+                url,
+                output_dir,
+                timeout,
+                cookies_file,
+                progress_cb=progress_cb,
+                format_spec=format_spec,
+                expect_audio=expect_audio,
+                expect_video=expect_video,
+            )
             await _maybe_store_cache(url, result)
             return result
         except DownloadError as err:
@@ -126,7 +283,17 @@ async def download_video(url: str, output_dir: Path, timeout: int = 20 * 60, coo
     raise DownloadError("Не удалось скачать видео по неизвестной причине.")
 
 
-async def _download_once(url: str, output_dir: Path, timeout: int, cookies_file: Optional[str]) -> Path:
+async def _download_once(
+    url: str,
+    output_dir: Path,
+    timeout: int,
+    cookies_file: Optional[str],
+    *,
+    progress_cb: Optional[ProgressCallback] = None,
+    format_spec: Optional[str] = None,
+    expect_audio: bool = True,
+    expect_video: bool = True,
+) -> Path:
     output_template = str(output_dir / "%(title).100s-%(id)s.%(ext)s")
     user_agent = os.environ.get(
         "YTDLP_USER_AGENT",
@@ -135,8 +302,9 @@ async def _download_once(url: str, output_dir: Path, timeout: int, cookies_file:
     cmd = [
         "yt-dlp",
         "--no-playlist",
+        "--newline",
         "-f",
-        "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best",
+        format_spec or "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best",
         "--merge-output-format",
         "mp4",
         "--no-warnings",
@@ -163,7 +331,7 @@ async def _download_once(url: str, output_dir: Path, timeout: int, cookies_file:
 
     logger.info("Запускаем yt-dlp: %s ...", url)
     try:
-        stdout, stderr, rc = await _run_cmd(cmd + [url], timeout=timeout)
+        stdout, stderr, rc = await _run_yt_dlp(cmd + [url], timeout=timeout, progress_cb=progress_cb)
     except FileNotFoundError as e:
         logger.exception("yt-dlp не найден.")
         raise DownloadError("yt-dlp не найден. Убедитесь, что он установлен и доступен в PATH.") from e
@@ -200,10 +368,15 @@ async def _download_once(url: str, output_dir: Path, timeout: int, cookies_file:
     probes = await _ffprobe_has_audio_or_video(downloaded)
     logger.debug("ffprobe result: %s", probes)
 
-    if probes.get("has_video") and probes.get("has_audio"):
+    has_video = probes.get("has_video")
+    has_audio = probes.get("has_audio")
+    needs_audio = expect_audio and not has_audio
+    needs_video = expect_video and not has_video
+
+    if not needs_audio and not needs_video:
         return downloaded
 
-    if probes.get("has_video") and not probes.get("has_audio"):
+    if needs_audio and not needs_video and has_video:
         logger.info("Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.")
         audio_template = str(output_dir / "%(title).100s-%(id)s.%(ext)s")
         audio_cmd = [
@@ -224,7 +397,7 @@ async def _download_once(url: str, output_dir: Path, timeout: int, cookies_file:
         if "instagram.com" in url:
             audio_cmd += ["--add-header", "Referer: https://www.instagram.com/"]
 
-        stdout_a, stderr_a, rc_a = await _run_cmd(audio_cmd + [url], timeout=timeout)
+        stdout_a, stderr_a, rc_a = await _run_yt_dlp(audio_cmd + [url], timeout=timeout)
         if rc_a != 0:
             last_line = (stderr_a.splitlines()[-1].strip() if stderr_a else "unknown error")
             logger.error("Не удалось скачать аудио отдельно: %s", last_line)
@@ -252,7 +425,7 @@ async def _download_once(url: str, output_dir: Path, timeout: int, cookies_file:
         logger.info("Merge выполнен, итог: %s", merged)
         return merged
 
-    if probes.get("has_audio") and not probes.get("has_video"):
+    if needs_video and not needs_audio and has_audio:
         logger.info("Файл содержит только аудио. Пробуем скачать video отдельно и смержить.")
         video_template = str(output_dir / "%(title).100s-%(id)s.%(ext)s")
         video_cmd = [
@@ -273,7 +446,7 @@ async def _download_once(url: str, output_dir: Path, timeout: int, cookies_file:
         if "instagram.com" in url:
             video_cmd += ["--add-header", "Referer: https://www.instagram.com/"]
 
-        stdout_v, stderr_v, rc_v = await _run_cmd(video_cmd + [url], timeout=timeout)
+        stdout_v, stderr_v, rc_v = await _run_yt_dlp(video_cmd + [url], timeout=timeout)
         if rc_v != 0:
             last_line = (stderr_v.splitlines()[-1].strip() if stderr_v else "unknown error")
             logger.error("Не удалось скачать video отдельно: %s", last_line)

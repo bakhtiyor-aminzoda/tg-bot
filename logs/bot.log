@@ -3331,3 +3331,268 @@ NameError: name '_try_cache_get' is not defined
 2025-12-13 19:52:36,601 | INFO | bot_app.runtime | Acquired global download slot
 2025-12-13 19:52:36,601 | INFO | bot_app.runtime | Released global download slot
 2025-12-13 19:52:36,621 | INFO | services.video_cache | Video cache hit for https://example.com/foo (/var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpg3p5c63l/out/video.mp4)
+2025-12-13 20:54:10,294 | WARNING | utils.access_control | Пользователь 6 не администратор
+2025-12-13 20:54:10,295 | WARNING | utils.access_control | Пользователь 99 не в whitelist
+2025-12-13 20:54:10,310 | INFO | bot_app.runtime | Received callback_query: download:valid from 42
+2025-12-13 20:54:10,311 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-13 20:54:10,311 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-13 20:54:10,311 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-13 20:54:10,311 | ERROR | db | Ошибка при добавлении записи в БД
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 3309, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/base.py", line 673, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/base.py", line 899, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/engine/create.py", line 661, in connect
+    return dialect.connect(*cargs, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/psycopg/connection.py", line 129, in connect
+    raise type(last_ex)("\n".join(lines)).with_traceback(None)
+psycopg.OperationalError: connection failed: connection to server at "::1", port 5432 failed: could not receive data from server: Connection refused
+Multiple connection attempts failed. All failures were:
+- host: 'localhost', port: 5432, hostaddr: '127.0.0.1': connection failed: connection to server at "127.0.0.1", port 5432 failed: could not receive data from server: Connection refused
+- host: 'localhost', port: 5432, hostaddr: '::1': connection failed: connection to server at "::1", port 5432 failed: could not receive data from server: Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/db.py", line 154, in add_download
+    with _engine.begin() as conn:
+         ~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 3249, in begin
+    with self.connect() as conn:
+         ~~~~~~~~~~~~^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 3285, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 145, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 2448, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 3309, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/base.py", line 673, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/base.py", line 899, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/pool/base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/engine/create.py", line 661, in connect
+    return dialect.connect(*cargs, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/psycopg/connection.py", line 129, in connect
+    raise type(last_ex)("\n".join(lines)).with_traceback(None)
+sqlalchemy.exc.OperationalError: (psycopg.OperationalError) connection failed: connection to server at "::1", port 5432 failed: could not receive data from server: Connection refused
+Multiple connection attempts failed. All failures were:
+- host: 'localhost', port: 5432, hostaddr: '127.0.0.1': connection failed: connection to server at "127.0.0.1", port 5432 failed: could not receive data from server: Connection refused
+- host: 'localhost', port: 5432, hostaddr: '::1': connection failed: connection to server at "::1", port 5432 failed: could not receive data from server: Connection refused
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-12-13 20:54:10,317 | INFO | bot_app.runtime | Received callback_query: download:expired from 42
+2025-12-13 20:54:10,318 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video2 ...
+2025-12-13 20:54:10,318 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpd9tg0h56/video.mp4 (0.00 MB)
+2025-12-13 20:54:10,318 | INFO | utils.downloader | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-13 20:54:10,318 | INFO | utils.downloader | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpd9tg0h56/audio.m4a
+2025-12-13 20:54:10,318 | INFO | utils.downloader | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpd9tg0h56/video_merged.mp4
+2025-12-13 20:54:10,319 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-13 20:54:10,319 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp9fllin67/sample.mp4 (0.00 MB)
+2025-12-13 20:54:10,320 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRQSTxVDKmh/ ...
+2025-12-13 20:54:10,320 | ERROR | utils.downloader | yt-dlp завершился с кодом 1: ERROR: [Instagram] DRQSTxVDKmh: This content may be inappropriate: It's unavailable for certain audiences.
+2025-12-13 20:54:10,320 | WARNING | utils.downloader | Instagram reported restricted media, invoking API fallback
+2025-12-13 20:54:10,322 | INFO | bot_app.runtime | Waiting for global download slot...
+2025-12-13 20:54:10,322 | INFO | bot_app.runtime | Acquired global download slot
+2025-12-13 20:54:10,322 | INFO | bot_app.runtime | Released global download slot
+2025-12-13 20:54:10,343 | INFO | services.video_cache | Video cache hit for https://example.com/foo (/var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp_56pxywb/out/video.mp4)
+2025-12-13 20:56:27,549 | WARNING | utils.access_control | Пользователь 6 не администратор
+2025-12-13 20:56:27,550 | WARNING | utils.access_control | Пользователь 99 не в whitelist
+2025-12-13 20:56:27,559 | INFO | bot_app.runtime | Received callback_query: download:valid from 42
+2025-12-13 20:56:27,560 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-13 20:56:27,560 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-13 20:56:27,560 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-13 20:56:27,562 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=42, platform=youtube, status=success, chat_id=100
+2025-12-13 20:56:27,563 | INFO | bot_app.runtime | Received callback_query: download:expired from 42
+2025-12-13 20:56:27,564 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video2 ...
+2025-12-13 20:56:27,564 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpad9gdfkc/video.mp4 (0.00 MB)
+2025-12-13 20:56:27,564 | INFO | utils.downloader | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-13 20:56:27,564 | INFO | utils.downloader | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpad9gdfkc/audio.m4a
+2025-12-13 20:56:27,565 | INFO | utils.downloader | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpad9gdfkc/video_merged.mp4
+2025-12-13 20:56:27,566 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-13 20:56:27,566 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmprl_y68gj/sample.mp4 (0.00 MB)
+2025-12-13 20:56:27,567 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRQSTxVDKmh/ ...
+2025-12-13 20:56:27,567 | ERROR | utils.downloader | yt-dlp завершился с кодом 1: ERROR: [Instagram] DRQSTxVDKmh: This content may be inappropriate: It's unavailable for certain audiences.
+2025-12-13 20:56:27,567 | WARNING | utils.downloader | Instagram reported restricted media, invoking API fallback
+2025-12-13 20:56:27,568 | INFO | bot_app.runtime | Waiting for global download slot...
+2025-12-13 20:56:27,568 | INFO | bot_app.runtime | Acquired global download slot
+2025-12-13 20:56:27,568 | INFO | bot_app.runtime | Released global download slot
+2025-12-13 20:56:27,589 | INFO | services.video_cache | Video cache hit for https://example.com/foo (/var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpd_tr5yae/out/video.mp4)
+2025-12-13 21:56:48,436 | WARNING | utils.access_control | Пользователь 6 не администратор
+2025-12-13 21:56:48,437 | WARNING | utils.access_control | Пользователь 99 не в whitelist
+2025-12-13 21:56:48,446 | INFO | bot_app.runtime | Received callback_query: download:valid from 42
+2025-12-13 21:56:48,447 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-13 21:56:48,447 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-13 21:56:48,447 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-13 21:56:48,449 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=42, platform=youtube, status=success, chat_id=100
+2025-12-13 21:56:48,451 | INFO | bot_app.runtime | Received callback_query: download:expired from 42
+2025-12-13 21:56:48,452 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video2 ...
+2025-12-13 21:56:48,452 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpu1grij15/video.mp4 (0.00 MB)
+2025-12-13 21:56:48,452 | INFO | utils.downloader | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-13 21:56:48,452 | INFO | utils.downloader | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpu1grij15/audio.m4a
+2025-12-13 21:56:48,452 | INFO | utils.downloader | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpu1grij15/video_merged.mp4
+2025-12-13 21:56:48,454 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-13 21:56:48,454 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmptuv0d2as/sample.mp4 (0.00 MB)
+2025-12-13 21:56:48,455 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRQSTxVDKmh/ ...
+2025-12-13 21:56:48,455 | ERROR | utils.downloader | yt-dlp завершился с кодом 1: ERROR: [Instagram] DRQSTxVDKmh: This content may be inappropriate: It's unavailable for certain audiences.
+2025-12-13 21:56:48,455 | WARNING | utils.downloader | Instagram reported restricted media, invoking API fallback
+2025-12-13 21:56:48,456 | INFO | bot_app.runtime | Waiting for global download slot...
+2025-12-13 21:56:48,456 | INFO | bot_app.runtime | Acquired global download slot
+2025-12-13 21:56:48,456 | INFO | bot_app.runtime | Released global download slot
+2025-12-13 21:56:48,479 | INFO | services.video_cache | Video cache hit for https://example.com/foo (/var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp05ae2m3g/out/video.mp4)
+2025-12-13 22:49:35,528 | WARNING | utils.access_control | Пользователь 6 не администратор
+2025-12-13 22:49:35,530 | WARNING | utils.access_control | Пользователь 99 не в whitelist
+2025-12-13 22:49:35,542 | INFO | bot_app.runtime | Received callback_query: download:valid from 42
+2025-12-13 22:49:35,543 | INFO | bot_app.runtime | Waiting for global download slot (callback)...
+2025-12-13 22:49:35,543 | INFO | bot_app.runtime | Acquired global download slot (callback)
+2025-12-13 22:49:35,543 | INFO | bot_app.runtime | Released global download slot (callback)
+2025-12-13 22:49:35,545 | INFO | db | ✓ Запись о загрузке сохранена в БД: user=42, platform=youtube, status=success, chat_id=100
+2025-12-13 22:49:35,546 | INFO | bot_app.runtime | Received callback_query: download:expired from 42
+2025-12-13 22:49:35,547 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video2 ...
+2025-12-13 22:49:35,547 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpxvzeb0ua/video.mp4 (0.00 MB)
+2025-12-13 22:49:35,548 | INFO | utils.downloader | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-13 22:49:35,548 | INFO | utils.downloader | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpxvzeb0ua/audio.m4a
+2025-12-13 22:49:35,548 | INFO | utils.downloader | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpxvzeb0ua/video_merged.mp4
+2025-12-13 22:49:35,549 | INFO | utils.downloader | Запускаем yt-dlp: https://example.com/video ...
+2025-12-13 22:49:35,549 | INFO | utils.downloader | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpbkbr8gt_/sample.mp4 (0.00 MB)
+2025-12-13 22:49:35,550 | INFO | utils.downloader | Запускаем yt-dlp: https://www.instagram.com/reel/DRQSTxVDKmh/ ...
+2025-12-13 22:49:35,550 | ERROR | utils.downloader | yt-dlp завершился с кодом 1: ERROR: [Instagram] DRQSTxVDKmh: This content may be inappropriate: It's unavailable for certain audiences.
+2025-12-13 22:49:35,550 | WARNING | utils.downloader | Instagram reported restricted media, invoking API fallback
+2025-12-13 22:49:35,551 | INFO | bot_app.runtime | Waiting for global download slot...
+2025-12-13 22:49:35,551 | INFO | bot_app.runtime | Acquired global download slot
+2025-12-13 22:49:35,551 | INFO | bot_app.runtime | Released global download slot
+2025-12-13 22:49:35,573 | INFO | services.video_cache | Video cache hit for https://example.com/foo (/var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpcvn2mmpb/out/video.mp4)
+2025-12-14 04:14:34,972 | INFO | utils.downloader | request=- | Запускаем yt-dlp: https://example.com/video2 ...
+2025-12-14 04:14:34,972 | INFO | utils.downloader | request=- | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp3zqw79_w/video.mp4 (0.00 MB)
+2025-12-14 04:14:34,972 | INFO | utils.downloader | request=- | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-14 04:14:34,973 | INFO | utils.downloader | request=- | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp3zqw79_w/audio.m4a
+2025-12-14 04:14:34,973 | INFO | utils.downloader | request=- | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp3zqw79_w/video_merged.mp4
+2025-12-14 04:14:34,974 | INFO | utils.downloader | request=- | Запускаем yt-dlp: https://example.com/video ...
+2025-12-14 04:14:34,975 | INFO | utils.downloader | request=- | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpmb3ajw__/sample.mp4 (0.00 MB)
+2025-12-14 04:14:34,976 | INFO | utils.downloader | request=- | Запускаем yt-dlp: https://www.instagram.com/reel/DRQSTxVDKmh/ ...
+2025-12-14 04:14:34,976 | ERROR | utils.downloader | request=- | yt-dlp завершился с кодом 1: ERROR: [Instagram] DRQSTxVDKmh: This content may be inappropriate: It's unavailable for certain audiences.
+2025-12-14 04:14:34,976 | WARNING | utils.downloader | request=- | Instagram reported restricted media, invoking API fallback
+2025-12-14 04:14:35,075 | INFO | bot_app.runtime | request=test-audio | Waiting for global download slot...
+2025-12-14 04:14:35,075 | INFO | bot_app.runtime | request=test-audio | Acquired global download slot
+2025-12-14 04:14:35,075 | INFO | bot_app.runtime | request=test-audio | Released global download slot
+2025-12-14 04:14:35,077 | INFO | db | request=test-audio | ✓ Запись о загрузке сохранена в БД: user=42, platform=youtube, status=success, chat_id=1234
+2025-12-14 04:14:35,077 | WARNING | asyncio | request=- | Executing <Task finished name='Task-17' coro=<DownloadsHandlerTests.test_audio_preset_uses_send_audio() done, defined at /Users/apple/Desktop/projects/tg_video_downloader_mvp/tests/test_handlers_downloads.py:68> result=None created at /opt/homebrew/Cellar/python@3.14/3.14.1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:109> took 0.100 seconds
+2025-12-14 04:14:59,011 | INFO | utils.downloader | request=- | Запускаем yt-dlp: https://example.com/video2 ...
+2025-12-14 04:14:59,011 | INFO | utils.downloader | request=- | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpwv1lhz5n/video.mp4 (0.00 MB)
+2025-12-14 04:14:59,011 | INFO | utils.downloader | request=- | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-14 04:14:59,012 | INFO | utils.downloader | request=- | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpwv1lhz5n/audio.m4a
+2025-12-14 04:14:59,012 | INFO | utils.downloader | request=- | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpwv1lhz5n/video_merged.mp4
+2025-12-14 04:14:59,013 | INFO | utils.downloader | request=- | Запускаем yt-dlp: https://example.com/video ...
+2025-12-14 04:14:59,013 | INFO | utils.downloader | request=- | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpbesuxajz/sample.mp4 (0.00 MB)
+2025-12-14 04:14:59,014 | INFO | utils.downloader | request=- | Запускаем yt-dlp: https://www.instagram.com/reel/DRQSTxVDKmh/ ...
+2025-12-14 04:14:59,014 | ERROR | utils.downloader | request=- | yt-dlp завершился с кодом 1: ERROR: [Instagram] DRQSTxVDKmh: This content may be inappropriate: It's unavailable for certain audiences.
+2025-12-14 04:14:59,015 | WARNING | utils.downloader | request=- | Instagram reported restricted media, invoking API fallback
+2025-12-14 04:14:59,048 | INFO | bot_app.runtime | request=test-audio | Waiting for global download slot...
+2025-12-14 04:14:59,048 | INFO | bot_app.runtime | request=test-audio | Acquired global download slot
+2025-12-14 04:14:59,048 | INFO | bot_app.runtime | request=test-audio | Released global download slot
+2025-12-14 04:21:26,704 | INFO | utils.downloader | request=- | Запускаем yt-dlp: https://example.com/video2 ...
+2025-12-14 04:21:26,704 | INFO | utils.downloader | request=- | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp70h2j_6z/video.mp4 (0.00 MB)
+2025-12-14 04:21:26,704 | INFO | utils.downloader | request=- | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-14 04:21:26,704 | INFO | utils.downloader | request=- | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp70h2j_6z/audio.m4a
+2025-12-14 04:21:26,705 | INFO | utils.downloader | request=- | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp70h2j_6z/video_merged.mp4
+2025-12-14 04:21:26,706 | INFO | utils.downloader | request=- | Запускаем yt-dlp: https://example.com/video ...
+2025-12-14 04:21:26,706 | INFO | utils.downloader | request=- | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmp8fd4igh8/sample.mp4 (0.00 MB)
+2025-12-14 04:21:26,707 | INFO | utils.downloader | request=- | Запускаем yt-dlp: https://www.instagram.com/reel/DRQSTxVDKmh/ ...
+2025-12-14 04:21:26,707 | ERROR | utils.downloader | request=- | yt-dlp завершился с кодом 1: ERROR: [Instagram] DRQSTxVDKmh: This content may be inappropriate: It's unavailable for certain audiences.
+2025-12-14 04:21:26,707 | WARNING | utils.downloader | request=- | Instagram reported restricted media, invoking API fallback
+2025-12-14 04:21:26,742 | INFO | bot_app.runtime | request=test-audio | Waiting for global download slot...
+2025-12-14 04:21:26,742 | INFO | bot_app.runtime | request=test-audio | Acquired global download slot
+2025-12-14 04:21:26,742 | INFO | bot_app.runtime | request=test-audio | Released global download slot
+2025-12-14 04:21:59,450 | INFO | utils.downloader | request=- | Запускаем yt-dlp: https://example.com/video2 ...
+2025-12-14 04:21:59,450 | INFO | utils.downloader | request=- | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpl9b2ula0/video.mp4 (0.00 MB)
+2025-12-14 04:21:59,450 | INFO | utils.downloader | request=- | Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.
+2025-12-14 04:21:59,450 | INFO | utils.downloader | request=- | Аудио скачано: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpl9b2ula0/audio.m4a
+2025-12-14 04:21:59,450 | INFO | utils.downloader | request=- | Merge выполнен, итог: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpl9b2ula0/video_merged.mp4
+2025-12-14 04:21:59,452 | INFO | utils.downloader | request=- | Запускаем yt-dlp: https://example.com/video ...
+2025-12-14 04:21:59,452 | INFO | utils.downloader | request=- | Первичный файл: /var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpuh33t7te/sample.mp4 (0.00 MB)
+2025-12-14 04:21:59,453 | INFO | utils.downloader | request=- | Запускаем yt-dlp: https://www.instagram.com/reel/DRQSTxVDKmh/ ...
+2025-12-14 04:21:59,453 | ERROR | utils.downloader | request=- | yt-dlp завершился с кодом 1: ERROR: [Instagram] DRQSTxVDKmh: This content may be inappropriate: It's unavailable for certain audiences.
+2025-12-14 04:21:59,453 | WARNING | utils.downloader | request=- | Instagram reported restricted media, invoking API fallback
+2025-12-14 04:21:59,490 | INFO | bot_app.runtime | request=test-audio | Waiting for global download slot...
+2025-12-14 04:21:59,490 | INFO | bot_app.runtime | request=test-audio | Acquired global download slot
+2025-12-14 04:21:59,490 | INFO | bot_app.runtime | request=test-audio | Released global download slot
+2025-12-14 04:21:59,496 | INFO | bot_app.runtime | request=fallback | Waiting for global download slot...
+2025-12-14 04:21:59,496 | INFO | bot_app.runtime | request=fallback | Acquired global download slot
+2025-12-14 04:21:59,496 | INFO | bot_app.runtime | request=fallback | Released global download slot
+2025-12-14 04:21:59,496 | WARNING | bot_app.runtime | request=fallback | send_video failed (Telegram server says - fail), trying send_document
+2025-12-14 04:23:22,785 | ERROR | utils.downloader | request=- | yt-dlp завершился с кодом 1: ERROR: [Instagram] DRQSTxVDKmh: This content may be inappropriate: It's unavailable for certain audiences.

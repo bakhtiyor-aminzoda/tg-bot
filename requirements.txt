@@ -9,3 +9,4 @@ packaging>=21.0  # для сравнения версий yt-dlp
 playwright>=1.45.0
 SQLAlchemy>=2.0
 psycopg[binary]>=3.1
+alembic>=1.13
