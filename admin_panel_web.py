@@ -625,6 +625,35 @@ class AdminPanelServer:
         </div>
         """
 
+        active_queue_rows = "".join(
+            f"""
+            <tr>
+                <td>{row.get('user_id')}</td>
+                <td>{row.get('active')}</td>
+                <td class=\"{'danger-text' if row.get('is_stuck') else ''}\">{format_since(row.get('seconds_since_last'))}</td>
+                <td>
+                    <button class=\"action-btn danger\" data-action=\"cancel_user\" data-user-id=\"{row.get('user_id')}\" data-confirm=\"Сбросить активные загрузки пользователя {row.get('user_id')}?\">Сбросить</button>
+                </td>
+            </tr>
+            """
+            for row in active_rows
+        ) or "<tr><td colspan=\"4\">Нет активных загрузок</td></tr>"
+
+        pending_queue_rows = "".join(
+            f"""
+            <tr>
+                <td><code>{html.escape(str(row.get('token')))}</code></td>
+                <td>{row.get('initiator_id') or '—'}</td>
+                <td>{row.get('source_chat_id') or '—'}</td>
+                <td>{format_since(row.get('age_seconds'))}</td>
+                <td>
+                    <button class=\"action-btn danger\" data-action=\"drop_token\" data-token=\"{html.escape(str(row.get('token')))}\" data-confirm=\"Удалить pending кнопку?\">Удалить</button>
+                </td>
+            </tr>
+            """
+            for row in pending_rows_preview
+        ) or "<tr><td colspan=\"5\">Pending кнопок нет</td></tr>"
+
         queue_section_html = f"""
         <section>
             <h2>Очередь и управление</h2>
@@ -725,35 +754,6 @@ class AdminPanelServer:
             """
             for item in recent
         ) or "<tr><td colspan=\"5\">История пуста</td></tr>"
-
-        active_queue_rows = "".join(
-            f"""
-            <tr>
-                <td>{row.get('user_id')}</td>
-                <td>{row.get('active')}</td>
-                <td class=\"{'danger-text' if row.get('is_stuck') else ''}\">{format_since(row.get('seconds_since_last'))}</td>
-                <td>
-                    <button class=\"action-btn danger\" data-action=\"cancel_user\" data-user-id=\"{row.get('user_id')}\" data-confirm=\"Сбросить активные загрузки пользователя {row.get('user_id')}?\">Сбросить</button>
-                </td>
-            </tr>
-            """
-            for row in active_rows
-        ) or "<tr><td colspan=\"4\">Нет активных загрузок</td></tr>"
-
-        pending_queue_rows = "".join(
-            f"""
-            <tr>
-                <td><code>{html.escape(str(row.get('token')))}</code></td>
-                <td>{row.get('initiator_id') or '—'}</td>
-                <td>{row.get('source_chat_id') or '—'}</td>
-                <td>{format_since(row.get('age_seconds'))}</td>
-                <td>
-                    <button class=\"action-btn danger\" data-action=\"drop_token\" data-token=\"{html.escape(str(row.get('token')))}\" data-confirm=\"Удалить pending кнопку?\">Удалить</button>
-                </td>
-            </tr>
-            """
-            for row in pending_rows_preview
-        ) or "<tr><td colspan=\"5\">Pending кнопок нет</td></tr>"
 
         failure_rows_html = "".join(
             f"""
