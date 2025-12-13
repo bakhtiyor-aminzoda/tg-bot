@@ -140,7 +140,7 @@ def get_user_stats(user_id: int, chat_id: Optional[int] = None) -> Optional[Dict
         func.sum(sa.case((downloads.c.status != "success", 1), else_=0)).label("failed_count"),
         func.min(downloads.c.timestamp).label("first_download"),
         func.max(downloads.c.timestamp).label("last_download"),
-    ).where(*filters)
+    ).where(*filters).group_by(downloads.c.user_id)
 
     row = _fetch_one(stmt)
 

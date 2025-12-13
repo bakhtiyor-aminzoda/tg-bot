@@ -11,7 +11,7 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import FSInputFile
 
 import config
-from bot_app.helpers import detect_platform, resolve_chat_title
+from bot_app.helpers import detect_platform, resolve_chat_title, resolve_user_display
 from bot_app.runtime import bot, dp, global_download_semaphore, logger
 from bot_app import state
 from bot_app.ui import status as status_ui
@@ -58,7 +58,7 @@ async def handle_download_callback(callback: types.CallbackQuery):
 
     url = entry.get("url")
     uid = callback.from_user.id
-    username = callback.from_user.username
+    username = resolve_user_display(callback.from_user)
     initiator_id = entry.get("initiator_id")
     source_chat_id = entry.get("source_chat_id")
     source_message_id = entry.get("source_message_id")
@@ -204,7 +204,7 @@ async def _log_and_report_callback_error(
     error: Exception,
     url: str,
     uid: int,
-    username: str,
+    username: str | None,
     platform: str,
 ):
     logger.exception("Ошибка при обработке callback: %s", error)

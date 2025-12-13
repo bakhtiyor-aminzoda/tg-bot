@@ -79,9 +79,28 @@ def resolve_chat_title(chat: types.Chat) -> str:
         return f"@{username}"
     return f"chat_{getattr(chat, 'id', 'unknown')}"
 
+def resolve_user_display(user: types.User | None) -> Optional[str]:
+    """Return the best-effort display name for a Telegram user."""
+
+    if not user:
+        return None
+
+    username = getattr(user, "username", None)
+    if username:
+        return f"@{username}" if not username.startswith("@") else username
+
+    parts = [getattr(user, "first_name", None), getattr(user, "last_name", None)]
+    display = " ".join(part for part in parts if part)
+    if display.strip():
+        return display.strip()
+
+    return str(getattr(user, "id", "")) or None
+
+
 __all__ = [
     "detect_platform",
     "extract_url_from_entities",
     "extract_first_url_from_text",
     "resolve_chat_title",
+    "resolve_user_display",
 ]

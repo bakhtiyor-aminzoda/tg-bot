@@ -19,6 +19,7 @@ from bot_app.helpers import (
     extract_url_from_entities,
     extract_first_url_from_text,
     resolve_chat_title,
+    resolve_user_display,
 )
 from bot_app.runtime import bot, dp, global_download_semaphore, logger
 from bot_app import state
@@ -107,6 +108,7 @@ async def universal_handler(message: types.Message):
             logger.debug("Не удалось обновить сведения о чате", exc_info=True)
 
     uid = message.from_user.id
+    user_display = resolve_user_display(message.from_user)
     chat_type = getattr(message.chat, "type", "")
     platform = detect_platform(url)
     if not platform:
@@ -223,7 +225,7 @@ async def universal_handler(message: types.Message):
 
                 add_download(
                     user_id=uid,
-                    username=message.from_user.username,
+                    username=user_display,
                     platform=platform,
                     url=url,
                     chat_id=message.chat.id,
@@ -246,7 +248,7 @@ async def universal_handler(message: types.Message):
 
                 add_download(
                     user_id=uid,
-                    username=message.from_user.username,
+                    username=user_display,
                     platform=platform,
                     url=url,
                     chat_id=message.chat.id,
@@ -268,7 +270,7 @@ async def universal_handler(message: types.Message):
 
                 add_download(
                     user_id=uid,
-                    username=message.from_user.username,
+                    username=user_display,
                     platform=platform,
                     url=url,
                     chat_id=message.chat.id,
