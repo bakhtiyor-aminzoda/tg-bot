@@ -932,7 +932,11 @@ class AdminPanelServer:
         return parsed
 
 
-def _format_timestamp(ts: Optional[str]) -> str:
+def _format_timestamp(ts: Optional[object]) -> str:
     if not ts:
         return "—"
-    return ts.replace("T", " ")
+    if isinstance(ts, datetime):
+        # Normalize to naive string for consistent rendering
+        return ts.strftime("%Y-%m-%d %H:%M:%S")
+    text = str(ts)
+    return text.replace("T", " ")
