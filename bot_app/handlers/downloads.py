@@ -26,7 +26,6 @@ from bot_app.helpers import (
 from bot_app.metrics import update_active_downloads_gauge, update_pending_tokens_gauge, update_queue_gauges
 from bot_app.runtime import bot, dp, global_download_semaphore, logger
 from bot_app.ui import status as status_ui
-from bot_app.ui import quality as quality_ui
 from bot_app.ui.i18n import get_locale, translate
 from monitoring import add_breadcrumb, capture_exception, increment_metric, request_context, set_metric_gauge
 from services.file_scanner import ensure_file_is_safe
@@ -62,71 +61,6 @@ async def _safe_delete_message(message: types.Message) -> None:
             logger.exception("Ошибка удаления сообщения пользователя: %s", e)
     except Exception:
         logger.debug("Не удалось удалить сообщение пользователя", exc_info=True)
-
-
-@dp.callback_query(lambda c: (c.data or "").startswith("quality:"))
-async def handle_quality_choice_callback(callback: types.CallbackQuery) -> None:
-    data = callback.data or ""
-    locale = get_locale(getattr(callback.from_user, "language_code", None))
-    try:
-        _, token, slug = data.split(":", 2)
-    except ValueError:
-        await callback.answer(translate("quality.expired", locale), show_alert=True)
-        return
-    payload = state.pending_quality_requests.pop(token, None)
-    if not payload:
-        await callback.answer(translate("quality.expired", locale), show_alert=True)
-        return
-    if time.time() - payload.get("ts", 0) > state.QUALITY_TOKEN_TTL:
-        await callback.answer(translate("quality.expired", locale), show_alert=True)
-        return
-    expected_user = payload.get("user_id")
-    if expected_user and expected_user != getattr(callback.from_user, "id", None):
-        await callback.answer(translate("download.pending_missing", locale), show_alert=True)
-        return
-    message_dump = payload.get("message_dump")
-    if not message_dump:
-        await callback.answer(translate("quality.expired", locale), show_alert=True)
-        return
-    restored_message = types.Message.model_validate(message_dump)
-    restored_message.bot = bot
-    await _safe_delete_message(callback.message)
-    await callback.answer(translate("download.starting", locale))
-    url = payload.get("url")
-    if not url:
-        await callback.answer(translate("quality.expired", locale), show_alert=True)
-        return
-    await _process_download_flow(
-        restored_message,
-        url,
-        payload.get("locale", locale),
-        quality_slug=slug,
-        request_id=payload.get("request_id"),
-        skip_quality_prompt=True,
-    )
-
-
-async def _prompt_quality_choice(message: types.Message, url: str, locale: str, request_id: str) -> None:
-    token = uuid4().hex
-    try:
-        state.pending_quality_requests[token] = {
-            "message_dump": message.model_dump(),
-            "user_id": getattr(message.from_user, "id", 0),
-            "url": url,
-            "locale": locale,
-            "request_id": request_id,
-            "ts": time.time(),
-        }
-    except Exception:
-        logger.exception("Не удалось сохранить состояние для выбора качества")
-        await message.reply(translate("quality.expired", locale))
-        return
-    keyboard = quality_ui.build_keyboard(token, locale)
-    try:
-        await message.reply(translate("quality.prompt", locale), reply_markup=keyboard)
-    except Exception:
-        logger.exception("Не удалось отправить клавиатуру выбора качества")
-        state.pending_quality_requests.pop(token, None)
 
 
 @dp.message(Command("download"))
@@ -171,9 +105,7 @@ async def _process_download_flow(
     url: str,
     locale: str,
     *,
-    quality_slug: Optional[str] = None,
     request_id: Optional[str] = None,
-    skip_quality_prompt: bool = False,
 ) -> None:
     process_started = time.perf_counter()
     uid = getattr(message.from_user, "id", 0)
@@ -254,12 +186,6 @@ async def _process_download_flow(
                     await message.reply(translate("download.cooldown", locale, seconds=wait))
                     return
 
-            if chat_type not in ("group", "supergroup") and not skip_quality_prompt and quality_slug is None:
-                await _prompt_quality_choice(message, url, locale, request_id)
-                return
-
-            preset = quality_ui.get_preset(quality_slug or "auto")
-
             if chat_type in ("group", "supergroup"):
                 token = uuid4().hex
                 state.pending_downloads[token] = {
@@ -331,9 +257,6 @@ async def _process_download_flow(
                     timeout=config.DOWNLOAD_TIMEOUT_SECONDS,
                     cookies_file=cookies_file,
                     progress_cb=progress_callback,
-                    format_spec=preset.format_spec,
-                    expect_audio=preset.expect_audio,
-                    expect_video=preset.expect_video,
                 )
             logger.info("Released global download slot")
             update_queue_gauges()
@@ -345,27 +268,16 @@ async def _process_download_flow(
                 await _safe_status_edit(status_msg, translate("download.large_file_limit", locale))
                 return
 
-            caption = translate(
-                "download.audio_caption" if not preset.expect_video else "download.video_caption",
-                locale,
-                platform=platform_label,
-            )
+            caption = translate("download.video_caption", locale, platform=platform_label)
             try:
                 await _safe_status_edit(status_msg, status_ui.sending(platform, locale=locale))
                 file_obj = FSInputFile(path=str(downloaded_path))
-                if preset.expect_video:
-                    await bot.send_video(
-                        chat_id=message.chat.id,
-                        video=file_obj,
-                        caption=caption,
-                        supports_streaming=True,
-                    )
-                else:
-                    await bot.send_audio(
-                        chat_id=message.chat.id,
-                        audio=file_obj,
-                        caption=caption,
-                    )
+                await bot.send_video(
+                    chat_id=message.chat.id,
+                    video=file_obj,
+                    caption=caption,
+                    supports_streaming=True,
+                )
             except TelegramBadRequest as e:
                 logger.warning("send_video failed (%s), trying send_document", e)
                 try:

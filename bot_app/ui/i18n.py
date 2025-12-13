@@ -52,13 +52,6 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "download.source_unavailable": "Ссылка недоступна.",
         "download.telegram_send_error": "Ошибка отправки файла в Telegram: {reason}",
         "download.video_caption": "Видео скачано с {platform} — @MediaBanditbot",
-        "download.audio_caption": "Аудио дорожка с {platform} — @MediaBanditbot",
-        "quality.prompt": "Выберите качество или аудио-режим перед скачиванием:",
-        "quality.option.auto": "⚙️ Авто",
-        "quality.option.720p": "HD 720p",
-        "quality.option.480p": "SD 480p",
-        "quality.option.audio": "🎧 Аудио",
-        "quality.expired": "Этот выбор устарел. Отправьте ссылку ещё раз.",
     },
     "en": {
         "status.waiting": (
@@ -102,13 +95,6 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "download.source_unavailable": "Link unavailable.",
         "download.telegram_send_error": "Failed to send the file to Telegram: {reason}",
         "download.video_caption": "Video downloaded from {platform} — @MediaBanditbot",
-        "download.audio_caption": "Audio track from {platform} — @MediaBanditbot",
-        "quality.prompt": "Pick the video/audio quality before downloading:",
-        "quality.option.auto": "⚙️ Auto",
-        "quality.option.720p": "HD 720p",
-        "quality.option.480p": "SD 480p",
-        "quality.option.audio": "🎧 Audio",
-        "quality.expired": "This selection expired. Please send the link again.",
     },
 }
 

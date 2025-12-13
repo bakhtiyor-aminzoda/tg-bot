@@ -635,11 +635,11 @@ class AdminPanelServer:
                     <h3>Активные пользователи</h3>
                     <table>
                         <thead>
-                            <td>
-                                <button type="button" class="action-btn danger" data-action="cancel_user" data-user-id="{row.get('user_id')}" data-confirm="Сбросить активные загрузки пользователя {row.get('user_id')}?">Сбросить</button>
-                            </td>
+                            <tr>
+                                <th>Пользователь</th>
+                                <th>Активность</th>
                                 <th>Последняя активность</th>
-                                <th>Действие</th>
+                                <th>Действия</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -651,12 +651,12 @@ class AdminPanelServer:
                     <h3>Pending кнопки</h3>
                     <table>
                         <thead>
-                            <td>
-                                <button type="button" class="action-btn danger" data-action="drop_token" data-token="{html.escape(str(row.get('token')))}" data-confirm="Удалить pending кнопку?">Удалить</button>
-                            </td>
+                            <tr>
+                                <th>Токен</th>
+                                <th>Инициатор</th>
                                 <th>Чат</th>
                                 <th>Возраст</th>
-                                <th></th>
+                                <th>Действия</th>
                             </tr>
                         </thead>
                         <tbody>

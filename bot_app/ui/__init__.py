@@ -1,3 +1,3 @@
 """UI helpers package."""
 
-__all__ = ["status", "quality"]
+__all__ = ["status"]
