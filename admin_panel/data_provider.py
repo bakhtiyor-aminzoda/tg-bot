@@ -41,7 +41,7 @@ class DashboardDataProvider:
         summary = stats_service.get_summary(chat_id)
         top_users = stats_service.get_top_users(chat_id, limit=10, order_by=top_sort)
         platforms = stats_service.get_platform_stats(chat_id, order_by=platform_sort)
-        recent = stats_service.get_recent_downloads(chat_id, limit=20)
+        recent = stats_service.get_recent_downloads(chat_id, limit=10)
         failures = stats_service.get_recent_failures(chat_id, limit=10)
         chat_list = stats_service.list_chats(order_by=chat_sort, search=search_query, limit=100)
         scope = "Глобальная статистика" if chat_id is None else f"Чат #{chat_id}"
