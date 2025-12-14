@@ -324,7 +324,7 @@ def _normalized_subscription_plans() -> Dict[str, Dict[str, object]]:
 	baseline = {
 		"free": {
 			"label": "Free",
-			"daily_quota": 5,
+			"daily_quota": 30,
 			"monthly_quota": 60,
 			"max_parallel_downloads": 1,
 			"priority": 0,
@@ -333,7 +333,7 @@ def _normalized_subscription_plans() -> Dict[str, Dict[str, object]]:
 		},
 		"power": {
 			"label": "Power",
-			"daily_quota": 20,
+			"daily_quota": 30,
 			"monthly_quota": 400,
 			"max_parallel_downloads": 2,
 			"priority": 10,
@@ -342,7 +342,7 @@ def _normalized_subscription_plans() -> Dict[str, Dict[str, object]]:
 		},
 		"team": {
 			"label": "Team",
-			"daily_quota": 60,
+			"daily_quota": 30,
 			"monthly_quota": 1500,
 			"max_parallel_downloads": 4,
 			"priority": 20,
@@ -370,7 +370,7 @@ def _normalized_subscription_plans() -> Dict[str, Dict[str, object]]:
 			current = baseline.get(plan_key, {})
 			baseline[plan_key] = {
 				"label": definition.get("label") or current.get("label") or plan_key.title(),
-				"daily_quota": _coerce_positive_int(definition.get("daily_quota"), current.get("daily_quota", 5)),
+				"daily_quota": _coerce_positive_int(definition.get("daily_quota"), current.get("daily_quota", 30)),
 				"monthly_quota": _coerce_positive_int(definition.get("monthly_quota"), current.get("monthly_quota", 60)),
 				"max_parallel_downloads": max(1, _coerce_positive_int(definition.get("max_parallel_downloads"), current.get("max_parallel_downloads", 1))),
 				"priority": _coerce_positive_int(definition.get("priority"), current.get("priority", 0)),

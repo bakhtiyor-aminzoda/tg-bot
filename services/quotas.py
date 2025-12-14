@@ -71,7 +71,7 @@ def _plan_defaults(plan_key: Optional[str]) -> Dict[str, object]:
     if not plans:
         return {
             "label": "Free",
-            "daily_quota": 5,
+            "daily_quota": 30,
             "monthly_quota": 60,
         }
     normalized_key = (plan_key or config.DEFAULT_SUBSCRIPTION_PLAN or "free").strip().lower() or "free"

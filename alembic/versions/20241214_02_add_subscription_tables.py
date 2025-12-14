@@ -18,7 +18,7 @@ def upgrade() -> None:
         sa.Column("plan", sa.Text(), primary_key=True),
         sa.Column("display_name", sa.Text(), nullable=False),
         sa.Column("description", sa.Text()),
-        sa.Column("daily_quota", sa.Integer(), nullable=False, server_default="5"),
+        sa.Column("daily_quota", sa.Integer(), nullable=False, server_default="30"),
         sa.Column("monthly_quota", sa.Integer(), nullable=False, server_default="60"),
         sa.Column("max_parallel_downloads", sa.Integer(), nullable=False, server_default="1"),
         sa.Column("price_usd", sa.Integer(), nullable=False, server_default="0"),

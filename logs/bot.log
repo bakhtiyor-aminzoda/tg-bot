@@ -3879,3 +3879,91 @@ sentry_sdk.utils.BadDsn: Missing public key
 2025-12-14 16:57:56,572 | INFO | bot_app.runtime | request=b72f2c7efa5b4176a59a9df27fc4e183 | Acquired global download slot
 2025-12-14 16:57:56,572 | INFO | bot_app.runtime | request=b72f2c7efa5b4176a59a9df27fc4e183 | Released global download slot
 2025-12-14 16:57:56,592 | INFO | services.video_cache | request=- | Video cache hit for https://example.com/foo (/var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpzim7citp/out/video.mp4)
+2025-12-14 17:09:31,617 | ERROR | root | request=- | Не удалось инициализировать Sentry (sentry_sdk отсутствует или неверный DSN)
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/monitoring.py", line 176, in setup_logging
+    sentry_sdk.init(dsn=sentry_dsn)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sentry_sdk/_init_implementation.py", line 62, in _init
+    client = sentry_sdk.Client(*args, **kwargs)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sentry_sdk/client.py", line 295, in __init__
+    self._init_impl()
+    ~~~~~~~~~~~~~~~^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sentry_sdk/client.py", line 385, in _init_impl
+    self.transport = make_transport(self.options)
+                     ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sentry_sdk/transport.py", line 902, in make_transport
+    return transport_cls(options)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sentry_sdk/transport.py", line 188, in __init__
+    Transport.__init__(self, options)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sentry_sdk/transport.py", line 73, in __init__
+    self.parsed_dsn = Dsn(options["dsn"], options.get("org_id"))
+                      ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sentry_sdk/utils.py", line 327, in __init__
+    raise BadDsn("Missing public key")
+sentry_sdk.utils.BadDsn: Missing public key
+2025-12-14 17:09:31,636 | WARNING | utils.access_control | request=- | Пользователь 6 не администратор
+2025-12-14 17:09:31,637 | WARNING | utils.access_control | request=- | Пользователь 99 не в whitelist
+2025-12-14 17:09:31,652 | INFO | bot_app.runtime | request=- | Received callback_query: download:photo-fallback from 42
+2025-12-14 17:09:31,653 | INFO | bot_app.runtime | request=76a0bbda7b2944aeaa32df23e8fcdeef | Waiting for global download slot (callback)...
+2025-12-14 17:09:31,653 | INFO | bot_app.runtime | request=76a0bbda7b2944aeaa32df23e8fcdeef | Acquired global download slot (callback)
+2025-12-14 17:09:31,653 | INFO | bot_app.runtime | request=76a0bbda7b2944aeaa32df23e8fcdeef | Released global download slot (callback)
+2025-12-14 17:09:31,653 | WARNING | bot_app.runtime | request=76a0bbda7b2944aeaa32df23e8fcdeef | send_photo failed (callback, ), fallback to document
+2025-12-14 17:09:31,655 | INFO | bot_app.runtime | request=- | Received callback_query: download:photo from 42
+2025-12-14 17:09:31,655 | INFO | bot_app.runtime | request=f53b645966a442adb4cd81cf64727919 | Waiting for global download slot (callback)...
+2025-12-14 17:09:31,655 | INFO | bot_app.runtime | request=f53b645966a442adb4cd81cf64727919 | Acquired global download slot (callback)
+2025-12-14 17:09:31,656 | INFO | bot_app.runtime | request=f53b645966a442adb4cd81cf64727919 | Released global download slot (callback)
+2025-12-14 17:09:31,657 | INFO | bot_app.runtime | request=- | Received callback_query: download:valid from 42
+2025-12-14 17:09:31,658 | INFO | bot_app.runtime | request=4f629709ca804ffea2bec9b1b9a69f7d | Waiting for global download slot (callback)...
+2025-12-14 17:09:31,658 | INFO | bot_app.runtime | request=4f629709ca804ffea2bec9b1b9a69f7d | Acquired global download slot (callback)
+2025-12-14 17:09:31,658 | INFO | bot_app.runtime | request=4f629709ca804ffea2bec9b1b9a69f7d | Released global download slot (callback)
+2025-12-14 17:09:31,659 | INFO | bot_app.runtime | request=- | Received callback_query: download:expired from 42
+2025-12-14 17:09:31,672 | INFO | bot_app.runtime | request=1a7042c8158b454c840d3cb194edbb49 | Waiting for global download slot...
+2025-12-14 17:09:31,672 | INFO | bot_app.runtime | request=1a7042c8158b454c840d3cb194edbb49 | Acquired global download slot
+2025-12-14 17:09:31,672 | INFO | bot_app.runtime | request=1a7042c8158b454c840d3cb194edbb49 | Released global download slot
+2025-12-14 17:09:31,692 | INFO | services.video_cache | request=- | Video cache hit for https://example.com/foo (/var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpfs4lf16o/out/video.mp4)
+2025-12-14 17:15:17,076 | ERROR | root | request=- | Не удалось инициализировать Sentry (sentry_sdk отсутствует или неверный DSN)
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/monitoring.py", line 176, in setup_logging
+    sentry_sdk.init(dsn=sentry_dsn)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sentry_sdk/_init_implementation.py", line 62, in _init
+    client = sentry_sdk.Client(*args, **kwargs)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sentry_sdk/client.py", line 295, in __init__
+    self._init_impl()
+    ~~~~~~~~~~~~~~~^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sentry_sdk/client.py", line 385, in _init_impl
+    self.transport = make_transport(self.options)
+                     ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sentry_sdk/transport.py", line 902, in make_transport
+    return transport_cls(options)
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sentry_sdk/transport.py", line 188, in __init__
+    Transport.__init__(self, options)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sentry_sdk/transport.py", line 73, in __init__
+    self.parsed_dsn = Dsn(options["dsn"], options.get("org_id"))
+                      ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/apple/Desktop/projects/tg_video_downloader_mvp/venv/lib/python3.14/site-packages/sentry_sdk/utils.py", line 327, in __init__
+    raise BadDsn("Missing public key")
+sentry_sdk.utils.BadDsn: Missing public key
+2025-12-14 17:15:17,099 | WARNING | utils.access_control | request=- | Пользователь 6 не администратор
+2025-12-14 17:15:17,101 | WARNING | utils.access_control | request=- | Пользователь 99 не в whitelist
+2025-12-14 17:15:17,115 | INFO | bot_app.runtime | request=- | Received callback_query: download:photo-fallback from 42
+2025-12-14 17:15:17,116 | INFO | bot_app.runtime | request=d1417b54f8d94fcbbd314dc9c2560716 | Waiting for global download slot (callback)...
+2025-12-14 17:15:17,116 | INFO | bot_app.runtime | request=d1417b54f8d94fcbbd314dc9c2560716 | Acquired global download slot (callback)
+2025-12-14 17:15:17,116 | INFO | bot_app.runtime | request=d1417b54f8d94fcbbd314dc9c2560716 | Released global download slot (callback)
+2025-12-14 17:15:17,116 | WARNING | bot_app.runtime | request=d1417b54f8d94fcbbd314dc9c2560716 | send_photo failed (callback, ), fallback to document
+2025-12-14 17:15:17,118 | INFO | bot_app.runtime | request=- | Received callback_query: download:photo from 42
+2025-12-14 17:15:17,119 | INFO | bot_app.runtime | request=c965e7bc7f604a2ea2307d0a8209df4f | Waiting for global download slot (callback)...
+2025-12-14 17:15:17,119 | INFO | bot_app.runtime | request=c965e7bc7f604a2ea2307d0a8209df4f | Acquired global download slot (callback)
+2025-12-14 17:15:17,119 | INFO | bot_app.runtime | request=c965e7bc7f604a2ea2307d0a8209df4f | Released global download slot (callback)
+2025-12-14 17:15:17,121 | INFO | bot_app.runtime | request=- | Received callback_query: download:valid from 42
+2025-12-14 17:15:17,122 | INFO | bot_app.runtime | request=81d057b9ff7c40e69ec68fb950137bec | Waiting for global download slot (callback)...
+2025-12-14 17:15:17,122 | INFO | bot_app.runtime | request=81d057b9ff7c40e69ec68fb950137bec | Acquired global download slot (callback)
+2025-12-14 17:15:17,122 | INFO | bot_app.runtime | request=81d057b9ff7c40e69ec68fb950137bec | Released global download slot (callback)
+2025-12-14 17:15:17,123 | INFO | bot_app.runtime | request=- | Received callback_query: download:expired from 42
+2025-12-14 17:15:17,142 | INFO | bot_app.runtime | request=b9750732cf6844d1b8a3123e4d1ebd5f | Waiting for global download slot...
+2025-12-14 17:15:17,142 | INFO | bot_app.runtime | request=b9750732cf6844d1b8a3123e4d1ebd5f | Acquired global download slot
+2025-12-14 17:15:17,142 | INFO | bot_app.runtime | request=b9750732cf6844d1b8a3123e4d1ebd5f | Released global download slot
+2025-12-14 17:15:17,163 | INFO | services.video_cache | request=- | Video cache hit for https://example.com/foo (/var/folders/5k/4qc4qmc90xx04dqvk105m3b00000gn/T/tmpn_ksxzmb/out/video.mp4)
