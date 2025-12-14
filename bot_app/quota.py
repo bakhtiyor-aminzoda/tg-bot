@@ -1,6 +1,4 @@
 """Rendering helpers for quota-related UX flows."""
-+
-"""Rendering helpers for quota-related UX flows."""
 
 from __future__ import annotations
 
