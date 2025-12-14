@@ -12,7 +12,7 @@ import logging
 from datetime import datetime
 from typing import Optional
 
-from aiogram import types
+from aiogram import F, types
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
@@ -27,6 +27,13 @@ from monitoring import HealthCheckServer
 from admin_panel_web import AdminPanelServer
 
 logger = logging.getLogger(__name__)
+
+START_CTA_KEYBOARD = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="📥 Скачать без лишних вопросов", callback_data="start:download")],
+        [InlineKeyboardButton(text="🕳 Что здесь вообще происходит?", callback_data="start:howto")],
+    ]
+)
 
 # === История загрузок (опционально) ===
 if config.ENABLE_HISTORY:
@@ -48,6 +55,76 @@ if config.ENABLE_HISTORY:
     except Exception as e:
         logger.warning("Не удалось инициализировать БД истории: %s", e)
         config.ENABLE_HISTORY = False
+
+# ---------- Базовые команды ----------
+
+
+@dp.message(Command("start"))
+async def cmd_start_handler(message: types.Message):
+    """Приветственное сообщение с чёрным юмором и быстрыми CTA."""
+
+    chat_type = getattr(message.chat, "type", "private")
+    in_private = chat_type == "private"
+
+    opener_lines = [
+        "😈 <b>Media Bandit на связи.</b>",
+        "Я похищаю ваши видео быстрее, чем их автор успевает нажать «удалить».",
+        "Если нужна совесть — ищи другой бот, здесь только быстрый дамп ссылок.",
+    ]
+
+    if in_private:
+        usage_hint = (
+            "🔒 <b>Личные сообщения:</b> просто швыряй ссылку сюда. "
+            "Можно с подписью, можно ответом на своё же сообщение — я всё равно вскрою контент."
+        )
+    else:
+        usage_hint = (
+            "👥 <b>Группы и супергруппы:</b> ответь на сообщение с ссылкой или вставь URL в чат. "
+            "Я тихо отработаю и удалю хвосты, пока модеры делают вид, что всё под контролем."
+        )
+
+    outro = (
+        "💀 Нажми кнопку ниже: одно касание, и у тебя официальный алиби — будто ты просто грузил котиков." 
+        " Попутно можешь звать друзей командой /referral, пусть тоже страдают от изобилия контента."
+    )
+
+    text = "\n\n".join(opener_lines + [usage_hint, outro])
+    await message.reply(text, parse_mode="HTML", reply_markup=START_CTA_KEYBOARD)
+
+
+@dp.callback_query(F.data.startswith("start:"))
+async def start_cta_callback(callback_query: types.CallbackQuery):
+    """Обработчик инлайн-кнопок на /start."""
+
+    payload = (callback_query.data or "start:download").split(":", 1)[1]
+    message = getattr(callback_query, "message", None)
+    chat_type = getattr(message, "chat", None)
+    chat_type = getattr(chat_type, "type", "private")
+    in_private = chat_type == "private"
+
+    if payload == "howto":
+        text = (
+            "🕳 <b>Суровый мануал:</b>\n"
+            "• До 3 параллельных загрузок на пользователя, чтобы сервера не вспыхнули.\n"
+            "• Ограничения видно в /quota, апгрейд — через /upgrade (или через шантаж, но мы за честность).\n"
+            "• Если бот молчит, повтори запрос: иногда CDN засыпает, мы его будим электрошейкером."
+        )
+    else:
+        if in_private:
+            text = (
+                "📥 <b>Личный режим грабежа:</b> кидай ссылку, жди файл. "
+                "Можно сразу несколько — анти-спам переживёт, а совесть мы уже выключили."
+            )
+        else:
+            text = (
+                "📥 <b>Групповой налёт:</b> ответь на чужое сообщение с ссылкой или брось URL отдельно. "
+                "Я отмечу исполнителя и шепну в личку, если что-то пойдёт не так."
+            )
+
+    await callback_query.answer()
+    if message:
+        await message.reply(text, parse_mode="HTML")
+
 
 # ---------- Команды админ-панели ----------
 if config.ENABLE_HISTORY:
