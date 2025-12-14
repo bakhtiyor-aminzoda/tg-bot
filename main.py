@@ -22,7 +22,7 @@ import bot_app.handlers.downloads  # noqa: F401
 from bot_app.maintenance import start_background_tasks, stop_background_tasks
 from bot_app.runtime import bot, dp
 from bot_app.ui.i18n import get_locale, translate
-from bot_app.referral import build_referral_card
+from bot_app.referral import build_profile_view, build_referral_card
 from monitoring import HealthCheckServer
 from admin_panel_web import AdminPanelServer
 
@@ -34,6 +34,31 @@ START_CTA_KEYBOARD = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="🕳 Что здесь вообще происходит?", callback_data="start:howto")],
     ]
 )
+
+def _extract_start_payload(message: types.Message) -> str:
+    text = message.text or ""
+    parts = text.split(maxsplit=1)
+    if len(parts) < 2:
+        return ""
+    return parts[1].strip()
+
+async def _handle_start_referral(message: types.Message, locale: str, payload: str) -> None:
+    if not config.ENABLE_HISTORY or not payload:
+        return
+    normalized = payload.strip()
+    if not normalized.lower().startswith("ref_"):
+        return
+    code = normalized[4:].strip()
+    if not code:
+        return
+    try:
+        referral_service.register_referral(code, message.from_user.id)
+    except ValueError as exc:
+        logger.info("Auto referral registration skipped: %s", exc)
+        return
+    await message.reply(translate("referral.register_success", locale))
+    text, markup = build_profile_view(message.from_user.id, locale, section="referrals")
+    await message.answer(text, reply_markup=markup)
 
 # === История загрузок (опционально) ===
 if config.ENABLE_HISTORY:
@@ -65,6 +90,8 @@ async def cmd_start_handler(message: types.Message):
 
     chat_type = getattr(message.chat, "type", "private")
     in_private = chat_type == "private"
+    locale = get_locale(getattr(getattr(message, "from_user", None), "language_code", None))
+    start_payload = _extract_start_payload(message)
 
     opener_lines = [
         "😈 <b>Media Bandit на связи.</b>",
@@ -90,6 +117,7 @@ async def cmd_start_handler(message: types.Message):
 
     text = "\n\n".join(opener_lines + [usage_hint, outro])
     await message.reply(text, parse_mode="HTML", reply_markup=START_CTA_KEYBOARD)
+    await _handle_start_referral(message, locale, start_payload)
 
 
 @dp.callback_query(lambda cq: (cq.data or "").startswith("start:"))
@@ -306,10 +334,17 @@ export ADMIN_USER_IDS="{message.from_user.id}"
             )
         await message.reply(text, parse_mode="HTML", reply_markup=reply_markup)
 
+    @dp.message(Command("profile"))
+    async def cmd_profile_handler(message: types.Message):
+        locale = get_locale(getattr(getattr(message, "from_user", None), "language_code", None))
+        text, markup = build_profile_view(message.from_user.id, locale, section="overview")
+        await message.reply(text, reply_markup=markup)
+
+
     @dp.message(Command("referral"))
     async def cmd_referral_handler(message: types.Message):
         locale = get_locale(getattr(getattr(message, "from_user", None), "language_code", None))
-        text, markup = build_referral_card(message.from_user.id, locale)
+        text, markup = build_profile_view(message.from_user.id, locale, section="referrals")
         await message.reply(text, reply_markup=markup)
 
     @dp.message(Command("use_referral"))
@@ -326,6 +361,8 @@ export ADMIN_USER_IDS="{message.from_user.id}"
             await message.reply(translate("referral.register_error", locale, reason=str(exc)))
             return
         await message.reply(translate("referral.register_success", locale))
+        text, markup = build_profile_view(message.from_user.id, locale, section="referrals")
+        await message.answer(text, reply_markup=markup)
 
     @dp.message(Command("ref_leaderboard"))
     async def cmd_ref_leaderboard_handler(message: types.Message):

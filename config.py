@@ -82,6 +82,8 @@ def _normalize_database_url(raw: Optional[str]) -> Optional[str]:
 
 # Telegram token — читаем из окружения
 TOKEN = _require_env_var("TELEGRAM_BOT_TOKEN", example="123456:ABCDEF")
+_bot_username_raw = os.environ.get("BOT_USERNAME", "").strip()
+BOT_USERNAME = _bot_username_raw.lstrip("@") if _bot_username_raw else None
 
 # Хранилище истории: DATABASE_URL обязателен (можно использовать sqlite DSN)
 _raw_db_url = _require_env_var("DATABASE_URL", example="postgresql+psycopg://user:pass@host/db")

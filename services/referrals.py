@@ -103,6 +103,21 @@ def list_user_codes(user_id: int) -> List[Dict[str, object]]:
         return [dict(row) for row in conn.execute(stmt).mappings().all()]
 
 
+def ensure_personal_code(user_id: int) -> Dict[str, object]:
+    """Return an active referral code for the user, creating one if needed."""
+
+    if not user_id:
+        raise ValueError("user_id is required")
+
+    now = _utcnow()
+    codes = list_user_codes(user_id)
+    for code in codes:
+        expires_at = code.get("expires_at")
+        if not expires_at or expires_at > now:
+            return code
+    return create_referral_code(user_id)
+
+
 def register_referral(code_value: str, referred_user_id: int) -> Dict[str, object]:
     """Link a referred user to a code (pending confirmation)."""
 
@@ -308,6 +323,7 @@ def referral_leaderboard(limit: int = 10) -> List[Dict[str, object]]:
 __all__ = [
     "create_referral_code",
     "list_user_codes",
+    "ensure_personal_code",
     "register_referral",
     "confirm_referral",
     "active_bonus_for_user",

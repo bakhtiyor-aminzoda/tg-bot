@@ -15,7 +15,7 @@ from aiogram.types import FSInputFile
 
 import config
 from bot_app import quota as quota_ui
-from bot_app.referral import build_referral_card
+from bot_app.referral import build_profile_view, build_referral_card
 from bot_app.helpers import detect_platform, resolve_chat_title, resolve_user_display
 from bot_app.runtime import bot, dp, global_download_semaphore, logger
 from bot_app import state
@@ -37,10 +37,10 @@ from services import quotas as quota_service
 from services import referrals as referral_service
 
 
-async def _update_referral_card(callback: types.CallbackQuery, locale: str) -> None:
+async def _update_profile(callback: types.CallbackQuery, locale: str, section: str = "overview") -> None:
     if not callback.message:
         return
-    text, markup = build_referral_card(callback.from_user.id, locale)
+    text, markup = build_profile_view(callback.from_user.id, locale, section=section)
     try:
         await callback.message.edit_text(text, reply_markup=markup)
     except TelegramBadRequest:
@@ -60,7 +60,7 @@ async def handle_referral_callback(callback: types.CallbackQuery):
         except ValueError as exc:
             await callback.answer(str(exc), show_alert=True)
             return
-        await _update_referral_card(callback, locale)
+        await _update_profile(callback, locale, section="referrals")
         await callback.answer("✅")
         return
     if action == "copy":
@@ -69,6 +69,45 @@ async def handle_referral_callback(callback: types.CallbackQuery):
             await callback.answer(translate("referral.copy_fail", locale), show_alert=True)
             return
         await callback.answer(f"{translate('referral.copy_success', locale)}\n{code}", show_alert=True)
+        return
+    if action == "leaderboard":
+        rows = referral_service.referral_leaderboard(limit=5)
+        if not rows:
+            await callback.answer(translate("referral.leaderboard_empty", locale), show_alert=True)
+            return
+        lines = [translate("referral.leaderboard_header", locale)]
+        for idx, row in enumerate(rows, start=1):
+            lines.append(
+                translate(
+                    "referral.leaderboard_line",
+                    locale,
+                    place=idx,
+                    user=row.get("user_id"),
+                    count=row.get("rewarded", 0),
+                    daily=row.get("daily_bonus", 0),
+                    monthly=row.get("monthly_bonus", 0),
+                )
+            )
+        text = "\n".join(lines)
+        if callback.message:
+            await callback.message.answer(text)
+        await callback.answer()
+        return
+
+    await callback.answer()
+
+
+@dp.callback_query(lambda c: (c.data or "").startswith("profile:"))
+async def handle_profile_callback(callback: types.CallbackQuery):
+    data = callback.data or ""
+    locale = get_locale(getattr(callback.from_user, "language_code", None))
+    parts = data.split(":", 2)
+    action = parts[1] if len(parts) > 1 else ""
+
+    if action == "section":
+        section = parts[2] if len(parts) > 2 else "overview"
+        await _update_profile(callback, locale, section=section)
+        await callback.answer()
         return
     if action == "leaderboard":
         rows = referral_service.referral_leaderboard(limit=5)
