@@ -16,7 +16,7 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
             "Мы сообщим, как только стартуем скачивание."
         ),
         "status.downloading": (
-            "⬇️ Скачиваем видео с {platform}...\n"
+            "⬇️ Скачиваем медиа из {platform}...\n"
             "Это может занять пару минут — можно продолжать переписку."
         ),
         "status.downloading_progress": (
@@ -28,7 +28,7 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "status.processing": "🛠 Обрабатываем файл {platform}...\nПочти готово!",
         "status.sending": "📤 Отправляем файл из {platform}...\nТелеграм готовит вложение.",
         "status.success": (
-            "✅ Готово! Видео с {platform} уже у вас.\n"
+            "✅ Готово! Медиа из {platform} уже у вас.\n"
             "Смело делитесь и возвращайтесь за новыми ссылками."
         ),
         "status.error": "⚠️ Ошибка: {reason}\nПопробуйте ещё раз или проверьте ссылку.",
@@ -51,7 +51,10 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "download.starting": "Запускаю...",
         "download.source_unavailable": "Ссылка недоступна.",
         "download.telegram_send_error": "Ошибка отправки файла в Telegram: {reason}",
-        "download.video_caption": "Видео скачано с {platform} — @MediaBanditbot",
+        "download.caption.video": "Видео скачано с {platform} — @MediaBanditbot",
+        "download.caption.photo": "Фото скачано с {platform} — @MediaBanditbot",
+        "download.document_caption.video": "Видео (файл) — скачано с помощью @MediaBanditbot",
+        "download.document_caption.photo": "Фото (файл) — скачано с помощью @MediaBanditbot",
         "download.quota_daily_exceeded": "🚦 Тариф {plan} позволяет {limit} загрузок в день. Лимит обновится через {reset}.",
         "download.quota_monthly_exceeded": "🚦 Вы исчерпали месячный лимит ({limit}) по тарифу {plan}. Лимит обновится через {reset}.",
         "download.quota_upgrade_hint": "Нужен больший лимит? Напишите @MediaBanditSupport или оформите /upgrade.",
@@ -93,7 +96,7 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
             "We'll notify you as soon as the transfer starts."
         ),
         "status.downloading": (
-            "⬇️ Downloading from {platform}...\n"
+            "⬇️ Downloading media from {platform}...\n"
             "This may take a minute—feel free to keep chatting."
         ),
         "status.downloading_progress": (
@@ -105,7 +108,7 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "status.processing": "🛠 Processing the {platform} file...\nAlmost there!",
         "status.sending": "📤 Sending the file from {platform}...\nTelegram is preparing the attachment.",
         "status.success": (
-            "✅ Done! The {platform} video is already with you.\n"
+            "✅ Done! The {platform} media is already with you.\n"
             "Share it or send another link anytime."
         ),
         "status.error": "⚠️ Error: {reason}\nTry again or double-check the link.",
@@ -126,7 +129,10 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "download.starting": "Starting...",
         "download.source_unavailable": "Link unavailable.",
         "download.telegram_send_error": "Failed to send the file to Telegram: {reason}",
-        "download.video_caption": "Video downloaded from {platform} — @MediaBanditbot",
+        "download.caption.video": "Video downloaded from {platform} — @MediaBanditbot",
+        "download.caption.photo": "Photo downloaded from {platform} — @MediaBanditbot",
+        "download.document_caption.video": "Video (file) — downloaded via @MediaBanditbot",
+        "download.document_caption.photo": "Photo (file) — downloaded via @MediaBanditbot",
         "download.quota_daily_exceeded": "🚦 Your {plan} plan allows {limit} downloads per day. Limit resets in {reset}.",
         "download.quota_monthly_exceeded": "🚦 You've reached the monthly limit ({limit}) on {plan}. Limit resets in {reset}.",
         "download.quota_upgrade_hint": "Need more? Reach out to @MediaBanditSupport or use /upgrade to unlock bigger limits.",

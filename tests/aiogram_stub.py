@@ -80,7 +80,8 @@ def ensure_aiogram_stub() -> None:
             self.inline_keyboard = inline_keyboard
 
     class DummyTelegramBadRequest(Exception):
-        pass
+        def __init__(self, *args, **_kwargs):
+            super().__init__(*args)
 
     class DummyTelegramAPIError(Exception):
         def __init__(self, message: str = "", status_code: int | None = None):

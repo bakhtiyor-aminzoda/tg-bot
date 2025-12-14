@@ -32,7 +32,7 @@ from monitoring import add_breadcrumb, capture_exception, increment_metric, requ
 from services.file_scanner import ensure_file_is_safe
 from services import quotas as quota_service
 from utils.access_control import check_and_log_access, get_access_denied_message, is_user_allowed
-from utils.downloader import DownloadError, download_video
+from utils.downloader import DownloadError, download_video, is_image_file
 from utils.url_validation import UnsafeURLError, ensure_safe_public_url
 
 
@@ -283,18 +283,32 @@ async def _process_download_flow(
                 await _safe_status_edit(status_msg, translate("download.large_file_limit", locale))
                 return
 
-            caption = translate("download.video_caption", locale, platform=platform_label)
+            is_photo = is_image_file(downloaded_path)
+            caption_key = "download.caption.photo" if is_photo else "download.caption.video"
+            doc_caption_key = (
+                "download.document_caption.photo" if is_photo else "download.document_caption.video"
+            )
+            caption = translate(caption_key, locale, platform=platform_label)
+            doc_caption = translate(doc_caption_key, locale, platform=platform_label)
             try:
                 await _safe_status_edit(status_msg, status_ui.sending(platform, locale=locale))
                 file_obj = FSInputFile(path=str(downloaded_path))
-                await bot.send_video(
-                    chat_id=message.chat.id,
-                    video=file_obj,
-                    caption=caption,
-                    supports_streaming=True,
-                )
+                if is_photo:
+                    await bot.send_photo(
+                        chat_id=message.chat.id,
+                        photo=file_obj,
+                        caption=caption,
+                    )
+                else:
+                    await bot.send_video(
+                        chat_id=message.chat.id,
+                        video=file_obj,
+                        caption=caption,
+                        supports_streaming=True,
+                    )
             except TelegramBadRequest as e:
-                logger.warning("send_video failed (%s), trying send_document", e)
+                mode = "photo" if is_photo else "video"
+                logger.warning("send_%s failed (%s), trying send_document", mode, e)
                 try:
                     capture_exception(e)
                 except Exception:
@@ -305,7 +319,7 @@ async def _process_download_flow(
                     await bot.send_document(
                         chat_id=message.chat.id,
                         document=file_obj,
-                        caption=caption,
+                        caption=doc_caption,
                     )
                 except Exception as e2:
                     logger.exception("Не удалось отправить как документ: %s", e2)

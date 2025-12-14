@@ -14,6 +14,7 @@ from aiogram.types import InlineKeyboardMarkup
 from bot_app.handlers import downloads
 from bot_app import state
 from bot_app.runtime import logger as runtime_logger
+from bot_app.ui.i18n import translate
 
 
 class DummyStatusMessage:
@@ -158,6 +159,77 @@ class DownloadsHandlerTests(IsolatedAsyncioTestCase):
 
         dummy_bot.send_video.assert_awaited_once()
         dummy_bot.send_document.assert_awaited_once()
+
+    async def test_photo_flow_uses_send_photo_and_caption(self) -> None:
+        message = DummyMessage(user_id=88, text="/download https://instagram.com/p/demo")
+        photo_path = Path(self.tmpdir.name) / "media.jpg"
+        photo_path.write_bytes(b"img")
+
+        dummy_bot = SimpleNamespace(
+            send_photo=mock.AsyncMock(),
+            send_video=mock.AsyncMock(),
+            send_document=mock.AsyncMock(),
+        )
+
+        with (
+            mock.patch.object(downloads, "bot", dummy_bot),
+            mock.patch.object(downloads, "detect_platform", return_value="instagram"),
+            mock.patch.object(downloads, "is_user_allowed", new=mock.AsyncMock(return_value=True)),
+            mock.patch.object(downloads, "ensure_safe_public_url", return_value=None),
+            mock.patch.object(downloads, "ensure_file_is_safe", new=mock.AsyncMock()),
+            mock.patch.object(downloads, "download_video", new=mock.AsyncMock(return_value=photo_path)),
+            mock.patch.object(downloads, "global_download_semaphore", asyncio.Semaphore(1)),
+        ):
+            await downloads._process_download_flow(
+                message,
+                "https://instagram.com/p/demo",
+                locale="ru",
+                request_id="photo",
+            )
+
+        dummy_bot.send_photo.assert_awaited_once()
+        dummy_bot.send_video.assert_not_called()
+        caption = dummy_bot.send_photo.await_args.kwargs["caption"]
+        expected_caption = translate("download.caption.photo", "ru", platform="Instagram")
+        self.assertEqual(caption, expected_caption)
+
+    async def test_photo_flow_document_fallback_uses_localized_caption(self) -> None:
+        message = DummyMessage(user_id=89, text="/download https://instagram.com/p/demo2")
+        photo_path = Path(self.tmpdir.name) / "media2.jpg"
+        photo_path.write_bytes(b"img")
+
+        dummy_bot = SimpleNamespace(
+            send_photo=mock.AsyncMock(side_effect=TelegramBadRequest(method="sendPhoto", message="fail")),
+            send_video=mock.AsyncMock(),
+            send_document=mock.AsyncMock(),
+        )
+
+        with (
+            mock.patch.object(downloads, "bot", dummy_bot),
+            mock.patch.object(downloads, "detect_platform", return_value="instagram"),
+            mock.patch.object(downloads, "is_user_allowed", new=mock.AsyncMock(return_value=True)),
+            mock.patch.object(downloads, "ensure_safe_public_url", return_value=None),
+            mock.patch.object(downloads, "ensure_file_is_safe", new=mock.AsyncMock()),
+            mock.patch.object(downloads, "download_video", new=mock.AsyncMock(return_value=photo_path)),
+            mock.patch.object(downloads, "global_download_semaphore", asyncio.Semaphore(1)),
+            mock.patch.object(downloads, "capture_exception"),
+        ):
+            await downloads._process_download_flow(
+                message,
+                "https://instagram.com/p/demo2",
+                locale="ru",
+                request_id="photo-fallback",
+            )
+
+        dummy_bot.send_photo.assert_awaited_once()
+        dummy_bot.send_document.assert_awaited_once()
+        doc_caption = dummy_bot.send_document.await_args.kwargs["caption"]
+        expected_doc_caption = translate(
+            "download.document_caption.photo",
+            "ru",
+            platform="Instagram",
+        )
+        self.assertEqual(doc_caption, expected_doc_caption)
 
 
 if __name__ == "__main__":

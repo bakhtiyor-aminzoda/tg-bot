@@ -259,7 +259,7 @@ async def download_video(
     expect_audio: bool = True,
     expect_video: bool = True,
 ) -> Path:
-    """Скачивает видео, транслируя прогресс и обновляя Instagram-cookies при необходимости."""
+    """Скачивает медиа (видео или фото), транслируя прогресс и обновляя Instagram-cookies."""
     output_dir.mkdir(parents=True, exist_ok=True)
     cached_path = await _try_cache_get(url, output_dir)
     if cached_path:
@@ -317,31 +317,53 @@ async def _download_once(
         "YTDLP_USER_AGENT",
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
     )
-    cmd = [
-        "yt-dlp",
-        "--no-playlist",
-        "--newline",
-        "-f",
-        format_spec or "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best",
-        "--merge-output-format",
-        "mp4",
-        "--no-warnings",
-        "--restrict-filenames",
-        "--output",
-        output_template,
-        "--retries",
-        "3",
-        "--fragment-retries",
-        "3",
-        "--user-agent",
-        user_agent,
-    ]
+    def _build_cmd(format_expression: str, *, merge_mp4: bool = True) -> list[str]:
+        base = [
+            "yt-dlp",
+            "--no-playlist",
+            "--newline",
+            "-f",
+            format_expression,
+        ]
+        if merge_mp4:
+            base += ["--merge-output-format", "mp4"]
+        base += [
+            "--no-warnings",
+            "--restrict-filenames",
+            "--output",
+            output_template,
+            "--retries",
+            "3",
+            "--fragment-retries",
+            "3",
+            "--user-agent",
+            user_agent,
+        ]
+        if resolved_cookies_file:
+            base += ["--cookies", resolved_cookies_file]
+        if "instagram.com" in url:
+            base += ["--add-header", "Referer: https://www.instagram.com/"]
+        return base
 
-    if resolved_cookies_file:
-        cmd += ["--cookies", resolved_cookies_file]
+    async def _handle_yt_dlp_failure(stderr_text: str, rc_value: int) -> Path:
+        logger.error("yt-dlp завершился с кодом %s: %s", rc_value, stderr_text[:2000])
+        last_line = stderr_text.splitlines()[-1] if stderr_text else "unknown error"
+        cookies_path = _resolve_instagram_cookies_path(resolved_cookies_file or cookies_file)
+        if _should_try_instagram_fallback(url, last_line, cookies_path):
+            logger.warning("Instagram reported restricted media, invoking API fallback")
+            try:
+                assert instagram_direct is not None  # for type checkers
+                return await instagram_direct.download_sensitive_media(
+                    url=url,
+                    output_dir=workdir,
+                    cookies_file=cookies_path,
+                )
+            except Exception as fallback_err:
+                logger.warning("Instagram API fallback failed: %s", fallback_err)
+                last_line = f"{last_line} (fallback failed: {fallback_err})"
+        raise DownloadError(f"Ошибка yt-dlp: {last_line}")
 
-    if "instagram.com" in url:
-        cmd += ["--add-header", "Referer: https://www.instagram.com/"]
+    cmd = _build_cmd(format_spec or "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best", merge_mp4=True)
 
     logger.info("Запускаем yt-dlp: %s ...", url)
     try:
@@ -359,24 +381,25 @@ async def _download_once(
         raise
 
     if rc != 0:
-        logger.error("yt-dlp завершился с кодом %s: %s", rc, stderr[:2000])
-        last_line = stderr.splitlines()[-1] if stderr else "unknown error"
-        cookies_path = _resolve_instagram_cookies_path(resolved_cookies_file or cookies_file)
-        if _should_try_instagram_fallback(url, last_line, cookies_path):
-            logger.warning("Instagram reported restricted media, invoking API fallback")
-            try:
-                assert instagram_direct is not None  # for type checkers
-                return await instagram_direct.download_sensitive_media(
-                    url=url,
-                    output_dir=workdir,
-                    cookies_file=cookies_path,
-                )
-            except Exception as fallback_err:
-                logger.warning("Instagram API fallback failed: %s", fallback_err)
-                last_line = f"{last_line} (fallback failed: {fallback_err})"
-        raise DownloadError(f"Ошибка yt-dlp: {last_line}")
+        return await _handle_yt_dlp_failure(stderr, rc)
 
     candidates = [p for p in workdir.iterdir() if p.is_file()]
+    if not candidates and "instagram.com" in url:
+        logger.info("Первичный запуск yt-dlp не вернул файлов, пробуем fallback-формат best")
+        photo_cmd = _build_cmd("best", merge_mp4=False)
+        try:
+            stdout, stderr, rc = await _run_yt_dlp(
+                photo_cmd + [url],
+                timeout=timeout,
+                progress_cb=progress_cb,
+                cwd=workdir_str,
+            )
+        except DownloadError:
+            logger.exception("Ошибка yt-dlp при повторном запуске (photo fallback)")
+            raise
+        if rc != 0:
+            return await _handle_yt_dlp_failure(stderr, rc)
+        candidates = [p for p in workdir.iterdir() if p.is_file()]
     if not candidates:
         logger.error(
             "yt-dlp завершился без файлов: workdir=%s, содержимое=%s, stdout_tail=%s, stderr_tail=%s",
@@ -392,6 +415,10 @@ async def _download_once(
 
     downloaded = sorted(candidates, key=lambda p: p.stat().st_mtime, reverse=True)[0]
     logger.info("Первичный файл: %s (%.2f MB)", downloaded, downloaded.stat().st_size / 1024 / 1024)
+
+    if is_image_file(downloaded):
+        logger.info("Обнаружен фотоконтент Instagram: %s", downloaded)
+        return downloaded
 
     # Проверяем с помощью ffprobe наличие аудио+видео
     probes = await _ffprobe_has_audio_or_video(downloaded)
@@ -567,6 +594,16 @@ def _dir_snapshot(path: Path) -> str:
     except Exception:
         logger.debug("Не удалось получить снимок директории %s", path, exc_info=True)
         return "<unavailable>"
+
+
+IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".heic", ".heif"}
+
+
+def is_image_file(path: Path) -> bool:
+    try:
+        return path.is_file() and path.suffix.lower() in IMAGE_SUFFIXES
+    except Exception:
+        return False
 
 
 def _normalize_cookies_path(path: Optional[str]) -> Optional[str]:

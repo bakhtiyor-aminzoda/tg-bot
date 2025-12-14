@@ -81,7 +81,7 @@ class SmokeFlowTests(unittest.IsolatedAsyncioTestCase):
         message = DummyMessage("https://youtube.com/watch?v=test")
         fake_bot = FakeBot()
 
-        async def fake_download(url, tmpdir, timeout, cookies_file=None):  # noqa: ARG001
+        async def fake_download(url, tmpdir, timeout, cookies_file=None, **_kwargs):  # noqa: ARG001
             file_path = Path(tmpdir) / "result.mp4"
             file_path.parent.mkdir(parents=True, exist_ok=True)
             file_path.write_bytes(b"data")

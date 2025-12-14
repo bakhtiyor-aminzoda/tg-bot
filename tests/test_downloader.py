@@ -27,7 +27,7 @@ class DownloaderTests(unittest.IsolatedAsyncioTestCase):
     async def test_download_video_success_path(self) -> None:
         target_file = self.output_dir / "sample.mp4"
 
-        async def fake_run_yt_dlp(cmd, timeout, progress_cb=None):
+        async def fake_run_yt_dlp(cmd, timeout, progress_cb=None, **_kwargs):
             if cmd and cmd[0] == "yt-dlp" and not target_file.exists():
                 target_file.write_bytes(b"video")
             return ("", "", 0)
@@ -45,14 +45,14 @@ class DownloaderTests(unittest.IsolatedAsyncioTestCase):
             )
 
         self.assertTrue(result_path.exists())
-        self.assertEqual(result_path, target_file)
+        self.assertEqual(result_path.resolve(), target_file.resolve())
 
     async def test_download_video_merges_when_audio_missing(self) -> None:
         video_file = self.output_dir / "video.mp4"
         audio_file = self.output_dir / "audio.m4a"
         merged_file = video_file.with_name(video_file.stem + "_merged.mp4")
 
-        async def fake_run_yt_dlp(cmd, timeout, progress_cb=None):
+        async def fake_run_yt_dlp(cmd, timeout, progress_cb=None, **_kwargs):
             if cmd and cmd[0] == "yt-dlp":
                 format_arg = cmd[cmd.index("-f") + 1] if "-f" in cmd else ""
                 if "bestvideo" in format_arg and not video_file.exists():
@@ -65,8 +65,8 @@ class DownloaderTests(unittest.IsolatedAsyncioTestCase):
             return {"has_audio": False, "has_video": True}
 
         async def fake_merge(v_path, a_path, out_path, timeout=120):
-            self.assertEqual(v_path, video_file)
-            self.assertEqual(a_path, audio_file)
+            self.assertEqual(v_path.resolve(), video_file.resolve())
+            self.assertEqual(a_path.resolve(), audio_file.resolve())
             out_path.write_bytes(b"merged")
             return out_path
 
@@ -82,12 +82,12 @@ class DownloaderTests(unittest.IsolatedAsyncioTestCase):
             )
 
         self.assertTrue(result_path.exists())
-        self.assertEqual(result_path, merged_file)
+        self.assertEqual(result_path.resolve(), merged_file.resolve())
 
     async def test_instagram_fallback_invoked_on_sensitive_error(self) -> None:
         fallback_file = self.output_dir / "instagram_fallback.mp4"
 
-        async def fake_run_yt_dlp(cmd, timeout, progress_cb=None):
+        async def fake_run_yt_dlp(cmd, timeout, progress_cb=None, **_kwargs):
             return (
                 "",
                 "ERROR: [Instagram] DRQSTxVDKmh: This content may be inappropriate: It's unavailable for certain audiences.",

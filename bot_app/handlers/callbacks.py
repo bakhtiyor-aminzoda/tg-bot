@@ -31,7 +31,7 @@ from monitoring import (
 from bot_app.metrics import update_active_downloads_gauge, update_pending_tokens_gauge, update_queue_gauges
 from utils.access_control import is_user_allowed, get_access_denied_message, check_and_log_access
 from services.file_scanner import ensure_file_is_safe
-from utils.downloader import download_video, DownloadError
+from utils.downloader import download_video, DownloadError, is_image_file
 from utils.url_validation import ensure_safe_public_url, UnsafeURLError
 from services import quotas as quota_service
 from services import referrals as referral_service
@@ -281,6 +281,7 @@ async def handle_download_callback(callback: types.CallbackQuery):
                     show_alert=True,
                 )
                 return
+            platform_label = (platform or "unknown").capitalize()
 
             status_msg = await callback.message.reply(
                 status_ui.waiting(
@@ -328,17 +329,32 @@ async def handle_download_callback(callback: types.CallbackQuery):
                 await _safe_status_edit(status_msg, translate("download.large_file_limit", locale))
                 return
 
+            is_photo = is_image_file(downloaded_path)
+            caption_key = "download.caption.photo" if is_photo else "download.caption.video"
+            doc_caption_key = (
+                "download.document_caption.photo" if is_photo else "download.document_caption.video"
+            )
+            caption = translate(caption_key, locale, platform=platform_label)
+            doc_caption = translate(doc_caption_key, locale, platform=platform_label)
             try:
                 await _safe_status_edit(status_msg, status_ui.sending(platform, locale=locale))
                 file_obj = FSInputFile(path=str(downloaded_path))
-                await bot.send_video(
-                    chat_id=callback.message.chat.id,
-                    video=file_obj,
-                    caption="Видео скачано — @MediaBanditbot",
-                    supports_streaming=True,
-                )
+                if is_photo:
+                    await bot.send_photo(
+                        chat_id=callback.message.chat.id,
+                        photo=file_obj,
+                        caption=caption,
+                    )
+                else:
+                    await bot.send_video(
+                        chat_id=callback.message.chat.id,
+                        video=file_obj,
+                        caption=caption,
+                        supports_streaming=True,
+                    )
             except TelegramBadRequest as e:
-                logger.warning("send_video failed (callback, %s), fallback to document", e)
+                mode = "photo" if is_photo else "video"
+                logger.warning("send_%s failed (callback, %s), fallback to document", mode, e)
                 try:
                     capture_exception(e)
                 except Exception:
@@ -349,7 +365,7 @@ async def handle_download_callback(callback: types.CallbackQuery):
                     await bot.send_document(
                         chat_id=callback.message.chat.id,
                         document=file_obj,
-                        caption="Видео (файл) — скачано с помощью @MediaBanditbot",
+                        caption=doc_caption,
                     )
                 except Exception as e2:
                     logger.exception("Не удалось отправить файл в группу: %s", e2)
