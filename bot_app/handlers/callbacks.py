@@ -15,7 +15,7 @@ from aiogram.types import FSInputFile
 
 import config
 from bot_app import quota as quota_ui
-from bot_app.referral import build_profile_view, build_referral_card
+from bot_app.referral import build_profile_view
 from bot_app.helpers import detect_platform, resolve_chat_title, resolve_user_display
 from bot_app.runtime import bot, dp, global_download_semaphore, logger
 from bot_app import state

@@ -22,7 +22,7 @@ import bot_app.handlers.downloads  # noqa: F401
 from bot_app.maintenance import start_background_tasks, stop_background_tasks
 from bot_app.runtime import bot, dp
 from bot_app.ui.i18n import get_locale, translate
-from bot_app.referral import build_profile_view, build_referral_card
+from bot_app.referral import build_profile_view
 from monitoring import HealthCheckServer
 from admin_panel_web import AdminPanelServer
 
@@ -32,6 +32,7 @@ START_CTA_KEYBOARD = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text="📥 Скачать без лишних вопросов", callback_data="start:download")],
         [InlineKeyboardButton(text="🕳 Что здесь вообще происходит?", callback_data="start:howto")],
+        [InlineKeyboardButton(text="📇 Профиль", callback_data="profile:section:overview")],
     ]
 )
 
@@ -42,23 +43,33 @@ def _extract_start_payload(message: types.Message) -> str:
         return ""
     return parts[1].strip()
 
-async def _handle_start_referral(message: types.Message, locale: str, payload: str) -> None:
-    if not config.ENABLE_HISTORY or not payload:
-        return
+async def _handle_start_referral(user_id: int, locale: str, payload: str) -> Optional[str]:
+    if not config.ENABLE_HISTORY or not payload or not user_id:
+        return None
     normalized = payload.strip()
     if not normalized.lower().startswith("ref_"):
-        return
+        return None
     code = normalized[4:].strip()
     if not code:
-        return
+        return None
     try:
-        referral_service.register_referral(code, message.from_user.id)
+        referral_service.register_referral(code, user_id)
     except ValueError as exc:
         logger.info("Auto referral registration skipped: %s", exc)
-        return
-    await message.reply(translate("referral.register_success", locale))
-    text, markup = build_profile_view(message.from_user.id, locale, section="referrals")
-    await message.answer(text, reply_markup=markup)
+        return None
+    return translate("referral.register_success", locale)
+
+
+async def _send_profile(
+    message: types.Message,
+    locale: str,
+    *,
+    section: str = "overview",
+    reply: bool = False,
+) -> types.Message:
+    text, markup = build_profile_view(message.from_user.id, locale, section=section)
+    sender = message.reply if reply else message.answer
+    return await sender(text, reply_markup=markup)
 
 # === История загрузок (опционально) ===
 if config.ENABLE_HISTORY:
@@ -115,9 +126,15 @@ async def cmd_start_handler(message: types.Message):
         " Попутно можешь звать друзей командой /referral, пусть тоже страдают от изобилия контента."
     )
 
+    referral_notice = await _handle_start_referral(message.from_user.id, locale, start_payload)
+
     text = "\n\n".join(opener_lines + [usage_hint, outro])
     await message.reply(text, parse_mode="HTML", reply_markup=START_CTA_KEYBOARD)
-    await _handle_start_referral(message, locale, start_payload)
+
+    if referral_notice:
+        await message.answer(referral_notice)
+    profile_section = "referrals" if referral_notice else "overview"
+    await _send_profile(message, locale, section=profile_section)
 
 
 @dp.callback_query(lambda cq: (cq.data or "").startswith("start:"))
@@ -337,15 +354,13 @@ export ADMIN_USER_IDS="{message.from_user.id}"
     @dp.message(Command("profile"))
     async def cmd_profile_handler(message: types.Message):
         locale = get_locale(getattr(getattr(message, "from_user", None), "language_code", None))
-        text, markup = build_profile_view(message.from_user.id, locale, section="overview")
-        await message.reply(text, reply_markup=markup)
+        await _send_profile(message, locale, section="overview", reply=True)
 
 
     @dp.message(Command("referral"))
     async def cmd_referral_handler(message: types.Message):
         locale = get_locale(getattr(getattr(message, "from_user", None), "language_code", None))
-        text, markup = build_profile_view(message.from_user.id, locale, section="referrals")
-        await message.reply(text, reply_markup=markup)
+        await _send_profile(message, locale, section="referrals", reply=True)
 
     @dp.message(Command("use_referral"))
     async def cmd_use_referral_handler(message: types.Message):
@@ -361,8 +376,7 @@ export ADMIN_USER_IDS="{message.from_user.id}"
             await message.reply(translate("referral.register_error", locale, reason=str(exc)))
             return
         await message.reply(translate("referral.register_success", locale))
-        text, markup = build_profile_view(message.from_user.id, locale, section="referrals")
-        await message.answer(text, reply_markup=markup)
+        await _send_profile(message, locale, section="referrals")
 
     @dp.message(Command("ref_leaderboard"))
     async def cmd_ref_leaderboard_handler(message: types.Message):
