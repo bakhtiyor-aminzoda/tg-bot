@@ -221,6 +221,9 @@
         tbody tr:hover { background: rgba(255,255,255,0.03); }
         .chat-table tr.active { background: rgba(123,240,195,0.08); }
         .chat-table td:first-child a { color: var(--text); text-decoration: none; font-weight: 600; }
+        .alerts-table code { font-size: 13px; }
+        .alert-message { line-height: 1.4; }
+        .alert-message small { color: var(--muted); }
         .two-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
         .logs-list {
             list-style: none;
@@ -261,6 +264,17 @@
             padding: 14px;
         }
         .metrics-block ul { list-style: none; display: flex; flex-direction: column; gap: 6px; font-family: 'Space Grotesk', monospace; }
+        .quota-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            font-size: 12px;
+            font-weight: 600;
+        }
         .muted { color: var(--muted); }
         .utility-bar {
             position: sticky;
@@ -377,6 +391,7 @@
                                 <th>Загрузок</th>
                                 <th>Объём</th>
                                 <th>Ошибки</th>
+                                <th>Тариф · лимит</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -438,6 +453,15 @@
                 </div>
             </div>
             {{ health_html|safe }}
+        </section>
+        <section class="panel panel-alerts">
+            <div class="panel-heading">
+                <div>
+                    <p class="eyebrow">Alerts</p>
+                    <h2>События мониторинга</h2>
+                </div>
+            </div>
+            {{ alerts_html|safe }}
         </section>
         <section class="panel panel-logs">
             <div class="panel-heading">

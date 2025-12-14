@@ -15,6 +15,7 @@ from aiogram.filters import Command
 from aiogram.types import FSInputFile, InlineKeyboardButton, InlineKeyboardMarkup
 
 import config
+from bot_app import quota as quota_ui
 from bot_app import state
 from bot_app.helpers import (
     detect_platform,
@@ -29,6 +30,7 @@ from bot_app.ui import status as status_ui
 from bot_app.ui.i18n import get_locale, translate
 from monitoring import add_breadcrumb, capture_exception, increment_metric, request_context, set_metric_gauge
 from services.file_scanner import ensure_file_is_safe
+from services import quotas as quota_service
 from utils.access_control import check_and_log_access, get_access_denied_message, is_user_allowed
 from utils.downloader import DownloadError, download_video
 from utils.url_validation import UnsafeURLError, ensure_safe_public_url
@@ -167,6 +169,19 @@ async def _process_download_flow(
                     await message.reply(translate("download.unsupported", locale))
                 return
             platform_label = (platform or "unknown").capitalize()
+
+            quota_plan = None
+            if config.ENABLE_HISTORY:
+                try:
+                    quota_plan = quota_service.build_enforcement_plan(uid)
+                except Exception:
+                    logger.debug("Не удалось получить данные квот", exc_info=True)
+            if quota_plan and quota_plan.get("blocked"):
+                block_text = quota_ui.quota_block_message(quota_plan, locale) or translate(
+                    "download.cooldown", locale, seconds=60
+                )
+                await message.reply(block_text)
+                return
 
             max_per_user = getattr(config, "MAX_CONCURRENT_PER_USER", 2)
             active = state.user_active_downloads.get(uid, 0)
@@ -326,6 +341,10 @@ async def _process_download_flow(
                         status="success",
                         file_size_bytes=size,
                     )
+                    try:
+                        quota_service.consume_success(uid)
+                    except Exception:
+                        logger.debug("Не удалось обновить счётчик квот", exc_info=True)
                 except Exception as e:
                     logger.debug("Ошибка при логировании в БД: %s", e)
 

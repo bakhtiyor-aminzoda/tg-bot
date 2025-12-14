@@ -6,10 +6,11 @@ SQLAlchemy Core, while keeping the synchronous API expected by the bot.
 
 from __future__ import annotations
 
+import json
 import logging
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Mapping, Optional
 
 import sqlalchemy as sa
 from sqlalchemy import func, select
@@ -97,6 +98,84 @@ chats = sa.Table(
     sa.Column("updated_at", sa.DateTime(timezone=True), server_default=func.now()),
 )
 
+subscription_plans = sa.Table(
+    "subscription_plans",
+    metadata,
+    sa.Column("plan", sa.Text, primary_key=True),
+    sa.Column("display_name", sa.Text, nullable=False),
+    sa.Column("description", sa.Text),
+    sa.Column("daily_quota", sa.Integer, nullable=False, server_default="5"),
+    sa.Column("monthly_quota", sa.Integer, nullable=False, server_default="60"),
+    sa.Column("max_parallel_downloads", sa.Integer, nullable=False, server_default="1"),
+    sa.Column("price_usd", sa.Integer, nullable=False, server_default="0"),
+    sa.Column("priority", sa.Integer, nullable=False, server_default="0"),
+    sa.Column("created_at", sa.DateTime(timezone=True), server_default=func.now()),
+    sa.Column("updated_at", sa.DateTime(timezone=True), server_default=func.now(), onupdate=func.now()),
+)
+
+user_quotas = sa.Table(
+    "user_quotas",
+    metadata,
+    sa.Column("user_id", sa.BigInteger, primary_key=True),
+    sa.Column("plan", sa.Text, sa.ForeignKey("subscription_plans.plan", onupdate="CASCADE"), nullable=False),
+    sa.Column("custom_daily_quota", sa.Integer),
+    sa.Column("custom_monthly_quota", sa.Integer),
+    sa.Column("daily_used", sa.Integer, nullable=False, server_default="0"),
+    sa.Column("monthly_used", sa.Integer, nullable=False, server_default="0"),
+    sa.Column("daily_reset_at", sa.DateTime(timezone=True), server_default=func.now()),
+    sa.Column("current_period_start", sa.DateTime(timezone=True), server_default=func.now()),
+    sa.Column("notes", sa.Text),
+    sa.Column("updated_at", sa.DateTime(timezone=True), server_default=func.now(), onupdate=func.now()),
+)
+
+health_alerts = sa.Table(
+    "health_alerts",
+    metadata,
+    sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
+    sa.Column("code", sa.Text, nullable=False, index=True),
+    sa.Column("severity", sa.Text, nullable=False, server_default="warning"),
+    sa.Column("message", sa.Text, nullable=False),
+    sa.Column("details", sa.Text),
+    sa.Column("status", sa.Text, nullable=False, server_default="open"),
+    sa.Column("last_notified_at", sa.DateTime(timezone=True)),
+    sa.Column("created_at", sa.DateTime(timezone=True), server_default=func.now()),
+    sa.Column("updated_at", sa.DateTime(timezone=True), server_default=func.now(), onupdate=func.now()),
+    sa.Column("resolved_at", sa.DateTime(timezone=True)),
+)
+
+referral_codes = sa.Table(
+    "referral_codes",
+    metadata,
+    sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
+    sa.Column("code", sa.Text, nullable=False, unique=True),
+    sa.Column("user_id", sa.BigInteger, nullable=False, index=True),
+    sa.Column("max_uses", sa.Integer, nullable=False, server_default="0"),
+    sa.Column("usage_count", sa.Integer, nullable=False, server_default="0"),
+    sa.Column("expires_at", sa.DateTime(timezone=True)),
+    sa.Column("boost_daily_quota", sa.Integer, nullable=False, server_default="0"),
+    sa.Column("boost_monthly_quota", sa.Integer, nullable=False, server_default="0"),
+    sa.Column("notes", sa.Text),
+    sa.Column("created_at", sa.DateTime(timezone=True), server_default=func.now()),
+    sa.Column("updated_at", sa.DateTime(timezone=True), server_default=func.now(), onupdate=func.now()),
+)
+
+referral_events = sa.Table(
+    "referral_events",
+    metadata,
+    sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
+    sa.Column("code_id", sa.Integer, sa.ForeignKey("referral_codes.id", ondelete="SET NULL")),
+    sa.Column("referrer_user_id", sa.BigInteger, nullable=False, index=True),
+    sa.Column("referred_user_id", sa.BigInteger, nullable=False, unique=True),
+    sa.Column("status", sa.Text, nullable=False, server_default="pending"),
+    sa.Column("reward_daily_bonus", sa.Integer, nullable=False, server_default="0"),
+    sa.Column("reward_monthly_bonus", sa.Integer, nullable=False, server_default="0"),
+    sa.Column("reward_expires_at", sa.DateTime(timezone=True)),
+    sa.Column("notes", sa.Text),
+    sa.Column("confirmed_at", sa.DateTime(timezone=True)),
+    sa.Column("created_at", sa.DateTime(timezone=True), server_default=func.now()),
+    sa.Column("updated_at", sa.DateTime(timezone=True), server_default=func.now(), onupdate=func.now()),
+)
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -127,6 +206,59 @@ def _fetch_all(query) -> List[Dict]:
         return [dict(row) for row in conn.execute(query).mappings().all()]
 
 
+def sync_subscription_plans(plan_definitions: Mapping[str, Dict[str, object]]) -> None:
+    """Persist configured subscription plans for later quota checks."""
+
+    if not plan_definitions:
+        return
+
+    with _engine.begin() as conn:
+        for slug, payload in plan_definitions.items():
+            if not slug:
+                continue
+            plan_key = str(slug).strip().lower()
+            if not plan_key:
+                continue
+            label = str(payload.get("label") or plan_key.title())
+            stmt = _dialect_insert(subscription_plans).values(
+                plan=plan_key,
+                display_name=label,
+                description=payload.get("description"),
+                daily_quota=int(payload.get("daily_quota", 0) or 0),
+                monthly_quota=int(payload.get("monthly_quota", 0) or 0),
+                max_parallel_downloads=max(1, int(payload.get("max_parallel_downloads", 1) or 1)),
+                price_usd=int(payload.get("price_usd", 0) or 0),
+                priority=int(payload.get("priority", 0) or 0),
+            )
+            stmt = stmt.on_conflict_do_update(
+                index_elements=[subscription_plans.c.plan],
+                set_={
+                    "display_name": stmt.excluded.display_name,
+                    "description": stmt.excluded.description,
+                    "daily_quota": stmt.excluded.daily_quota,
+                    "monthly_quota": stmt.excluded.monthly_quota,
+                    "max_parallel_downloads": stmt.excluded.max_parallel_downloads,
+                    "price_usd": stmt.excluded.price_usd,
+                    "priority": stmt.excluded.priority,
+                    "updated_at": func.now(),
+                },
+            )
+            conn.execute(stmt)
+
+
+def ensure_user_quota(user_id: int, *, plan: Optional[str] = None) -> None:
+    """Create a quota record for the user if it does not exist."""
+
+    if not user_id:
+        return
+
+    plan_key = (plan or config.DEFAULT_SUBSCRIPTION_PLAN or "free").strip().lower() or "free"
+    stmt = _dialect_insert(user_quotas).values(user_id=user_id, plan=plan_key)
+    stmt = stmt.on_conflict_do_nothing(index_elements=[user_quotas.c.user_id])
+    with _engine.begin() as conn:
+        conn.execute(stmt)
+
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -150,6 +282,7 @@ def add_download(
 ) -> bool:
     size = file_size_bytes or 0
     failures = 0 if status == "success" else 1
+    ensure_user_quota(user_id, plan=config.DEFAULT_SUBSCRIPTION_PLAN)
     try:
         with _engine.begin() as conn:
             conn.execute(
@@ -420,5 +553,13 @@ __all__ = [
     "list_authorized_admins",
     "get_engine",
     "downloads",
+    "user_stats",
+    "platform_stats",
+    "authorized_admins",
     "chats",
+    "subscription_plans",
+    "user_quotas",
+    "referral_codes",
+    "referral_events",
+    "health_alerts",
 ]

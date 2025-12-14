@@ -7,7 +7,7 @@ from typing import Dict, List, Mapping, Optional
 import sqlalchemy as sa
 from sqlalchemy import func, select
 
-from db import chats, downloads, get_engine
+from db import chats, downloads, subscription_plans, user_quotas, get_engine
 
 _engine = get_engine()
 
@@ -76,6 +76,16 @@ def get_top_users(chat_id: Optional[int] = None, limit: int = 10, order_by: str 
     total_downloads_col = func.count().label("total_downloads")
     total_bytes_col = func.sum(func.coalesce(downloads.c.file_size_bytes, 0)).label("total_bytes")
     failed_col = func.sum(sa.case((downloads.c.status != "success", 1), else_=0)).label("failed_count")
+    plan_col = func.max(user_quotas.c.plan).label("plan_key")
+    plan_name_col = func.max(subscription_plans.c.display_name).label("plan_label")
+    daily_limit_col = func.max(
+        func.coalesce(user_quotas.c.custom_daily_quota, subscription_plans.c.daily_quota)
+    ).label("daily_quota")
+    monthly_limit_col = func.max(
+        func.coalesce(user_quotas.c.custom_monthly_quota, subscription_plans.c.monthly_quota)
+    ).label("monthly_quota")
+    daily_used_col = func.max(func.coalesce(user_quotas.c.daily_used, 0)).label("daily_used")
+    monthly_used_col = func.max(func.coalesce(user_quotas.c.monthly_used, 0)).label("monthly_used")
     stmt = (
         select(
             downloads.c.user_id,
@@ -83,6 +93,16 @@ def get_top_users(chat_id: Optional[int] = None, limit: int = 10, order_by: str 
             total_downloads_col,
             total_bytes_col,
             failed_col,
+            plan_col,
+            plan_name_col,
+            daily_limit_col,
+            monthly_limit_col,
+            daily_used_col,
+            monthly_used_col,
+        )
+        .select_from(
+            downloads.outerjoin(user_quotas, user_quotas.c.user_id == downloads.c.user_id)
+            .outerjoin(subscription_plans, subscription_plans.c.plan == user_quotas.c.plan)
         )
         .where(*filters)
         .group_by(downloads.c.user_id)

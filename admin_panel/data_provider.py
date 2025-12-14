@@ -6,8 +6,9 @@ import logging
 from typing import Any, Callable, Dict, List, Optional
 
 import config
-from services import stats as stats_service
 from monitoring import get_health_snapshot
+from services import alerts as alert_service
+from services import stats as stats_service
 
 from .runtime_controls import RuntimeController
 
@@ -40,6 +41,7 @@ class DashboardDataProvider:
     ) -> Dict[str, Any]:
         summary = stats_service.get_summary(chat_id)
         top_users = stats_service.get_top_users(chat_id, limit=10, order_by=top_sort)
+        top_users = self._with_plan_metadata(top_users)
         platforms = stats_service.get_platform_stats(chat_id, order_by=platform_sort)
         recent = stats_service.get_recent_downloads(chat_id, limit=10)
         failures = stats_service.get_recent_failures(chat_id, limit=10)
@@ -52,6 +54,13 @@ class DashboardDataProvider:
                 health_data = get_health_snapshot()
             except Exception:  # pragma: no cover - defensive logging only
                 self._logger.debug("Не удалось получить health snapshot", exc_info=True)
+
+        alerts: List[Dict[str, Any]] = []
+        if config.ENABLE_HISTORY:
+            try:
+                alerts = alert_service.recent_alerts(limit=25)
+            except Exception:
+                self._logger.debug("Не удалось получить health alerts", exc_info=True)
 
         runtime_state = self._runtime.snapshot()
 
@@ -71,7 +80,25 @@ class DashboardDataProvider:
             "error_logs": self._log_reader(log_tail),
             "health": health_data,
             "runtime": runtime_state,
+            "alerts": alerts,
         }
+
+    def _with_plan_metadata(self, rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        plans = config.SUBSCRIPTION_PLANS or {}
+        fallback_key = config.DEFAULT_SUBSCRIPTION_PLAN
+        fallback_plan = plans.get(fallback_key) or next(iter(plans.values()), {})
+        for row in rows:
+            plan_key = str(row.get("plan_key") or fallback_key or "free").strip().lower() or "free"
+            plan_payload = plans.get(plan_key, fallback_plan)
+            row["plan_key"] = plan_key
+            row["plan_label"] = row.get("plan_label") or plan_payload.get("label") or plan_key.title()
+            row["effective_daily_quota"] = int(row.get("daily_quota") or plan_payload.get("daily_quota") or 0)
+            row["effective_monthly_quota"] = int(
+                row.get("monthly_quota") or plan_payload.get("monthly_quota") or 0
+            )
+            row["daily_used"] = int(row.get("daily_used") or 0)
+            row["monthly_used"] = int(row.get("monthly_used") or 0)
+        return rows
 
 
 __all__ = ["DashboardDataProvider"]

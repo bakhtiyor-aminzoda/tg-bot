@@ -14,6 +14,8 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import FSInputFile
 
 import config
+from bot_app import quota as quota_ui
+from bot_app.referral import build_referral_card
 from bot_app.helpers import detect_platform, resolve_chat_title, resolve_user_display
 from bot_app.runtime import bot, dp, global_download_semaphore, logger
 from bot_app import state
@@ -31,6 +33,68 @@ from utils.access_control import is_user_allowed, get_access_denied_message, che
 from services.file_scanner import ensure_file_is_safe
 from utils.downloader import download_video, DownloadError
 from utils.url_validation import ensure_safe_public_url, UnsafeURLError
+from services import quotas as quota_service
+from services import referrals as referral_service
+
+
+async def _update_referral_card(callback: types.CallbackQuery, locale: str) -> None:
+    if not callback.message:
+        return
+    text, markup = build_referral_card(callback.from_user.id, locale)
+    try:
+        await callback.message.edit_text(text, reply_markup=markup)
+    except TelegramBadRequest:
+        await callback.message.answer(text, reply_markup=markup)
+
+
+@dp.callback_query(lambda c: (c.data or "").startswith("referral:"))
+async def handle_referral_callback(callback: types.CallbackQuery):
+    data = callback.data or ""
+    parts = data.split(":", 2)
+    action = parts[1] if len(parts) > 1 else ""
+    locale = get_locale(getattr(callback.from_user, "language_code", None))
+
+    if action == "gen":
+        try:
+            referral_service.create_referral_code(callback.from_user.id)
+        except ValueError as exc:
+            await callback.answer(str(exc), show_alert=True)
+            return
+        await _update_referral_card(callback, locale)
+        await callback.answer("✅")
+        return
+    if action == "copy":
+        code = parts[2] if len(parts) > 2 else ""
+        if not code:
+            await callback.answer(translate("referral.copy_fail", locale), show_alert=True)
+            return
+        await callback.answer(f"{translate('referral.copy_success', locale)}\n{code}", show_alert=True)
+        return
+    if action == "leaderboard":
+        rows = referral_service.referral_leaderboard(limit=5)
+        if not rows:
+            await callback.answer(translate("referral.leaderboard_empty", locale), show_alert=True)
+            return
+        lines = [translate("referral.leaderboard_header", locale)]
+        for idx, row in enumerate(rows, start=1):
+            lines.append(
+                translate(
+                    "referral.leaderboard_line",
+                    locale,
+                    place=idx,
+                    user=row.get("user_id"),
+                    count=row.get("rewarded", 0),
+                    daily=row.get("daily_bonus", 0),
+                    monthly=row.get("monthly_bonus", 0),
+                )
+            )
+        text = "\n".join(lines)
+        if callback.message:
+            await callback.message.answer(text)
+        await callback.answer()
+        return
+
+    await callback.answer()
 
 
 async def _safe_status_edit(status_msg: types.Message, text: str, **kwargs) -> None:
@@ -154,6 +218,16 @@ async def handle_download_callback(callback: types.CallbackQuery):
             except UnsafeURLError as err:
                 increment_metric("downloads.blocked")
                 await callback.answer(str(err), show_alert=True)
+                return
+
+            quota_plan = None
+            if config.ENABLE_HISTORY:
+                try:
+                    quota_plan = quota_service.build_enforcement_plan(uid)
+                except Exception:
+                    logger.debug("Не удалось получить данные квот (callback)", exc_info=True)
+            if quota_plan and quota_plan.get("blocked"):
+                await callback.answer(quota_ui.quota_block_message(quota_plan, locale), show_alert=True)
                 return
 
             now = time.time()
@@ -320,6 +394,10 @@ async def handle_download_callback(callback: types.CallbackQuery):
                         status="success",
                         file_size_bytes=size,
                     )
+                    try:
+                        quota_service.consume_success(uid)
+                    except Exception:
+                        logger.debug("Не удалось обновить счётчик квот (callback)", exc_info=True)
                 except Exception as log_err:
                     logger.debug("Failed to log success to DB: %s", log_err)
 

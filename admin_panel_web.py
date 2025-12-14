@@ -259,6 +259,7 @@ class AdminPanelServer:
         health_info: Optional[Dict[str, object]] = data.get("health")  # type: ignore[assignment]
         runtime_state: Dict[str, object] = data.get("runtime", {})  # type: ignore[assignment]
         failures: List[Dict[str, object]] = data.get("failures", [])  # type: ignore[assignment]
+        alerts: List[Dict[str, object]] = data.get("alerts", [])  # type: ignore[assignment]
         admin_identity_label = data.get("admin_identity")
         multi_admin = bool(data.get("multi_admin"))
 
@@ -337,6 +338,7 @@ class AdminPanelServer:
             build_link=build_link,
         )
         logs_html = admin_ui.render_logs_list(error_logs)
+        alerts_html = admin_ui.render_alerts_section(alerts)
 
         fallback_metrics = {
             "Всего загрузок": f"{total_downloads:,}",
@@ -383,6 +385,7 @@ class AdminPanelServer:
             "recent_rows": recent_rows,
             "failures_section_html": failures_section_html,
             "health_html": health_html,
+            "alerts_html": alerts_html,
             "logs_html": logs_html,
             "dashboard_js": dashboard_js,
         }

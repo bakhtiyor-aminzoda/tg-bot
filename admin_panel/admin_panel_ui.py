@@ -293,10 +293,15 @@ def render_top_rows(top_users: List[Dict[str, object]]) -> str:
             <td>{user.get('total_downloads', 0)}</td>
             <td>{format_bytes(int(user.get('total_bytes', 0) or 0))}</td>
             <td>{user.get('failed_count', 0)}</td>
+            <td>
+                <div class="quota-chip" title="{html.escape(str(user.get('plan_label', '')))}">
+                    {html.escape(str(user.get('plan_label', '—')))} · {user.get('daily_used', 0)}/{user.get('effective_daily_quota', 0)}
+                </div>
+            </td>
         </tr>
         """
         for idx, user in enumerate(top_users)
-    ) or "<tr><td colspan=\"5\">Нет данных</td></tr>"
+    ) or "<tr><td colspan=\"6\">Нет данных</td></tr>"
 
 
 def render_platform_rows(platforms: List[Dict[str, object]]) -> str:
@@ -498,6 +503,53 @@ def render_health_section(
     )
 
 
+def render_alerts_section(alerts: List[Dict[str, object]]) -> str:
+    if not alerts:
+        return "<p class=\"muted\">Актуальных алертов нет.</p>"
+
+    rows = []
+    for alert in alerts:
+        severity = str(alert.get("severity", "warning")).lower()
+        severity_class = "danger" if severity == "danger" else ("warning" if severity.startswith("warn") else "")
+        status = str(alert.get("status", "open"))
+        status_class = "danger" if status == "open" and severity_class == "danger" else ("warning" if status == "open" else "")
+        code = html.escape(str(alert.get("code", "unknown")))
+        message = html.escape(str(alert.get("message", "")))
+        severity_label = html.escape(severity.upper())
+        status_label = html.escape(status)
+        created = html.escape(format_timestamp(alert.get("created_at")))
+        resolved = html.escape(format_timestamp(alert.get("resolved_at")))
+        last_notified = html.escape(format_timestamp(alert.get("last_notified_at")))
+        detail_payload = alert.get("details")
+        if isinstance(detail_payload, dict):
+            details_text = ", ".join(f"{html.escape(str(k))}={html.escape(str(v))}" for k, v in detail_payload.items())
+        elif detail_payload:
+            details_text = html.escape(str(detail_payload))
+        else:
+            details_text = "—"
+        rows.append(
+            f"""
+            <tr>
+                <td><span class=\"status-pill {severity_class}\">{severity_label}</span></td>
+                <td><span class=\"status-pill {status_class}\">{status_label}</span></td>
+                <td><code>{code}</code></td>
+                <td class=\"alert-message\">{message}<br><small class=\"muted\">{details_text}</small></td>
+                <td>{created}</td>
+                <td>{last_notified}</td>
+                <td>{resolved}</td>
+            </tr>
+            """
+        )
+
+    return (
+        "<table class=\"alerts-table\">"
+        "<thead><tr>"
+        "<th>Severity</th><th>Status</th><th>Code</th><th>Message</th><th>Created</th><th>Notified</th><th>Resolved</th>"
+        "</tr></thead>"
+        f"<tbody>{''.join(rows)}</tbody></table>"
+    )
+
+
 def render_dashboard_js() -> str:
     return textwrap.dedent(
         """
@@ -568,5 +620,6 @@ __all__ = [
     "render_chat_table",
     "render_logs_list",
     "render_health_section",
+    "render_alerts_section",
     "render_dashboard_js",
 ]

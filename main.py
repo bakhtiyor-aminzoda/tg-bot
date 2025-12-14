@@ -9,15 +9,20 @@
 
 import asyncio
 import logging
+from datetime import datetime
+from typing import Optional
 
 from aiogram import types
 from aiogram.filters import Command
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 import config
 import bot_app.handlers.callbacks  # noqa: F401
 import bot_app.handlers.downloads  # noqa: F401
 from bot_app.maintenance import start_background_tasks, stop_background_tasks
 from bot_app.runtime import bot, dp
+from bot_app.ui.i18n import get_locale, translate
+from bot_app.referral import build_referral_card
 from monitoring import HealthCheckServer
 from admin_panel_web import AdminPanelServer
 
@@ -28,11 +33,18 @@ if config.ENABLE_HISTORY:
     from db import init_db, add_authorized_admin, remove_authorized_admin
     from admin_panel_clean import (
         cmd_stats, cmd_top_users, cmd_platform_stats,
-        cmd_user_stats, cmd_recent,
+        cmd_user_stats, cmd_recent, cmd_referral_overview,
+        cmd_confirm_referral, is_admin,
     )
+    from bot_app import quota as quota_ui
+    from services import quotas as quota_service
+    from services import referrals as referral_service
+    from services import alerts as alert_service
+    from db import sync_subscription_plans
 
     try:
         init_db()
+        sync_subscription_plans(config.SUBSCRIPTION_PLANS)
     except Exception as e:
         logger.warning("Не удалось инициализировать БД истории: %s", e)
         config.ENABLE_HISTORY = False
@@ -130,6 +142,304 @@ export ADMIN_USER_IDS="{message.from_user.id}"
         """Обработчик команды /recent."""
         logger.info(f"Команда /recent от пользователя {message.from_user.id} ({message.from_user.username})")
         await cmd_recent(message)
+
+    @dp.message(Command("upgrade"))
+    async def cmd_upgrade_handler(message: types.Message):
+        """Показать тарифы и подсветить текущий план пользователя."""
+
+        locale = get_locale(getattr(getattr(message, "from_user", None), "language_code", None))
+        plans = quota_service.available_plans()
+        if not plans:
+            await message.reply(translate("upgrade.no_plans", locale))
+            return
+
+        try:
+            current = quota_service.build_enforcement_plan(message.from_user.id)
+        except Exception:
+            logger.debug("Не удалось получить текущий план пользователя", exc_info=True)
+            current = None
+
+        def _fmt_limit(value: Optional[int]) -> str:
+            return "∞" if not value else str(value)
+
+        lines = [translate("upgrade.header", locale)]
+        limits = current.get("limits", {}) if current else {}
+        if current:
+            lines.append(
+                translate(
+                    "upgrade.current_plan",
+                    locale,
+                    plan=current.get("plan_label", current.get("plan", "")),
+                    daily=_fmt_limit(limits.get("daily")),
+                    monthly=_fmt_limit(limits.get("monthly")),
+                )
+            )
+        lines.append("")
+        lines.append(translate("upgrade.pick_plan", locale))
+
+        ordered = sorted(plans.items(), key=lambda item: item[1].get("priority", 0))
+        for plan_key, info in ordered:
+            label = str(info.get("label") or plan_key.title())
+            if current and plan_key == current.get("plan"):
+                label = f"{label} ✅"
+            daily_limit = _fmt_limit(info.get("daily_quota"))
+            monthly_limit = _fmt_limit(info.get("monthly_quota"))
+            try:
+                price_value = int(info.get("price_usd", 0) or 0)
+            except (TypeError, ValueError):
+                price_value = 0
+            price_label = (
+                translate("upgrade.price_free", locale)
+                if price_value <= 0
+                else translate("upgrade.price_paid", locale, price=price_value)
+            )
+            description = info.get("description")
+            desc_suffix = f" — {description}" if description else ""
+            lines.append(
+                translate(
+                    "upgrade.plan_line",
+                    locale,
+                    label=label,
+                    daily=daily_limit,
+                    monthly=monthly_limit,
+                    price=price_label,
+                    desc=desc_suffix,
+                )
+            )
+
+        lines.append("")
+        lines.append(translate("upgrade.cta", locale))
+        text = "\n".join(line for line in lines if line is not None)
+
+        support_link = getattr(config, "UPGRADE_SUPPORT_LINK", None)
+        reply_markup = None
+        if support_link:
+            reply_markup = InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [
+                        InlineKeyboardButton(
+                            text=translate("upgrade.button_contact", locale),
+                            url=support_link,
+                        )
+                    ]
+                ]
+            )
+        await message.reply(text, parse_mode="HTML", reply_markup=reply_markup)
+
+    @dp.message(Command("referral"))
+    async def cmd_referral_handler(message: types.Message):
+        locale = get_locale(getattr(getattr(message, "from_user", None), "language_code", None))
+        text, markup = build_referral_card(message.from_user.id, locale)
+        await message.reply(text, reply_markup=markup)
+
+    @dp.message(Command("use_referral"))
+    async def cmd_use_referral_handler(message: types.Message):
+        locale = get_locale(getattr(getattr(message, "from_user", None), "language_code", None))
+        args = (message.text or "").split()
+        if len(args) < 2:
+            await message.reply(translate("referral.enter_code_prompt", locale))
+            return
+        code = args[1]
+        try:
+            referral_service.register_referral(code, message.from_user.id)
+        except ValueError as exc:
+            await message.reply(translate("referral.register_error", locale, reason=str(exc)))
+            return
+        await message.reply(translate("referral.register_success", locale))
+
+    @dp.message(Command("ref_leaderboard"))
+    async def cmd_ref_leaderboard_handler(message: types.Message):
+        locale = get_locale(getattr(getattr(message, "from_user", None), "language_code", None))
+        rows = referral_service.referral_leaderboard(limit=10)
+        if not rows:
+            await message.reply(translate("referral.leaderboard_empty", locale))
+            return
+        text_lines = [translate("referral.leaderboard_header", locale)]
+        for idx, row in enumerate(rows, start=1):
+            username = row.get("user_id")
+            count = row.get("rewarded") or 0
+            text_lines.append(
+                translate(
+                    "referral.leaderboard_line",
+                    locale,
+                    place=idx,
+                    user=username,
+                    count=count,
+                    daily=row.get("daily_bonus", 0),
+                    monthly=row.get("monthly_bonus", 0),
+                )
+            )
+        text_lines.append(translate("referral.leaderboard_footer", locale))
+        await message.reply("\n".join(text_lines))
+
+    @dp.message(Command("referral_admin"))
+    async def cmd_referral_admin_handler(message: types.Message):
+        if not await is_admin(message):
+            await message.reply("🔒 Только администраторы могут использовать эту команду.")
+            return
+        target_id = message.from_user.id
+        parts = (message.text or "").split()[1:]
+        if message.reply_to_message:
+            target_id = getattr(getattr(message.reply_to_message, "from_user", None), "id", target_id)
+        elif parts:
+            try:
+                target_id = int(parts[0])
+            except ValueError:
+                await message.reply("user_id должен быть числом.")
+                return
+        await cmd_referral_overview(message, target_id)
+
+    @dp.message(Command("confirm_referral"))
+    async def cmd_confirm_referral_handler(message: types.Message):
+        await cmd_confirm_referral(message)
+
+    def _format_alert_ts(value: Optional[object]) -> str:
+        if isinstance(value, datetime):
+            return value.strftime("%Y-%m-%d %H:%M:%S")
+        if not value:
+            return "—"
+        return str(value)
+
+    @dp.message(Command("alerts"))
+    async def cmd_alerts_handler(message: types.Message):
+        if not await is_admin(message):
+            await message.reply("🔒 Только администраторы могут просматривать алерты.")
+            return
+        alerts = alert_service.recent_alerts(limit=10)
+        if not alerts:
+            await message.reply("✅ Активных алертов нет.")
+            return
+        lines = ["⚠️ Последние алерты:"]
+        for alert in alerts:
+            severity = str(alert.get("severity", "warning")).upper()
+            status = str(alert.get("status", "open"))
+            code = alert.get("code", "unknown")
+            created = _format_alert_ts(alert.get("created_at"))
+            message_text = alert.get("message", "")
+            lines.append(f"• [{severity}/{status}] {code} — {message_text} ({created})")
+        lines.append("\nЧтобы закрыть алерт вручную: /alert_ack <code>")
+        await message.reply("\n".join(lines))
+
+    @dp.message(Command("alert_ack"))
+    async def cmd_alert_ack_handler(message: types.Message):
+        if not await is_admin(message):
+            await message.reply("🔒 Только администраторы могут подтверждать алерты.")
+            return
+        parts = (message.text or "").split()
+        if len(parts) < 2:
+            await message.reply("Использование: /alert_ack <code>. Пример: /alert_ack errors.spike")
+            return
+        code = parts[1].strip().lower()
+        if not code:
+            await message.reply("Укажите код алерта: /alert_ack errors.spike")
+            return
+        resolved = alert_service.resolve_alert(code)
+        if resolved:
+            await message.reply(f"✅ Алерт {code} помечен как resolved.")
+        else:
+            await message.reply("ℹ️ Активный алерт с таким кодом не найден.")
+    @dp.message(Command("quota"))
+    async def cmd_quota_handler(message: types.Message):
+        locale = get_locale(getattr(getattr(message, "from_user", None), "language_code", None))
+        target_id = message.from_user.id
+        admin_view = await is_admin(message)
+        parts = (message.text or "").strip().split()
+
+        if message.reply_to_message:
+            reply_user = getattr(getattr(message.reply_to_message, "from_user", None), "id", None)
+            if reply_user and reply_user != target_id:
+                if not admin_view:
+                    await message.reply("🔒 Только администраторы могут просматривать чужие лимиты.")
+                    return
+                target_id = reply_user
+        elif admin_view and len(parts) > 1:
+            try:
+                target_id = int(parts[1])
+            except ValueError:
+                await message.reply("⚠️ user_id должен быть числом.")
+                return
+        elif len(parts) > 1 and not admin_view:
+            await message.reply("🔒 Только администраторы могут просматривать чужие лимиты.")
+            return
+
+        try:
+            plan = quota_service.build_enforcement_plan(target_id)
+        except Exception:
+            logger.exception("Не удалось получить квоты пользователя %s", target_id)
+            await message.reply("⚠️ Не удалось получить информацию о тарифе.")
+            return
+
+        summary = quota_ui.quota_summary(
+            plan,
+            locale,
+            admin=admin_view and target_id != message.from_user.id,
+            target_user_id=target_id if admin_view else None,
+        )
+        await message.reply(summary, parse_mode="HTML")
+
+    @dp.message(Command("set_plan"))
+    async def cmd_set_plan_handler(message: types.Message):
+        if not await is_admin(message):
+            await message.reply("🔒 Эта команда доступна только администраторам.")
+            return
+
+        args = (message.text or "").strip().split()[1:]
+        target_id: Optional[int] = None
+        plan_key: Optional[str] = None
+        overrides: list[str] = []
+
+        if message.reply_to_message:
+            if not args:
+                await message.reply("Использование: /set_plan <plan> [daily_override] [monthly_override]")
+                return
+            target_id = getattr(getattr(message.reply_to_message, "from_user", None), "id", None)
+            plan_key = args[0]
+            overrides = args[1:]
+        else:
+            if len(args) < 2:
+                await message.reply("Использование: /set_plan <user_id> <plan> [daily_override] [monthly_override]")
+                return
+            try:
+                target_id = int(args[0])
+            except ValueError:
+                await message.reply("⚠️ user_id должен быть числом.")
+                return
+            plan_key = args[1]
+            overrides = args[2:]
+
+        if not target_id or not plan_key:
+            await message.reply("⚠️ Не удалось определить пользователя или тариф.")
+            return
+
+        daily_override = None
+        monthly_override = None
+        if overrides:
+            try:
+                daily_override = int(overrides[0])
+            except ValueError:
+                await message.reply("⚠️ daily_override должен быть числом.")
+                return
+        if len(overrides) > 1:
+            try:
+                monthly_override = int(overrides[1])
+            except ValueError:
+                await message.reply("⚠️ monthly_override должен быть числом.")
+                return
+
+        try:
+            plan = quota_service.assign_plan(
+                target_id,
+                plan_key,
+                custom_daily=daily_override,
+                custom_monthly=monthly_override,
+            )
+        except ValueError as exc:
+            await message.reply(str(exc))
+            return
+
+        locale = get_locale(getattr(getattr(message, "from_user", None), "language_code", None))
+        summary = quota_ui.quota_summary(plan, locale, admin=True, target_user_id=target_id)
+        await message.reply(f"✅ Тариф обновлён.\n\n{summary}", parse_mode="HTML")
 
     @dp.my_chat_member()
     async def handle_my_chat_member(update: types.ChatMemberUpdated):

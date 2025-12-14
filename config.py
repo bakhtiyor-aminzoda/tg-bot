@@ -3,6 +3,7 @@
 # Токен должен лежать в переменной окружения TELEGRAM_BOT_TOKEN
 # (рекомендуется хранить в системной переменной или .env, НЕ в коде).
 
+import json
 import os
 from pathlib import Path
 from typing import Dict, Optional
@@ -308,4 +309,116 @@ ADMIN_PANEL_SESSION_TTL_SECONDS = _int_setting(
 	default=6 * 60 * 60,
 	min_value=300,
 	max_value=7 * 24 * 60 * 60,
+)
+
+
+def _coerce_positive_int(value, default: int) -> int:
+	try:
+		parsed = int(value)
+	except (TypeError, ValueError):
+		return default
+	return max(0, parsed)
+
+
+def _normalized_subscription_plans() -> Dict[str, Dict[str, object]]:
+	baseline = {
+		"free": {
+			"label": "Free",
+			"daily_quota": 5,
+			"monthly_quota": 60,
+			"max_parallel_downloads": 1,
+			"priority": 0,
+			"price_usd": 0,
+			"description": "Базовый тариф для новых пользователей",
+		},
+		"power": {
+			"label": "Power",
+			"daily_quota": 20,
+			"monthly_quota": 400,
+			"max_parallel_downloads": 2,
+			"priority": 10,
+			"price_usd": 9,
+			"description": "Для активных загрузчиков и креаторов",
+		},
+		"team": {
+			"label": "Team",
+			"daily_quota": 60,
+			"monthly_quota": 1500,
+			"max_parallel_downloads": 4,
+			"priority": 20,
+			"price_usd": 25,
+			"description": "Общий тариф для студий и медиа-команд",
+		},
+	}
+
+	raw_overrides = os.environ.get("SUBSCRIPTION_PLANS_JSON",
+		"",
+	)
+	if raw_overrides.strip():
+		try:
+			payload = json.loads(raw_overrides)
+		except json.JSONDecodeError as exc:  # pragma: no cover - config guardrail
+			raise ValueError("SUBSCRIPTION_PLANS_JSON must be a valid JSON object") from exc
+		if not isinstance(payload, dict):
+			raise ValueError("SUBSCRIPTION_PLANS_JSON must be a JSON object with plan definitions")
+		for key, definition in payload.items():
+			if not isinstance(definition, dict):
+				continue
+			plan_key = str(key).strip().lower()
+			if not plan_key:
+				continue
+			current = baseline.get(plan_key, {})
+			baseline[plan_key] = {
+				"label": definition.get("label") or current.get("label") or plan_key.title(),
+				"daily_quota": _coerce_positive_int(definition.get("daily_quota"), current.get("daily_quota", 5)),
+				"monthly_quota": _coerce_positive_int(definition.get("monthly_quota"), current.get("monthly_quota", 60)),
+				"max_parallel_downloads": max(1, _coerce_positive_int(definition.get("max_parallel_downloads"), current.get("max_parallel_downloads", 1))),
+				"priority": _coerce_positive_int(definition.get("priority"), current.get("priority", 0)),
+				"price_usd": _coerce_positive_int(definition.get("price_usd"), current.get("price_usd", 0)),
+				"description": definition.get("description") or current.get("description"),
+			}
+	return baseline
+
+
+SUBSCRIPTION_PLANS: Dict[str, Dict[str, object]] = _normalized_subscription_plans()
+DEFAULT_SUBSCRIPTION_PLAN = os.environ.get("DEFAULT_SUBSCRIPTION_PLAN", "free").strip().lower() or "free"
+if DEFAULT_SUBSCRIPTION_PLAN not in SUBSCRIPTION_PLANS:
+	DEFAULT_SUBSCRIPTION_PLAN = "free"
+SUBSCRIPTION_PERIOD_DAYS = _int_setting("SUBSCRIPTION_PERIOD_DAYS", default=30, min_value=1, max_value=120)
+UPGRADE_SUPPORT_LINK = os.environ.get("UPGRADE_SUPPORT_LINK", "https://t.me/MediaBanditSupport").strip() or None
+
+# === Alerts & health monitoring ===
+try:
+	ADMIN_ALERT_CHAT_ID = int(os.environ.get("ADMIN_ALERT_CHAT_ID", "0")) or None
+except ValueError:
+	ADMIN_ALERT_CHAT_ID = None
+ALERT_MONITOR_INTERVAL_SECONDS = _int_setting(
+	"ALERT_MONITOR_INTERVAL_SECONDS",
+	default=60,
+	min_value=15,
+	max_value=15 * 60,
+)
+ALERT_ERROR_SPIKE_THRESHOLD = _int_setting(
+	"ALERT_ERROR_SPIKE_THRESHOLD",
+	default=8,
+	min_value=1,
+	max_value=1000,
+)
+ALERT_PENDING_THRESHOLD = _int_setting(
+	"ALERT_PENDING_THRESHOLD",
+	default=15,
+	min_value=1,
+	max_value=10_000,
+)
+ALERT_STUCK_ACTIVE_MINUTES = _int_setting(
+	"ALERT_STUCK_ACTIVE_MINUTES",
+	default=3,
+	min_value=1,
+	max_value=60,
+)
+ALERT_NOTIFY_COOLDOWN_MINUTES = _int_setting(
+	"ALERT_NOTIFY_COOLDOWN_MINUTES",
+	default=60,
+	min_value=1,
+	max_value=24 * 60,
 )

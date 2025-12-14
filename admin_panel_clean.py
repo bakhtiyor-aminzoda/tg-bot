@@ -12,7 +12,9 @@ from aiogram import types
 
 import config
 from bot_app.helpers import resolve_chat_title
+from bot_app.ui.i18n import get_locale, translate
 from db import is_authorized_admin, upsert_chat
+from services import referrals as referral_service
 from services import stats as stats_service
 
 logger = logging.getLogger(__name__)
@@ -280,6 +282,110 @@ async def cmd_recent(message: types.Message):
 
     text = '\n'.join(lines)
     await message.reply(text, parse_mode='HTML')
+
+
+async def cmd_referral_overview(message: types.Message, target_user_id: Optional[int] = None):
+    target_id = target_user_id or message.from_user.id
+    locale = get_locale(getattr(getattr(message, "from_user", None), "language_code", None))
+    try:
+        overview = referral_service.get_referral_overview(target_id)
+    except Exception:
+        logger.exception("Не удалось получить данные рефералов для %s", target_id)
+        await message.reply("⚠️ Не удалось получить данные по рефералам.")
+        return
+
+    codes = overview.get("codes", [])
+    bonuses = overview.get("bonuses", {})
+    summary = overview.get("summary", {})
+
+    lines = ["🎁 <b>Реферальная программа</b>"]
+    if target_id != message.from_user.id:
+        lines.append(f"👤 User ID: <code>{target_id}</code>")
+
+    daily_bonus = int(bonuses.get("daily", 0))
+    monthly_bonus = int(bonuses.get("monthly", 0))
+    if daily_bonus or monthly_bonus:
+        lines.append(
+            translate(
+                "referral.single_bonus",
+                locale,
+                daily=daily_bonus,
+                monthly=monthly_bonus,
+            )
+        )
+    else:
+        lines.append(translate("referral.no_bonus", locale))
+
+    status_lines = []
+    for key in ("pending", "rewarded", "expired"):
+        status_lines.append(f"{key}: {summary.get(key, 0)}")
+    lines.append("Статус: " + ", ".join(status_lines))
+
+    if not codes:
+        lines.append("Кодов пока нет. Сгенерируйте через /referral.")
+    else:
+        lines.append("Коды:")
+        for code in codes[:5]:
+            max_uses = code.get("max_uses") or "∞"
+            lines.append(
+                translate(
+                    "referral.code_line",
+                    locale,
+                    code=code.get("code"),
+                    used=code.get("usage_count", 0),
+                    max=max_uses,
+                )
+            )
+
+    await message.reply("\n".join(lines), parse_mode="HTML")
+
+
+async def cmd_confirm_referral(message: types.Message):
+    if not await is_admin(message):
+        await message.reply("🔒 Только администраторы могут подтверждать рефералов.")
+        return
+
+    args = (message.text or "").split()[1:]
+    if not args:
+        await message.reply("Использование: /confirm_referral <referred_user_id> [daily_bonus] [monthly_bonus] [ttl_days]")
+        return
+    try:
+        referred_id = int(args[0])
+    except ValueError:
+        await message.reply("user_id должен быть числом.")
+        return
+
+    daily_bonus = int(args[1]) if len(args) > 1 else None
+    monthly_bonus = int(args[2]) if len(args) > 2 else None
+    ttl_days = int(args[3]) if len(args) > 3 else 30
+
+    try:
+        result = referral_service.confirm_referral(
+            referred_id,
+            daily_bonus=daily_bonus,
+            monthly_bonus=monthly_bonus,
+            reward_ttl_days=ttl_days,
+        )
+    except ValueError as exc:
+        await message.reply(str(exc))
+        return
+    except Exception:
+        logger.exception("Не удалось подтвердить реферала")
+        await message.reply("⚠️ Не удалось подтвердить реферал.")
+        return
+
+    locale = get_locale(getattr(getattr(message, "from_user", None), "language_code", None))
+    expiry = result.get("reward_expires_at")
+    expiry_text = expiry.isoformat() if expiry else "∞"
+    await message.reply(
+        translate(
+            "referral.admin_confirmed",
+            locale,
+            daily=result.get("reward_daily_bonus", 0),
+            monthly=result.get("reward_monthly_bonus", 0),
+            expiry=expiry_text,
+        )
+    )
 
 
 def register_admin_commands(dp):

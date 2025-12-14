@@ -9,11 +9,13 @@ from typing import Optional
 
 import config
 from bot_app import state
+from services import health_monitor
 
 logger = logging.getLogger(__name__)
 
 _cleanup_task: Optional[asyncio.Task[None]] = None
 _cookie_task: Optional[asyncio.Task[None]] = None
+_health_task: Optional[asyncio.Task[None]] = None
 
 
 def _purge_pending(now: float) -> int:
@@ -116,21 +118,25 @@ async def _cookie_refresh_loop() -> None:
 
 def start_background_tasks() -> None:
     """Ensure cleanup loop is running."""
-    global _cleanup_task, _cookie_task
+    global _cleanup_task, _cookie_task, _health_task
     loop = asyncio.get_running_loop()
     if not _cleanup_task or _cleanup_task.done():
         _cleanup_task = loop.create_task(_cleanup_loop(), name="state-cleanup")
     if not _cookie_task or _cookie_task.done():
         _cookie_task = loop.create_task(_cookie_refresh_loop(), name="instagram-cookie-refresh")
+    if config.ENABLE_HISTORY and (not _health_task or _health_task.done()):
+        _health_task = loop.create_task(health_monitor.monitor_loop(), name="health-monitor")
 
 
 async def stop_background_tasks() -> None:
     """Stop cleanup loop and wait for graceful shutdown."""
-    global _cleanup_task, _cookie_task
+    global _cleanup_task, _cookie_task, _health_task
     await _cancel_task(_cleanup_task)
     await _cancel_task(_cookie_task)
+    await _cancel_task(_health_task)
     _cleanup_task = None
     _cookie_task = None
+    _health_task = None
 
 
 async def _cancel_task(task: Optional[asyncio.Task[None]]) -> None:
