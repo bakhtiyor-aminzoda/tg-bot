@@ -136,6 +136,12 @@ def render_queue_section(runtime_state: Dict[str, object]) -> str:
     runtime_in_use = int(semaphore_state.get("in_use", 0) or 0)
     active_rows = runtime_state.get("active_rows") or []
     pending_rows = runtime_state.get("pending_rows") or []
+    utilization_pct = 0
+    if runtime_max_slots > 0:
+        try:
+            utilization_pct = min(100, int((runtime_in_use / runtime_max_slots) * 100))
+        except ZeroDivisionError:  # pragma: no cover - defensive guard
+            utilization_pct = 0
 
     active_queue_rows = "".join(
         f"""
@@ -180,6 +186,13 @@ def render_queue_section(runtime_state: Dict[str, object]) -> str:
             <p class=\"label\">Слоты</p>
             <p class=\"value\">{runtime_in_use}/{runtime_max_slots}</p>
         </article>
+        <article class=\"card mini util-card\">
+            <p class=\"label\">Нагрузка</p>
+            <div class=\"util-progress\" aria-label=\"{runtime_in_use} из {runtime_max_slots or 'inf'} слотов занято\">
+                <span style=\"width:{utilization_pct}%\"></span>
+            </div>
+            <p class=\"hint\">{utilization_pct}%</p>
+        </article>
     </div>
     """
 
@@ -191,7 +204,7 @@ def render_queue_section(runtime_state: Dict[str, object]) -> str:
     """
 
     return f"""
-    <section>
+    <section class=\"panel panel-queue\">
         <h2>Очередь и управление</h2>
         {queue_cards_html}
         {queue_actions_html}
@@ -251,7 +264,7 @@ def render_failures_section(failures: List[Dict[str, object]]) -> str:
     ) or "<tr><td colspan=\"5\">Ошибок нет</td></tr>"
 
     return f"""
-    <section>
+    <section class=\"panel panel-failures\">
         <h2>Неудачные загрузки</h2>
         <table class=\"failure-table\">
             <thead>

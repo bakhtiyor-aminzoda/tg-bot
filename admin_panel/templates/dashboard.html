@@ -5,285 +5,300 @@
     <title>Admin Panel — Media Bandit</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=General+Sans:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap');
         :root {
-            --bg: #050915;
-            --surface: rgba(13,23,42,0.85);
-            --surface-alt: rgba(15,27,52,0.6);
-            --accent: #58f29c;
-            --accent-secondary: #4cc9f0;
-            --text: #f5f7ff;
-            --muted: #94a3b8;
-            --danger: #f87171;
-            font-family: 'Space Grotesk', 'Fira Sans', sans-serif;
+            --bg: #030714;
+            --bg-accent: #0e1a3a;
+            --panel: rgba(10, 14, 30, 0.92);
+            --panel-soft: rgba(14, 21, 42, 0.8);
+            --stroke: rgba(255, 255, 255, 0.08);
+            --text: #f4f7ff;
+            --muted: #8f9bbd;
+            --accent: #7bf0c3;
+            --accent-soft: #5db5ff;
+            --danger: #ff708a;
+            --warn: #ffb347;
+            --success: #7af5a1;
+            --shadow: 0 25px 70px rgba(2, 6, 23, 0.55);
+            font-family: 'General Sans', 'Space Grotesk', system-ui, -apple-system, sans-serif;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             min-height: 100vh;
-            background: radial-gradient(circle at top, #112044, #050915);
+            background: radial-gradient(circle at 20% -10%, #1d2c62, #030714 55%);
             color: var(--text);
-            padding: 32px;
-            display: flex;
-            justify-content: center;
+            padding: clamp(16px, 3vw, 42px);
         }
-        main {
-            width: min(1200px, 100%);
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at 80% 15%, rgba(123,240,195,0.18), transparent 45%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .dashboard-shell {
+            position: relative;
+            z-index: 1;
+            max-width: 1280px;
+            margin: 0 auto 48px;
             display: flex;
             flex-direction: column;
             gap: 24px;
         }
-        header {
+        .hero {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 18px;
         }
         .title-row {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        h1 { font-size: 28px; letter-spacing: 0.5px; }
-        .scope-chip {
-            background: rgba(255,255,255,0.08);
-            padding: 6px 14px;
-            border-radius: 32px;
-            font-size: 14px;
-            letter-spacing: 0.5px;
-        }
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            align-items: flex-start;
             gap: 16px;
+            flex-wrap: wrap;
         }
-        .card {
-            background: var(--surface);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 18px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
-        }
-        .label {
-            font-size: 14px;
-            color: var(--muted);
+        h1 { font-size: clamp(28px, 4vw, 40px); letter-spacing: 0.4px; }
+        .eyebrow {
             text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 12px;
+            letter-spacing: 3px;
+            color: var(--muted);
             margin-bottom: 6px;
         }
-        .value {
-            font-size: clamp(28px, 5vw, 36px);
-            font-weight: 600;
-        }
-        .hint {
-            margin-top: 6px;
+        .hero-subtitle {
+            font-size: 15px;
             color: var(--muted);
-            font-size: 13px;
+            max-width: 520px;
         }
-        .controls {
-            background: var(--surface);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 16px;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            align-items: flex-end;
-        }
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            min-width: 180px;
-        }
-        .control-group label {
-            font-size: 11px;
-            text-transform: uppercase;
-            color: var(--muted);
-            letter-spacing: 0.8px;
-        }
-        input[type="number"], input[type="text"], select {
-            background: var(--surface-alt);
+        .scope-chip {
+            background: rgba(255,255,255,0.08);
+            padding: 8px 20px;
+            border-radius: 999px;
+            font-size: 14px;
             border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 8px;
-            color: var(--text);
-            padding: 8px 12px;
         }
-        select { min-width: 140px; }
-        button {
-            background: var(--accent);
-            color: #04161c;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.15s ease;
-        }
-        button:hover { transform: translateY(-1px); }
-        .ghost-btn {
-            border: 1px solid rgba(255,255,255,0.25);
-            border-radius: 8px;
-            padding: 10px 16px;
-            text-decoration: none;
-            color: var(--text);
-        }
-        .ghost-btn:hover { border-color: var(--accent); color: var(--accent); }
         .identity-badge {
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            padding: 8px 18px;
+            padding: 10px 20px;
             border-radius: 999px;
             background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
             font-size: 14px;
         }
+        .control-rail {
+            background: var(--panel);
+            border: 1px solid var(--stroke);
+            border-radius: 20px;
+            padding: 18px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            align-items: end;
+            position: sticky;
+            top: 20px;
+            box-shadow: var(--shadow);
+        }
+        .control-group { display: flex; flex-direction: column; gap: 6px; }
+        .control-group label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--muted);
+        }
+        input[type="number"], input[type="text"], select {
+            background: var(--panel-soft);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            color: var(--text);
+            padding: 10px 14px;
+            font-size: 15px;
+        }
+        select { min-width: 140px; }
+        button, .btn {
+            background: var(--accent);
+            color: #031816;
+            border: none;
+            border-radius: 12px;
+            padding: 11px 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.2s ease;
+        }
+        button:hover, .btn:hover { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(4,18,32,0.35); }
+        .ghost-btn, .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: var(--text);
+        }
+        .ghost-btn:hover, .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .panel {
+            background: var(--panel);
+            border-radius: 24px;
+            border: 1px solid var(--stroke);
+            padding: 24px;
+            box-shadow: var(--shadow);
+        }
+        .panel h2 { font-size: 20px; margin-bottom: 12px; }
+        .panel-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .panel-heading p { color: var(--muted); font-size: 14px; }
+        .panel-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+        .stat-grid, .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+        .stat-card, .card {
+            background: var(--panel-soft);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::after, .card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 0, rgba(255,255,255,0.08), transparent 60%);
+            pointer-events: none;
+        }
+        .label { font-size: 12px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
+        .value { font-size: clamp(30px, 5vw, 40px); font-weight: 600; margin-top: 8px; }
+        .hint { margin-top: 6px; color: var(--muted); font-size: 13px; }
         .queue-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-            margin-bottom: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+        .util-progress {
+            margin-top: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            overflow: hidden;
+        }
+        .util-progress span {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-soft));
         }
         .queue-actions {
             display: flex;
-            gap: 12px;
             flex-wrap: wrap;
-            margin-bottom: 16px;
+            gap: 10px;
+            margin-bottom: 18px;
         }
         .action-btn {
-            background: var(--surface);
-            color: var(--text);
+            background: transparent;
             border: 1px solid rgba(255,255,255,0.25);
-            border-radius: 8px;
-            padding: 8px 14px;
-            cursor: pointer;
-            font-weight: 500;
+            color: var(--text);
+            border-radius: 12px;
+            padding: 9px 16px;
         }
-        .action-btn:hover { border-color: var(--accent); }
-        .action-btn.danger {
-            background: var(--danger);
-            border-color: transparent;
-            color: #fff;
-        }
-        section {
-            background: var(--surface-alt);
-            border-radius: 18px;
-            border: 1px solid rgba(255,255,255,0.05);
-            padding: 20px;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-        }
-        section h2 {
-            font-size: 18px;
-            margin-bottom: 14px;
-            letter-spacing: 0.5px;
-        }
+        .action-btn.danger { background: rgba(255,112,138,0.15); border-color: var(--danger); color: var(--danger); }
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 14px;
         }
         th, td {
-            padding: 10px;
+            padding: 12px;
             text-align: left;
             border-bottom: 1px solid rgba(255,255,255,0.06);
         }
         th { color: var(--muted); font-weight: 500; }
         tbody tr:hover { background: rgba(255,255,255,0.03); }
-        .chat-table tr.active { background: rgba(88,242,156,0.1); }
+        .chat-table tr.active { background: rgba(123,240,195,0.08); }
         .chat-table td:first-child a { color: var(--text); text-decoration: none; font-weight: 600; }
-        .two-columns {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 16px;
-        }
+        .two-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
         .logs-list {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            max-height: 260px;
+            gap: 10px;
+            max-height: 320px;
             overflow-y: auto;
         }
         .logs-list li {
-            padding: 10px 12px;
-            background: var(--surface);
-            border-radius: 12px;
+            padding: 12px 14px;
+            background: var(--panel-soft);
+            border-radius: 14px;
             border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
         }
-        .log-ts {
-            font-family: 'Fira Code', monospace;
-            font-size: 12px;
-            color: var(--muted);
-            margin-right: 8px;
-        }
-        .log-level {
-            font-weight: 600;
-            color: var(--danger);
-            margin-right: 8px;
-        }
-        .log-msg { color: var(--text); }
-        .muted { color: var(--muted); }
-        .health-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 16px;
-            margin-top: 8px;
-        }
+        .log-ts { font-family: 'Space Grotesk', monospace; font-size: 12px; color: var(--muted); }
+        .log-level { font-weight: 600; color: var(--danger); margin-right: 4px; }
+        .health-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-top: 8px; }
         .status-pill {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 999px;
             font-weight: 600;
-            background: rgba(88,242,156,0.15);
+            background: rgba(123,240,195,0.15);
         }
-        .status-pill.danger { background: rgba(248,113,113,0.2); color: #fecaca; }
-        .status-pill.warning { background: rgba(252,211,77,0.25); color: #fef3c7; }
+        .status-pill.danger { background: rgba(255,112,138,0.2); color: #ffd5dd; }
+        .status-pill.warning { background: rgba(255,179,71,0.25); color: #ffe0b2; }
         .metrics-block {
-            background: rgba(0,0,0,0.2);
-            border-radius: 12px;
-            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 14px;
             border: 1px solid rgba(255,255,255,0.05);
+            padding: 14px;
         }
-        .card.mini .value { font-size: 30px; }
-        .danger-text { color: var(--danger); font-weight: 600; }
-        .failure-table .error { color: var(--danger); }
-        .failure-table .status-pill { font-size: 12px; padding: 4px 10px; }
-        .metrics-block ul {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .metrics-block li {
+        .metrics-block ul { list-style: none; display: flex; flex-direction: column; gap: 6px; font-family: 'Space Grotesk', monospace; }
+        .muted { color: var(--muted); }
+        .utility-bar {
+            position: sticky;
+            bottom: 20px;
             display: flex;
             justify-content: space-between;
-            font-family: 'Fira Code', monospace;
-            font-size: 13px;
+            gap: 12px;
+            padding: 12px 18px;
+            background: rgba(3,7,20,0.85);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 999px;
+            box-shadow: var(--shadow);
         }
-        .metrics-title {
-            font-size: 13px;
-            text-transform: uppercase;
-            color: var(--muted);
-            letter-spacing: 0.6px;
-            margin-bottom: 8px;
+        .utility-bar button, .utility-bar a {
+            flex: 1;
+            text-align: center;
         }
         @media (max-width: 720px) {
             body { padding: 16px; }
-            .controls { flex-direction: column; align-items: stretch; }
-            .control-group { width: 100%; }
+            .control-rail { grid-template-columns: 1fr; position: static; }
+            .title-row { flex-direction: column; }
+            .utility-bar { flex-direction: column; border-radius: 24px; }
         }
     </style>
 </head>
 <body>
-    <main>
-        <header>
+    <main class="dashboard-shell">
+        <header class="hero" id="top">
             <div class="title-row">
-                <h1>Media Bandit · Админ-панель</h1>
+                <div>
+                    <p class="eyebrow">Media Bandit · realtime</p>
+                    <h1>Админ-панель</h1>
+                    <p class="hero-subtitle">Следим за загрузками и состоянием воркеров, реагируем на сбои и управляем очередью в один клик.</p>
+                </div>
                 <span class="scope-chip">{{ scope }}</span>
             </div>
             {{ identity_html|safe }}
-            <form method="get" action="/admin" class="controls">
+            <form method="get" action="/admin" class="controls control-rail">
                 <div class="control-group">
                     <label>ID чата</label>
                     <input type="number" name="chat_id" placeholder="Например 12345" value="{{ chat_value }}" />
@@ -315,10 +330,18 @@
                 <a class="ghost-btn" href="{{ reset_link }}">Сбросить фильтр</a>
             </form>
         </header>
-        {{ cards_html|safe }}
+        <section class="panel panel-kpis">
+            {{ cards_html|safe }}
+        </section>
         {{ queue_section_html|safe }}
-        <section>
-            <h2>Чаты</h2>
+        <section class="panel panel-chats">
+            <div class="panel-heading">
+                <div>
+                    <p class="eyebrow">Чаты</p>
+                    <h2>Источники</h2>
+                    <p class="muted">Сортируются по выбранному фильтру</p>
+                </div>
+            </div>
             <table class="chat-table">
                 <thead>
                     <tr>
@@ -337,43 +360,60 @@
                 </tbody>
             </table>
         </section>
-        <div class="two-columns">
-            <section>
-                <h2>Топ пользователей</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Пользователь</th>
-                            <th>Загрузок</th>
-                            <th>Объём</th>
-                            <th>Ошибки</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{ top_rows|safe }}
-                    </tbody>
-                </table>
-            </section>
-            <section>
-                <h2>Платформы</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Платформа</th>
-                            <th>Загрузок</th>
-                            <th>Объём</th>
-                            <th>Ошибки</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{ platform_rows|safe }}
-                    </tbody>
-                </table>
-            </section>
-        </div>
-        <section>
-            <h2>Последние загрузки</h2>
+        <section class="panel panel-lists">
+            <div class="panel-grid">
+                <div>
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">Лояльность</p>
+                            <h2>Топ пользователей</h2>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Пользователь</th>
+                                <th>Загрузок</th>
+                                <th>Объём</th>
+                                <th>Ошибки</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{ top_rows|safe }}
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">Платформы</p>
+                            <h2>Каналы трафика</h2>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Платформа</th>
+                                <th>Загрузок</th>
+                                <th>Объём</th>
+                                <th>Ошибки</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{ platform_rows|safe }}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <section class="panel panel-recent">
+            <div class="panel-heading">
+                <div>
+                    <p class="eyebrow">История</p>
+                    <h2>Последние загрузки</h2>
+                </div>
+            </div>
             <table>
                 <thead>
                     <tr>
@@ -390,16 +430,30 @@
             </table>
         </section>
         {{ failures_section_html|safe }}
-        <section>
-            <h2>Healthcheck</h2>
+        <section class="panel panel-health">
+            <div class="panel-heading">
+                <div>
+                    <p class="eyebrow">Служебное состояние</p>
+                    <h2>Healthcheck</h2>
+                </div>
+            </div>
             {{ health_html|safe }}
         </section>
-        <section>
-            <h2>Ошибки</h2>
+        <section class="panel panel-logs">
+            <div class="panel-heading">
+                <div>
+                    <p class="eyebrow">Мониторинг</p>
+                    <h2>Ошибки</h2>
+                </div>
+            </div>
             <ul class="logs-list">
                 {{ logs_html|safe }}
             </ul>
         </section>
+        <footer class="utility-bar">
+            <button type="button" onclick="window.location.reload()">Обновить данные</button>
+            <a class="btn btn-outline" href="#top">Наверх</a>
+        </footer>
     </main>
     <script>
     {{ dashboard_js|safe }}
