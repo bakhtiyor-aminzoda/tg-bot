@@ -92,7 +92,7 @@ async def cmd_start_handler(message: types.Message):
     await message.reply(text, parse_mode="HTML", reply_markup=START_CTA_KEYBOARD)
 
 
-@dp.callback_query(F.data.startswith("start:"))
+@dp.callback_query(lambda cq: (cq.data or "").startswith("start:"))
 async def start_cta_callback(callback_query: types.CallbackQuery):
     """Обработчик инлайн-кнопок на /start."""
 
@@ -126,7 +126,7 @@ async def start_cta_callback(callback_query: types.CallbackQuery):
 
     await callback_query.answer(toast, show_alert=False)
     if message:
-        await message.reply(text, parse_mode="HTML")
+        await message.answer(text, parse_mode="HTML")
 
 
 # ---------- Команды админ-панели ----------

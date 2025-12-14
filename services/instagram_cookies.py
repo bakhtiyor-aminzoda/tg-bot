@@ -27,6 +27,10 @@ REFRESH_ERROR_MARKERS = (
 	"Requested content is not available",
 	"login required",
 	"rate-limit",
+	"no video formats",
+	"owner restricted",
+	"private",
+	"session cookie",
 )
 
 DESKTOP_UA = (
