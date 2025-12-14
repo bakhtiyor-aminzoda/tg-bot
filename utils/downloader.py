@@ -530,4 +530,13 @@ def _should_try_instagram_fallback(url: str, error_line: str, cookies_path: Opti
         logger.warning("Instagram fallback skipped: cookies path unavailable")
         return False
     lowered = error_line.lower()
-    return "inappropriate" in lowered or "certain audiences" in lowered
+    trigger_phrases = (
+        "inappropriate",
+        "certain audiences",
+        "login",
+        "private",
+        "not available",
+        "no video formats",
+        "owner restricted",
+    )
+    return any(phrase in lowered for phrase in trigger_phrases)
