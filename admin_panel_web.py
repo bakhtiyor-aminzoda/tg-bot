@@ -654,6 +654,21 @@ class AdminPanelServer:
             for row in pending_rows_preview
         ) or "<tr><td colspan=\"5\">Pending кнопок нет</td></tr>"
 
+        failure_rows_html = "".join(
+            f"""
+            <tr>
+                <td>{html.escape(str(item.get('username') or item.get('user_id')))}</td>
+                <td>{html.escape(str(item.get('platform', 'unknown')).upper())}</td>
+                <td class=\"error\">{html.escape(str(item.get('error_message') or '—'))}</td>
+                <td>{_format_timestamp(item.get('timestamp'))}</td>
+                <td>
+                    <span class=\"status-pill danger\">{html.escape(str(item.get('status')))}</span>
+                </td>
+            </tr>
+            """
+            for item in failures
+        ) or "<tr><td colspan=\"5\">Ошибок нет</td></tr>"
+
         queue_section_html = f"""
         <section>
             <h2>Очередь и управление</h2>
@@ -754,21 +769,6 @@ class AdminPanelServer:
             """
             for item in recent
         ) or "<tr><td colspan=\"5\">История пуста</td></tr>"
-
-        failure_rows_html = "".join(
-            f"""
-            <tr>
-                <td>{html.escape(str(item.get('username') or item.get('user_id')))}</td>
-                <td>{html.escape(str(item.get('platform', 'unknown')).upper())}</td>
-                <td class=\"error\">{html.escape(str(item.get('error_message') or '—'))}</td>
-                <td>{_format_timestamp(item.get('timestamp'))}</td>
-                <td>
-                    <span class=\"status-pill danger\">{html.escape(str(item.get('status')))}</span>
-                </td>
-            </tr>
-            """
-            for item in failures
-        ) or "<tr><td colspan=\"5\">Ошибок нет</td></tr>"
 
         chat_rows: List[str] = []
         global_link = build_link({"chat_id": None})
@@ -1090,7 +1090,7 @@ class AdminPanelServer:
                     color: var(--text);
                 }}
                 .ghost-btn:hover {{ border-color: var(--accent); color: var(--accent); }}
-                .identity-badge {
+                .identity-badge {{
                     display: inline-flex;
                     align-items: center;
                     gap: 10px;
@@ -1098,20 +1098,20 @@ class AdminPanelServer:
                     border-radius: 999px;
                     background: rgba(255,255,255,0.08);
                     font-size: 14px;
-                }
-                .queue-grid {
+                }}
+                .queue-grid {{
                     display: grid;
                     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
                     gap: 12px;
                     margin-bottom: 12px;
-                }
-                .queue-actions {
+                }}
+                .queue-actions {{
                     display: flex;
                     gap: 12px;
                     flex-wrap: wrap;
                     margin-bottom: 16px;
-                }
-                .action-btn {
+                }}
+                .action-btn {{
                     background: var(--surface);
                     color: var(--text);
                     border: 1px solid rgba(255,255,255,0.25);
@@ -1119,13 +1119,13 @@ class AdminPanelServer:
                     padding: 8px 14px;
                     cursor: pointer;
                     font-weight: 500;
-                }
-                .action-btn:hover { border-color: var(--accent); }
-                .action-btn.danger {
+                }}
+                .action-btn:hover {{ border-color: var(--accent); }}
+                .action-btn.danger {{
                     background: var(--danger);
                     border-color: transparent;
                     color: #fff;
-                }
+                }}
                 section {{
                     background: var(--surface-alt);
                     border-radius: 18px;
