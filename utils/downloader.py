@@ -120,13 +120,14 @@ def _parse_progress_line(line: str) -> Optional[DownloadProgress]:
 class DownloadError(Exception):
     pass
 
-async def _run_cmd(cmd: list[str], timeout: int):
+async def _run_cmd(cmd: list[str], timeout: int, *, cwd: Optional[str] = None):
     """Run subprocess, return (stdout, stderr, returncode)."""
     logger.debug("Run command: %s", " ".join(shlex.quote(x) for x in cmd))
     proc = await asyncio.create_subprocess_exec(
         *cmd,
         stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
+        stderr=asyncio.subprocess.PIPE,
+        cwd=cwd,
     )
     try:
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=timeout)
@@ -138,7 +139,11 @@ async def _run_cmd(cmd: list[str], timeout: int):
 
 
 async def _run_yt_dlp(
-    cmd: list[str], timeout: int, progress_cb: Optional[ProgressCallback] = None
+    cmd: list[str],
+    timeout: int,
+    progress_cb: Optional[ProgressCallback] = None,
+    *,
+    cwd: Optional[str] = None,
 ) -> tuple[str, str, int]:
     """Run yt-dlp command while streaming stdout for progress updates."""
 
@@ -146,6 +151,7 @@ async def _run_yt_dlp(
         *cmd,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
+        cwd=cwd,
     )
     loop = asyncio.get_running_loop()
     deadline = loop.time() + timeout
@@ -294,7 +300,10 @@ async def _download_once(
     expect_audio: bool = True,
     expect_video: bool = True,
 ) -> Path:
-    output_template = str(output_dir / "%(title).100s-%(id)s.%(ext)s")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    workdir = output_dir.resolve()
+    workdir_str = str(workdir)
+    output_template = "%(title).100s-%(id)s.%(ext)s"
     user_agent = os.environ.get(
         "YTDLP_USER_AGENT",
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
@@ -331,7 +340,12 @@ async def _download_once(
 
     logger.info("Запускаем yt-dlp: %s ...", url)
     try:
-        stdout, stderr, rc = await _run_yt_dlp(cmd + [url], timeout=timeout, progress_cb=progress_cb)
+        stdout, stderr, rc = await _run_yt_dlp(
+            cmd + [url],
+            timeout=timeout,
+            progress_cb=progress_cb,
+            cwd=workdir_str,
+        )
     except FileNotFoundError as e:
         logger.exception("yt-dlp не найден.")
         raise DownloadError("yt-dlp не найден. Убедитесь, что он установлен и доступен в PATH.") from e
@@ -349,7 +363,7 @@ async def _download_once(
                 assert instagram_direct is not None  # for type checkers
                 return await instagram_direct.download_sensitive_media(
                     url=url,
-                    output_dir=output_dir,
+                    output_dir=workdir,
                     cookies_file=cookies_path,
                 )
             except Exception as fallback_err:
@@ -357,7 +371,7 @@ async def _download_once(
                 last_line = f"{last_line} (fallback failed: {fallback_err})"
         raise DownloadError(f"Ошибка yt-dlp: {last_line}")
 
-    candidates = [p for p in output_dir.iterdir() if p.is_file()]
+    candidates = [p for p in workdir.iterdir() if p.is_file()]
     if not candidates:
         raise DownloadError("Файл не найден после завершения yt-dlp.")
 
@@ -378,7 +392,7 @@ async def _download_once(
 
     if needs_audio and not needs_video and has_video:
         logger.info("Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.")
-        audio_template = str(output_dir / "%(title).100s-%(id)s.%(ext)s")
+        audio_template = "%(title).100s-%(id)s.%(ext)s"
         audio_cmd = [
             "yt-dlp",
             "--no-playlist",
@@ -397,7 +411,11 @@ async def _download_once(
         if "instagram.com" in url:
             audio_cmd += ["--add-header", "Referer: https://www.instagram.com/"]
 
-        stdout_a, stderr_a, rc_a = await _run_yt_dlp(audio_cmd + [url], timeout=timeout)
+        stdout_a, stderr_a, rc_a = await _run_yt_dlp(
+            audio_cmd + [url],
+            timeout=timeout,
+            cwd=workdir_str,
+        )
         if rc_a != 0:
             last_line = (stderr_a.splitlines()[-1].strip() if stderr_a else "unknown error")
             logger.error("Не удалось скачать аудио отдельно: %s", last_line)
@@ -407,7 +425,7 @@ async def _download_once(
             raise DownloadError(f"Не удалось скачать аудио для объединения: {last_line}")
 
         # Найдём скачанный аудиофайл
-        candidates2 = [p for p in output_dir.iterdir() if p.is_file() and p != downloaded]
+        candidates2 = [p for p in workdir.iterdir() if p.is_file() and p != downloaded]
         if not candidates2:
             raise DownloadError("Аудиофайл не найден после скачивания.")
         audio_file = sorted(candidates2, key=lambda p: p.stat().st_mtime, reverse=True)[0]
@@ -427,7 +445,7 @@ async def _download_once(
 
     if needs_video and not needs_audio and has_audio:
         logger.info("Файл содержит только аудио. Пробуем скачать video отдельно и смержить.")
-        video_template = str(output_dir / "%(title).100s-%(id)s.%(ext)s")
+        video_template = "%(title).100s-%(id)s.%(ext)s"
         video_cmd = [
             "yt-dlp",
             "--no-playlist",
@@ -446,7 +464,11 @@ async def _download_once(
         if "instagram.com" in url:
             video_cmd += ["--add-header", "Referer: https://www.instagram.com/"]
 
-        stdout_v, stderr_v, rc_v = await _run_yt_dlp(video_cmd + [url], timeout=timeout)
+        stdout_v, stderr_v, rc_v = await _run_yt_dlp(
+            video_cmd + [url],
+            timeout=timeout,
+            cwd=workdir_str,
+        )
         if rc_v != 0:
             last_line = (stderr_v.splitlines()[-1].strip() if stderr_v else "unknown error")
             logger.error("Не удалось скачать video отдельно: %s", last_line)
@@ -456,7 +478,7 @@ async def _download_once(
             raise DownloadError(f"Не удалось скачать видео для объединения: {last_line}")
 
         # Найдём скачанный видеофайл
-        candidates3 = [p for p in output_dir.iterdir() if p.is_file() and p != downloaded]
+        candidates3 = [p for p in workdir.iterdir() if p.is_file() and p != downloaded]
         if not candidates3:
             raise DownloadError("Видеофайл не найден после скачивания.")
         video_file = sorted(candidates3, key=lambda p: p.stat().st_mtime, reverse=True)[0]

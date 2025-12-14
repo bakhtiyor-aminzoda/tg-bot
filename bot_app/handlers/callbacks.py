@@ -140,14 +140,11 @@ def _consume_global_rate_slot(now: float) -> bool:
     return True
 
 
-@dp.callback_query()
+@dp.callback_query(lambda c: (c.data or "").startswith("download:"))
 async def handle_download_callback(callback: types.CallbackQuery):
     """Handle inline Download button clicks (callback_data: download:<token>)."""
     logger.info("Received callback_query: %s from %s", callback.data, getattr(callback.from_user, "id", None))
     data = callback.data or ""
-    if not data.startswith("download:"):
-        return
-
     token = data.split(":", 1)[1]
     entry = state.pending_downloads.pop(token, None)
     update_pending_tokens_gauge()
