@@ -15,6 +15,7 @@ from dataclasses import dataclass
 from pathlib import Path
 import logging
 from typing import Awaitable, Callable, Optional
+from uuid import uuid4
 
 import config
 
@@ -303,7 +304,8 @@ async def _download_once(
     output_dir.mkdir(parents=True, exist_ok=True)
     workdir = output_dir.resolve()
     workdir_str = str(workdir)
-    output_template = "%(title).100s-%(id)s.%(ext)s"
+    filename_prefix = uuid4().hex[:8]
+    output_template = str(workdir / f"{filename_prefix}_%(id)s.%(ext)s")
     resolved_cookies_file = _normalize_cookies_path(
         cookies_file
         or os.environ.get("YTDLP_COOKIES_FILE")
@@ -376,6 +378,16 @@ async def _download_once(
 
     candidates = [p for p in workdir.iterdir() if p.is_file()]
     if not candidates:
+        logger.error(
+            "yt-dlp завершился без файлов: workdir=%s, содержимое=%s, stdout_tail=%s, stderr_tail=%s",
+            workdir,
+            _dir_snapshot(workdir),
+            _tail(stdout),
+            _tail(stderr),
+        )
+        part_candidates = [p.name for p in workdir.glob("*.part")]
+        if part_candidates:
+            logger.error("Найдены незавершённые файлы: %s", ", ".join(part_candidates))
         raise DownloadError("Файл не найден после завершения yt-dlp.")
 
     downloaded = sorted(candidates, key=lambda p: p.stat().st_mtime, reverse=True)[0]
@@ -395,7 +407,7 @@ async def _download_once(
 
     if needs_audio and not needs_video and has_video:
         logger.info("Файл не содержит аудио. Пробуем скачать аудио отдельно и смержить.")
-        audio_template = "%(title).100s-%(id)s.%(ext)s"
+        audio_template = str(workdir / f"{uuid4().hex[:8]}_audio_%(id)s.%(ext)s")
         audio_cmd = [
             "yt-dlp",
             "--no-playlist",
@@ -444,7 +456,7 @@ async def _download_once(
 
     if needs_video and not needs_audio and has_audio:
         logger.info("Файл содержит только аудио. Пробуем скачать video отдельно и смержить.")
-        video_template = "%(title).100s-%(id)s.%(ext)s"
+        video_template = str(workdir / f"{uuid4().hex[:8]}_video_%(id)s.%(ext)s")
         video_cmd = [
             "yt-dlp",
             "--no-playlist",
@@ -526,6 +538,35 @@ async def _maybe_store_cache(url: str, file_path: Path) -> None:
     if not video_cache or not video_cache.is_enabled():
         return
     await video_cache.store_copy(url, file_path)
+
+
+def _tail(text: Optional[str], limit: int = 800) -> str:
+    if not text:
+        return ""
+    cleaned = text.strip()
+    if len(cleaned) <= limit:
+        return cleaned
+    return "..." + cleaned[-limit:]
+
+
+def _dir_snapshot(path: Path) -> str:
+    try:
+        entries = []
+        for node in sorted(path.iterdir(), key=lambda p: p.name):
+            if node.is_dir():
+                entries.append(f"{node.name}/")
+            else:
+                try:
+                    size = node.stat().st_size
+                    entries.append(f"{node.name} ({size}b)")
+                except OSError:
+                    entries.append(f"{node.name} (?b)")
+        return ", ".join(entries) if entries else "<empty>"
+    except FileNotFoundError:
+        return "<missing>"
+    except Exception:
+        logger.debug("Не удалось получить снимок директории %s", path, exc_info=True)
+        return "<unavailable>"
 
 
 def _normalize_cookies_path(path: Optional[str]) -> Optional[str]:

@@ -245,7 +245,7 @@ async def _process_download_flow(
                 )
             )
 
-            tmpdir = Path(config.TEMP_DIR) / f"{uid}_{int(time.time())}"
+            tmpdir = Path(config.TEMP_DIR) / f"{uid}_{uuid4().hex[:12]}"
             tmpdir.mkdir(parents=True, exist_ok=True)
 
             cookies_file = getattr(config, "YTDLP_COOKIES_FILE", None)

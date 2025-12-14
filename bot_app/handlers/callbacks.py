@@ -290,7 +290,7 @@ async def handle_download_callback(callback: types.CallbackQuery):
                     locale=locale,
                 )
             )
-            tmpdir = Path(config.TEMP_DIR) / f"{uid}_{int(time.time())}"
+            tmpdir = Path(config.TEMP_DIR) / f"{uid}_{token[:8]}_{uuid4().hex[:6]}"
             tmpdir.mkdir(parents=True, exist_ok=True)
 
             cookies_file = getattr(config, "YTDLP_COOKIES_FILE", None)
