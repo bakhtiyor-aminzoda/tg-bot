@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>Admin Panel — Media Bandit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --bg: #050915;
+            --surface: rgba(13,23,42,0.85);
+            --surface-alt: rgba(15,27,52,0.6);
+            --accent: #58f29c;
+            --accent-secondary: #4cc9f0;
+            --text: #f5f7ff;
+            --muted: #94a3b8;
+            --danger: #f87171;
+            font-family: 'Space Grotesk', 'Fira Sans', sans-serif;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #112044, #050915);
+            color: var(--text);
+            padding: 32px;
+            display: flex;
+            justify-content: center;
+        }
+        main {
+            width: min(1200px, 100%);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        header {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        h1 { font-size: 28px; letter-spacing: 0.5px; }
+        .scope-chip {
+            background: rgba(255,255,255,0.08);
+            padding: 6px 14px;
+            border-radius: 32px;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .card {
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+        }
+        .label {
+            font-size: 14px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .value {
+            font-size: clamp(28px, 5vw, 36px);
+            font-weight: 600;
+        }
+        .hint {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+        .controls {
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 180px;
+        }
+        .control-group label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--muted);
+            letter-spacing: 0.8px;
+        }
+        input[type="number"], input[type="text"], select {
+            background: var(--surface-alt);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            color: var(--text);
+            padding: 8px 12px;
+        }
+        select { min-width: 140px; }
+        button {
+            background: var(--accent);
+            color: #04161c;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+        button:hover { transform: translateY(-1px); }
+        .ghost-btn {
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 8px;
+            padding: 10px 16px;
+            text-decoration: none;
+            color: var(--text);
+        }
+        .ghost-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .identity-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 18px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            font-size: 14px;
+        }
+        .queue-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .queue-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .action-btn {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 8px;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .action-btn:hover { border-color: var(--accent); }
+        .action-btn.danger {
+            background: var(--danger);
+            border-color: transparent;
+            color: #fff;
+        }
+        section {
+            background: var(--surface-alt);
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 20px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        section h2 {
+            font-size: 18px;
+            margin-bottom: 14px;
+            letter-spacing: 0.5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        th { color: var(--muted); font-weight: 500; }
+        tbody tr:hover { background: rgba(255,255,255,0.03); }
+        .chat-table tr.active { background: rgba(88,242,156,0.1); }
+        .chat-table td:first-child a { color: var(--text); text-decoration: none; font-weight: 600; }
+        .two-columns {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .logs-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+        .logs-list li {
+            padding: 10px 12px;
+            background: var(--surface);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .log-ts {
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            color: var(--muted);
+            margin-right: 8px;
+        }
+        .log-level {
+            font-weight: 600;
+            color: var(--danger);
+            margin-right: 8px;
+        }
+        .log-msg { color: var(--text); }
+        .muted { color: var(--muted); }
+        .health-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-top: 8px;
+        }
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+            background: rgba(88,242,156,0.15);
+        }
+        .status-pill.danger { background: rgba(248,113,113,0.2); color: #fecaca; }
+        .status-pill.warning { background: rgba(252,211,77,0.25); color: #fef3c7; }
+        .metrics-block {
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .card.mini .value { font-size: 30px; }
+        .danger-text { color: var(--danger); font-weight: 600; }
+        .failure-table .error { color: var(--danger); }
+        .failure-table .status-pill { font-size: 12px; padding: 4px 10px; }
+        .metrics-block ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .metrics-block li {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+        }
+        .metrics-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            color: var(--muted);
+            letter-spacing: 0.6px;
+            margin-bottom: 8px;
+        }
+        @media (max-width: 720px) {
+            body { padding: 16px; }
+            .controls { flex-direction: column; align-items: stretch; }
+            .control-group { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <header>
+            <div class="title-row">
+                <h1>Media Bandit · Админ-панель</h1>
+                <span class="scope-chip">{{ scope }}</span>
+            </div>
+            {{ identity_html|safe }}
+            <form method="get" action="/admin" class="controls">
+                <div class="control-group">
+                    <label>ID чата</label>
+                    <input type="number" name="chat_id" placeholder="Например 12345" value="{{ chat_value }}" />
+                </div>
+                <div class="control-group">
+                    <label>Поиск по названию</label>
+                    <input type="text" name="search" placeholder="Название чата" value="{{ search_value }}" />
+                </div>
+                <div class="control-group">
+                    <label>Сортировка чатов</label>
+                    <select name="chat_sort">
+                        {{ chat_sort_options_html|safe }}
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Топ пользователей</label>
+                    <select name="top_sort">
+                        {{ top_sort_options_html|safe }}
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Платформы</label>
+                    <select name="platform_sort">
+                        {{ platform_sort_options_html|safe }}
+                    </select>
+                </div>
+                {{ token_input|safe }}
+                <button type="submit">Применить</button>
+                <a class="ghost-btn" href="{{ reset_link }}">Сбросить фильтр</a>
+            </form>
+        </header>
+        {{ cards_html|safe }}
+        {{ queue_section_html|safe }}
+        <section>
+            <h2>Чаты</h2>
+            <table class="chat-table">
+                <thead>
+                    <tr>
+                        <th>Чат</th>
+                        <th>ID</th>
+                        <th>Тип</th>
+                        <th>Загрузок</th>
+                        <th>Ошибок</th>
+                        <th>Пользователей</th>
+                        <th>Объём</th>
+                        <th>Активность</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ chat_table|safe }}
+                </tbody>
+            </table>
+        </section>
+        <div class="two-columns">
+            <section>
+                <h2>Топ пользователей</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Пользователь</th>
+                            <th>Загрузок</th>
+                            <th>Объём</th>
+                            <th>Ошибки</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{ top_rows|safe }}
+                    </tbody>
+                </table>
+            </section>
+            <section>
+                <h2>Платформы</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Платформа</th>
+                            <th>Загрузок</th>
+                            <th>Объём</th>
+                            <th>Ошибки</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{ platform_rows|safe }}
+                    </tbody>
+                </table>
+            </section>
+        </div>
+        <section>
+            <h2>Последние загрузки</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Пользователь</th>
+                        <th>Платформа</th>
+                        <th>Статус</th>
+                        <th>Объём</th>
+                        <th>Время</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ recent_rows|safe }}
+                </tbody>
+            </table>
+        </section>
+        {{ failures_section_html|safe }}
+        <section>
+            <h2>Healthcheck</h2>
+            {{ health_html|safe }}
+        </section>
+        <section>
+            <h2>Ошибки</h2>
+            <ul class="logs-list">
+                {{ logs_html|safe }}
+            </ul>
+        </section>
+    </main>
+    <script>
+    {{ dashboard_js|safe }}
+    </script>
+</body>
+</html>

@@ -3,91 +3,29 @@
 from __future__ import annotations
 
 import asyncio
-import hashlib
-import hmac
 import html
 import logging
-import secrets
-import textwrap
 import threading
-import time
 from collections import deque
-from concurrent.futures import Future
-from dataclasses import dataclass
-from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 from urllib.parse import quote_plus
 
 from aiohttp import web
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 import config
-from bot_app import admin_runtime
-from services import stats as stats_service
-from monitoring import get_health_snapshot
+from admin_panel import (
+    AdminAuthManager,
+    AdminIdentity,
+    AuthResult,
+    DashboardDataProvider,
+    RuntimeController,
+)
+from admin_panel import admin_panel_ui as admin_ui
 
 CHAT_SORT_FIELDS = {"recent", "downloads", "data", "errors", "name"}
 METRIC_SORT_FIELDS = {"downloads", "data", "errors", "name"}
-CHAT_TYPE_LABELS = {
-    "private": "👤 Личные",
-    "group": "👥 Группа",
-    "supergroup": "👥 Супергруппа",
-    "channel": "📣 Канал",
-}
-SESSION_COOKIE_NAME = "mb_admin_session"
-
-
-def _format_chat_type_label(chat_type: Optional[str]) -> str:
-    if not chat_type:
-        return "—"
-    return CHAT_TYPE_LABELS.get(chat_type.lower(), "—")
-
-
-def _format_bytes(value: int) -> str:
-    units = ["B", "KB", "MB", "GB", "TB"]
-    size = float(value)
-    for unit in units:
-        if size < 1024 or unit == units[-1]:
-            return f"{size:.1f} {unit}" if unit != "B" else f"{int(size)} B"
-        size /= 1024
-    return f"{value} B"
-
-
-def _format_ratio(part: int, total: int) -> str:
-    if total <= 0:
-        return "0%"
-    return f"{(part / total) * 100:.1f}%"
-
-
-def _format_duration(value: Optional[int]) -> str:
-    if not value:
-        return "—"
-    seconds = int(value)
-    days, rem = divmod(seconds, 86400)
-    hours, rem = divmod(rem, 3600)
-    minutes, _ = divmod(rem, 60)
-    parts = []
-    if days:
-        parts.append(f"{days}д")
-    if hours:
-        parts.append(f"{hours}ч")
-    if minutes or not parts:
-        parts.append(f"{minutes}м")
-    return " ".join(parts)
-
-
-@dataclass(frozen=True)
-class AdminIdentity:
-    slug: str
-    display: str
-    token: str
-
-
-@dataclass
-class AuthResult:
-    ok: bool
-    identity: Optional[AdminIdentity] = None
-    set_cookie: Optional[str] = None
 
 
 class AdminPanelServer:
@@ -105,147 +43,30 @@ class AdminPanelServer:
     ) -> None:
         self._host = host
         self._port = port
-        self._token = access_token
         self._runner: web.AppRunner | None = None
         self._thread: threading.Thread | None = None
         self._loop: asyncio.AbstractEventLoop | None = None
         self._shutdown_event: asyncio.Event | None = None
         self._logger = logging.getLogger(__name__)
         self._log_tail = 50
-        self._session_cookie = SESSION_COOKIE_NAME
-        self._session_ttl = max(300, session_ttl)
-        self._bot_loop = bot_loop
-        self._accounts = self._build_accounts(admin_accounts or {})
-        self._token_lookup: Dict[str, AdminIdentity] = {acc.token: acc for acc in self._accounts.values()}
-        self._cookie_secret = None
-        if self._token_lookup:
-            seed = cookie_secret or access_token or secrets.token_hex(32)
-            self._cookie_secret = seed
-
-    # ---------- Внутренние помощники ----------
-    def _build_accounts(self, raw_accounts: Dict[str, Dict[str, str]]) -> Dict[str, AdminIdentity]:
-        accounts: Dict[str, AdminIdentity] = {}
-        for slug, payload in raw_accounts.items():
-            token = (payload or {}).get("token")
-            display = (payload or {}).get("display") or slug
-            normalized_slug = (slug or "").strip()
-            if not normalized_slug or not token:
-                continue
-            accounts[normalized_slug] = AdminIdentity(normalized_slug, display, token)
-        return accounts
-
-    def _multi_admin_enabled(self) -> bool:
-        return bool(self._token_lookup)
-
-    def _authorize(self, request: web.Request) -> AuthResult:
-        if self._multi_admin_enabled():
-            return self._authorize_multi(request)
-        return self._authorize_single(request)
-
-    def _authorize_single(self, request: web.Request) -> AuthResult:
-        if not self._token:
-            return AuthResult(ok=True)
-        header_token = request.headers.get("X-Admin-Token")
-        query_token = request.rel_url.query.get("token")
-        if header_token == self._token or query_token == self._token:
-            return AuthResult(ok=True)
-        return AuthResult(ok=False)
-
-    def _authorize_multi(self, request: web.Request) -> AuthResult:
-        cookie_value = request.cookies.get(self._session_cookie)
-        identity = self._validate_session_cookie(cookie_value)
-        if identity:
-            return AuthResult(ok=True, identity=identity)
-
-        header_token = request.headers.get("X-Admin-Token")
-        token = header_token or request.rel_url.query.get("token")
-        if not token:
-            return AuthResult(ok=False)
-        identity = self._token_lookup.get(token)
-        if not identity:
-            return AuthResult(ok=False)
-        cookie_payload = self._build_session_cookie(identity)
-        return AuthResult(ok=True, identity=identity, set_cookie=cookie_payload)
-
-    def _build_session_cookie(self, identity: AdminIdentity) -> Optional[str]:
-        if not self._cookie_secret:
-            return None
-        expires_at = int(time.time()) + self._session_ttl
-        payload = f"{identity.slug}:{expires_at}"
-        signature = hmac.new(self._cookie_secret.encode(), payload.encode(), hashlib.sha256).hexdigest()
-        return f"{payload}:{signature}"
-
-    def _validate_session_cookie(self, cookie_value: Optional[str]) -> Optional[AdminIdentity]:
-        if not cookie_value or not self._cookie_secret:
-            return None
-        try:
-            slug, expires_raw, signature = cookie_value.split(":", 2)
-            expires_at = int(expires_raw)
-        except ValueError:
-            return None
-        if expires_at < int(time.time()):
-            return None
-        payload = f"{slug}:{expires_at}"
-        expected = hmac.new(self._cookie_secret.encode(), payload.encode(), hashlib.sha256).hexdigest()
-        if not hmac.compare_digest(expected, signature):
-            return None
-        return self._accounts.get(slug)
-
-    def _attach_auth_cookies(self, response: web.StreamResponse, auth: AuthResult) -> None:
-        if not self._multi_admin_enabled():
-            return
-        if auth.set_cookie:
-            response.set_cookie(
-                self._session_cookie,
-                auth.set_cookie,
-                max_age=self._session_ttl,
-                httponly=True,
-                samesite="Lax",
-            )
-
-    def _logout_response(self) -> web.Response:
-        response = web.Response(status=302, headers={"Location": "/admin"})
-        response.del_cookie(self._session_cookie)
-        return response
-
-    def _call_on_bot_loop(self, func, *args, **kwargs):
-        if not self._bot_loop:
-            return func(*args, **kwargs)
-        future: Future = Future()
-
-        def runner():
-            try:
-                future.set_result(func(*args, **kwargs))
-            except Exception as exc:  # pragma: no cover - defensive
-                future.set_exception(exc)
-
-        self._bot_loop.call_soon_threadsafe(runner)
-        return future.result(timeout=5)
-
-    def _runtime_snapshot(self) -> Dict[str, Any]:
-        try:
-            return self._call_on_bot_loop(admin_runtime.get_runtime_snapshot, 12, 12)
-        except Exception:
-            self._logger.debug("Не удалось получить снимок очереди", exc_info=True)
-            return {}
-
-    def _perform_runtime_action(self, action: str, payload: Dict[str, Any]) -> Dict[str, Any]:
-        if action == "cancel_user":
-            if payload.get("user_id") is None:
-                raise ValueError("user_id is required")
-            user_id = int(payload.get("user_id"))
-            cancelled = self._call_on_bot_loop(admin_runtime.cancel_user_downloads, user_id)
-            return {"cancelled": bool(cancelled)}
-        if action == "drop_token":
-            token = payload.get("token")
-            if not token:
-                raise ValueError("token is required")
-            dropped = self._call_on_bot_loop(admin_runtime.drop_pending_token, str(token))
-            return {"dropped": bool(dropped)}
-        if action == "flush_tokens":
-            dropped = self._call_on_bot_loop(admin_runtime.flush_pending_tokens)
-            return {"dropped": int(dropped)}
-        raise ValueError("unknown action")
+        self._auth = AdminAuthManager(
+            access_token=access_token,
+            admin_accounts=admin_accounts,
+            cookie_secret=cookie_secret,
+            session_ttl=session_ttl,
+        )
+        self._runtime = RuntimeController(bot_loop=bot_loop, logger=self._logger)
+        self._data_provider = DashboardDataProvider(
+            runtime_controller=self._runtime,
+            log_reader=self._read_error_logs,
+            logger=self._logger,
+        )
+        template_dir = Path(__file__).with_name("admin_panel") / "templates"
+        self._template_env = Environment(
+            loader=FileSystemLoader(str(template_dir)),
+            autoescape=select_autoescape(["html", "xml"]),
+        )
+        self._dashboard_template = self._template_env.get_template("dashboard.html")
 
     # ---------- Публичные методы ----------
     def ensure_running(self) -> None:
@@ -295,7 +116,7 @@ class AdminPanelServer:
             self._runner = None
 
     def _unauthorized(self) -> web.Response:
-        if self._multi_admin_enabled():
+        if self._auth.multi_admin_enabled():
             body = """
             <!DOCTYPE html>
             <html><head><title>Admin login</title></head>
@@ -326,39 +147,17 @@ class AdminPanelServer:
         search_query: Optional[str],
         admin_identity: Optional[AdminIdentity],
     ) -> Dict[str, object]:
-        summary = stats_service.get_summary(chat_id)
-        top_users = stats_service.get_top_users(chat_id, limit=10, order_by=top_sort)
-        platforms = stats_service.get_platform_stats(chat_id, order_by=platform_sort)
-        recent = stats_service.get_recent_downloads(chat_id, limit=20)
-        failures = stats_service.get_recent_failures(chat_id, limit=10)
-        chat_list = stats_service.list_chats(order_by=chat_sort, search=search_query, limit=100)
-        scope = "Глобальная статистика" if chat_id is None else f"Чат #{chat_id}"
-        health_data: Optional[Dict[str, object]] = None
-        if getattr(config, "HEALTHCHECK_ENABLED", False):
-            try:
-                health_data = get_health_snapshot()
-            except Exception:
-                self._logger.debug("Не удалось получить health snapshot", exc_info=True)
-        runtime_state = self._runtime_snapshot()
-        return {
-            "summary": summary,
-            "top_users": top_users,
-            "platforms": platforms,
-            "recent": recent,
-            "failures": failures,
-            "scope": scope,
-            "chat_id": chat_id,
-            "chat_list": chat_list,
-            "chat_sort": chat_sort,
-            "top_sort": top_sort,
-            "platform_sort": platform_sort,
-            "search_query": search_query or "",
-            "error_logs": self._read_error_logs(self._log_tail),
-            "health": health_data,
-            "runtime": runtime_state,
-            "admin_identity": admin_identity.display if admin_identity else None,
-            "multi_admin": self._multi_admin_enabled(),
-        }
+        data = self._data_provider.collect_dashboard(
+            chat_id=chat_id,
+            chat_sort=chat_sort,
+            top_sort=top_sort,
+            platform_sort=platform_sort,
+            search_query=search_query,
+            log_tail=self._log_tail,
+        )
+        data["admin_identity"] = admin_identity.display if admin_identity else None
+        data["multi_admin"] = self._auth.multi_admin_enabled()
+        return data
 
     def _resolve_sort(self, value: Optional[str], allowed: Set[str], default: str) -> str:
         if not value:
@@ -367,10 +166,10 @@ class AdminPanelServer:
 
     async def _handle_dashboard(self, request: web.Request) -> web.Response:
         query = request.rel_url.query
-        if self._multi_admin_enabled() and query.get("logout") == "1":
-            return self._logout_response()
+        if self._auth.multi_admin_enabled() and query.get("logout") == "1":
+            return self._auth.logout_response()
 
-        auth = self._authorize(request)
+        auth = self._auth.authorize(request)
         if not auth.ok:
             return self._unauthorized()
         chat_id = self._parse_chat_id(request)
@@ -392,15 +191,15 @@ class AdminPanelServer:
             search_query=search_query,
             admin_identity=auth.identity,
         )
-        token_param = query.get("token") if (query.get("token") and not self._multi_admin_enabled()) else None
+        token_param = query.get("token") if (query.get("token") and not self._auth.multi_admin_enabled()) else None
         html_body = self._render_dashboard(dashboard, token_param)
         response = web.Response(text=html_body, content_type="text/html")
-        self._attach_auth_cookies(response, auth)
+        self._auth.attach_cookies(response, auth)
         return response
 
     async def _handle_dashboard_json(self, request: web.Request) -> web.Response:
         query = request.rel_url.query
-        auth = self._authorize(request)
+        auth = self._auth.authorize(request)
         if not auth.ok:
             return self._unauthorized()
         chat_id = self._parse_chat_id(request)
@@ -420,11 +219,11 @@ class AdminPanelServer:
             admin_identity=auth.identity,
         )
         response = web.json_response(dashboard)
-        self._attach_auth_cookies(response, auth)
+        self._auth.attach_cookies(response, auth)
         return response
 
     async def _handle_action(self, request: web.Request) -> web.Response:
-        auth = self._authorize(request)
+        auth = self._auth.authorize(request)
         if not auth.ok:
             return self._unauthorized()
         action = request.match_info.get("action", "")
@@ -433,14 +232,14 @@ class AdminPanelServer:
         except Exception:
             payload = {}
         try:
-            result = self._perform_runtime_action(action, payload)
+            result = self._runtime.perform_action(action, payload)
         except ValueError as exc:
             return web.json_response({"ok": False, "error": str(exc)}, status=400)
         except Exception:
             self._logger.exception("Admin action %s failed", action)
             return web.json_response({"ok": False, "error": "internal error"}, status=500)
         response = web.json_response({"ok": True, **result})
-        self._attach_auth_cookies(response, auth)
+        self._auth.attach_cookies(response, auth)
         return response
 
     # ---------- HTML ----------
@@ -463,69 +262,13 @@ class AdminPanelServer:
         admin_identity_label = data.get("admin_identity")
         multi_admin = bool(data.get("multi_admin"))
 
-        total_downloads = summary.get("total_downloads", 0)
-        successful = summary.get("successful_downloads", 0)
-        failed = summary.get("failed_downloads", 0)
-        total_bytes = summary.get("total_bytes", 0)
-        unique_users = summary.get("unique_users", 0)
+        total_downloads = int(summary.get("total_downloads", 0) or 0)
+        successful = int(summary.get("successful_downloads", 0) or 0)
+        failed = int(summary.get("failed_downloads", 0) or 0)
+        total_bytes = int(summary.get("total_bytes", 0) or 0)
+        unique_users = int(summary.get("unique_users", 0) or 0)
         last_activity = summary.get("last_activity")
-        health_status = None
-        health_timestamp = None
-        uptime_text = "—"
-        counters: Dict[str, object] = {}
-        gauges: Dict[str, object] = {}
         health_endpoint = f"{getattr(config, 'HEALTHCHECK_HOST', '0.0.0.0')}:{getattr(config, 'HEALTHCHECK_PORT', 8080)}"
-        cookie_info: Dict[str, object] = {}
-        video_cache_info: Dict[str, object] = {}
-        if health_info:
-            health_status = str(health_info.get("status", "unknown"))
-            uptime_text = _format_duration(int(health_info.get("uptime_seconds") or 0))
-            try:
-                ts = float(health_info.get("timestamp"))
-                health_timestamp = _format_timestamp(datetime.fromtimestamp(ts).isoformat(timespec="seconds"))
-            except Exception:
-                health_timestamp = "—"
-            metrics = health_info.get("metrics") or {}
-            counters = dict(metrics.get("counters", {}))  # type: ignore[arg-type]
-            gauges = dict(metrics.get("gauges", {}))  # type: ignore[arg-type]
-            cookie_info = dict(health_info.get("instagram_cookies") or {})  # type: ignore[arg-type]
-            video_cache_info = dict(health_info.get("video_cache") or {})  # type: ignore[arg-type]
-
-        semaphore_state: Dict[str, object] = runtime_state.get("semaphore") or {}
-        runtime_active_total = int(runtime_state.get("active_total", 0) or 0)
-        runtime_pending_total = int(runtime_state.get("pending_total", 0) or 0)
-        runtime_max_slots = int(semaphore_state.get("max_slots", 0) or 0)
-        runtime_in_use = int(semaphore_state.get("in_use", 0) or 0)
-        active_rows = runtime_state.get("active_rows") or []
-        pending_rows_preview = runtime_state.get("pending_rows") or []
-
-        status_class = ""
-        if health_status:
-            normalized_status = str(health_status).lower()
-            if normalized_status in ("warn", "warning"):
-                status_class = "warning"
-            elif normalized_status not in ("ok", "healthy"):
-                status_class = "danger"
-
-        def render_options(options: Dict[str, str], current: str) -> str:
-            return "".join(
-                f"<option value=\"{html.escape(key)}\"{' selected' if key == current else ''}>{html.escape(label)}</option>"
-                for key, label in options.items()
-            )
-
-        def format_since(seconds: Optional[float]) -> str:
-            if seconds is None:
-                return "—"
-            if seconds < 60:
-                return f"{int(seconds)} с назад"
-            minutes = int(seconds // 60)
-            if minutes < 60:
-                return f"{minutes} м назад"
-            hours = int(minutes // 60)
-            if hours < 24:
-                return f"{hours} ч назад"
-            days = int(hours // 24)
-            return f"{days} д назад"
 
         def build_query(overrides: Dict[str, Optional[str]]) -> str:
             base = {
@@ -564,273 +307,36 @@ class AdminPanelServer:
         }
 
         logout_link = build_link({"logout": "1"})
-        identity_html = ""
-        if admin_identity_label:
-            logout_button = (
-                f"<a class=\"ghost-btn\" href=\"{logout_link}\">Выйти</a>"
-                if multi_admin
-                else ""
-            )
-            extra = f" {logout_button}" if logout_button else ""
-            identity_html = (
-                "<div class=\"identity-badge\">Вошли как "
-                f"<strong>{html.escape(str(admin_identity_label))}</strong>{extra}</div>"
-            )
-
-        cards_html = f"""
-        <div class=\"cards\">
-            <article class=\"card\">
-                <p class=\"label\">Всего загрузок</p>
-                <p class=\"value\">{total_downloads:,}</p>
-            </article>
-            <article class=\"card\">
-                <p class=\"label\">Успешных</p>
-                <p class=\"value\">{successful:,}</p>
-                <p class=\"hint\">{_format_ratio(successful, total_downloads)}</p>
-            </article>
-            <article class=\"card\">
-                <p class=\"label\">Ошибок</p>
-                <p class=\"value\">{failed:,}</p>
-                <p class=\"hint\">{_format_ratio(failed, total_downloads)}</p>
-            </article>
-            <article class=\"card\">
-                <p class=\"label\">Данные</p>
-                <p class=\"value\">{_format_bytes(int(total_bytes))}</p>
-                <p class=\"hint\">Пользователей: {unique_users}</p>
-            </article>
-        </div>
-        """
-
-        queue_cards_html = f"""
-        <div class=\"queue-grid\">
-            <article class=\"card mini\">
-                <p class=\"label\">Активных</p>
-                <p class=\"value\">{runtime_active_total}</p>
-            </article>
-            <article class=\"card mini\">
-                <p class=\"label\">Pending</p>
-                <p class=\"value\">{runtime_pending_total}</p>
-            </article>
-            <article class=\"card mini\">
-                <p class=\"label\">Слоты</p>
-                <p class=\"value\">{runtime_in_use}/{runtime_max_slots}</p>
-            </article>
-        </div>
-        """
-
-        queue_actions_html = """
-        <div class="queue-actions">
-            <button type="button" class="action-btn" data-action="refresh">Обновить</button>
-            <button type="button" class="action-btn danger" data-action="flush_tokens" data-confirm="Сбросить все pending кнопки?">Очистить pending</button>
-        </div>
-        """
-
-        active_queue_rows = "".join(
-            f"""
-            <tr>
-                <td>{row.get('user_id')}</td>
-                <td>{row.get('active')}</td>
-                <td class=\"{'danger-text' if row.get('is_stuck') else ''}\">{format_since(row.get('seconds_since_last'))}</td>
-                <td>
-                    <button class=\"action-btn danger\" data-action=\"cancel_user\" data-user-id=\"{row.get('user_id')}\" data-confirm=\"Сбросить активные загрузки пользователя {row.get('user_id')}?\">Сбросить</button>
-                </td>
-            </tr>
-            """
-            for row in active_rows
-        ) or "<tr><td colspan=\"4\">Нет активных загрузок</td></tr>"
-
-        pending_queue_rows = "".join(
-            f"""
-            <tr>
-                <td><code>{html.escape(str(row.get('token')))}</code></td>
-                <td>{row.get('initiator_id') or '—'}</td>
-                <td>{row.get('source_chat_id') or '—'}</td>
-                <td>{format_since(row.get('age_seconds'))}</td>
-                <td>
-                    <button class=\"action-btn danger\" data-action=\"drop_token\" data-token=\"{html.escape(str(row.get('token')))}\" data-confirm=\"Удалить pending кнопку?\">Удалить</button>
-                </td>
-            </tr>
-            """
-            for row in pending_rows_preview
-        ) or "<tr><td colspan=\"5\">Pending кнопок нет</td></tr>"
-
-        failure_rows_html = "".join(
-            f"""
-            <tr>
-                <td>{html.escape(str(item.get('username') or item.get('user_id')))}</td>
-                <td>{html.escape(str(item.get('platform', 'unknown')).upper())}</td>
-                <td class=\"error\">{html.escape(str(item.get('error_message') or '—'))}</td>
-                <td>{_format_timestamp(item.get('timestamp'))}</td>
-                <td>
-                    <span class=\"status-pill danger\">{html.escape(str(item.get('status')))}</span>
-                </td>
-            </tr>
-            """
-            for item in failures
-        ) or "<tr><td colspan=\"5\">Ошибок нет</td></tr>"
-
-        queue_section_html = f"""
-        <section>
-            <h2>Очередь и управление</h2>
-            {queue_cards_html}
-            {queue_actions_html}
-            <div class=\"two-columns\">
-                <div>
-                    <h3>Активные пользователи</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Пользователь</th>
-                                <th>Активность</th>
-                                <th>Последняя активность</th>
-                                <th>Действия</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {active_queue_rows}
-                        </tbody>
-                    </table>
-                </div>
-                <div>
-                    <h3>Pending кнопки</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Токен</th>
-                                <th>Инициатор</th>
-                                <th>Чат</th>
-                                <th>Возраст</th>
-                                <th>Действия</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {pending_queue_rows}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-        """
-
-        failures_section_html = f"""
-        <section>
-            <h2>Неудачные загрузки</h2>
-            <table class=\"failure-table\">
-                <thead>
-                    <tr>
-                        <th>Пользователь</th>
-                        <th>Платформа</th>
-                        <th>Ошибка</th>
-                        <th>Время</th>
-                        <th>Статус</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {failure_rows_html}
-                </tbody>
-            </table>
-        </section>
-        """
-
-        top_rows = "".join(
-            f"""
-            <tr>
-                <td>{idx + 1}</td>
-                <td>{html.escape(str(user.get('username') or user.get('user_id')))}</td>
-                <td>{user.get('total_downloads', 0)}</td>
-                <td>{_format_bytes(int(user.get('total_bytes', 0) or 0))}</td>
-                <td>{user.get('failed_count', 0)}</td>
-            </tr>
-            """
-            for idx, user in enumerate(top_users)
-        ) or "<tr><td colspan=\"5\">Нет данных</td></tr>"
-
-        platform_rows = "".join(
-            f"""
-            <tr>
-                <td>{html.escape(str(item.get('platform', 'unknown')).upper())}</td>
-                <td>{item.get('download_count', 0)}</td>
-                <td>{_format_bytes(int(item.get('total_bytes', 0) or 0))}</td>
-                <td>{item.get('failed_count', 0)}</td>
-            </tr>
-            """
-            for item in platforms
-        ) or "<tr><td colspan=\"4\">Нет данных</td></tr>"
-
-        recent_rows = "".join(
-            f"""
-            <tr>
-                <td>{html.escape(str(item.get('username') or item.get('user_id')))}</td>
-                <td>{html.escape(str(item.get('platform', 'unknown')).upper())}</td>
-                <td>{item.get('status')}</td>
-                <td>{_format_bytes(int(item.get('file_size_bytes') or 0))}</td>
-                <td>{_format_timestamp(item.get('timestamp'))}</td>
-            </tr>
-            """
-            for item in recent
-        ) or "<tr><td colspan=\"5\">История пуста</td></tr>"
-
-        chat_rows: List[str] = []
-        global_link = build_link({"chat_id": None})
-        chat_rows.append(
-            f"""
-            <tr class=\"{'active' if chat_id is None else ''}\">
-                <td><a href=\"{global_link}\">🌐 Вся история</a></td>
-                <td>—</td>
-                <td>—</td>
-                <td>{total_downloads:,}</td>
-                <td>{failed:,}</td>
-                <td>{unique_users}</td>
-                <td>{_format_bytes(int(total_bytes))}</td>
-                <td>{_format_timestamp(last_activity)}</td>
-            </tr>
-            """
+        identity_html = admin_ui.render_identity_badge(
+            admin_identity_label,
+            logout_link=logout_link,
+            multi_admin=multi_admin,
         )
-        for chat in chat_list:
-            cid = chat.get("chat_id")
-            title = (str(chat.get("title") or "").strip()) or f"Чат #{cid}"
-            if title.lower().startswith("chat #"):
-                title = title.replace("Chat #", "Чат #", 1)
-            row_link = build_link({"chat_id": cid})
-            chat_type_label = _format_chat_type_label(chat.get("chat_type"))
-            chat_rows.append(
-                f"""
-                <tr class=\"{'active' if cid == chat_id else ''}\">
-                    <td><a href=\"{row_link}\">{html.escape(str(title))}</a></td>
-                    <td>{cid}</td>
-                    <td>{chat_type_label}</td>
-                    <td>{chat.get('total_downloads', 0)}</td>
-                    <td>{chat.get('failed_downloads', 0)}</td>
-                    <td>{chat.get('unique_users', 0)}</td>
-                    <td>{_format_bytes(int(chat.get('total_bytes', 0) or 0))}</td>
-                    <td>{_format_timestamp(chat.get('last_activity'))}</td>
-                </tr>
-                """
-            )
 
-        chat_table = "".join(chat_rows) or "<tr><td colspan=\"7\">Нет чатов</td></tr>"
+        cards_html = admin_ui.render_summary_cards(
+            total_downloads=total_downloads,
+            successful=successful,
+            failed=failed,
+            total_bytes=total_bytes,
+            unique_users=unique_users,
+        )
 
-        logs_html = "".join(
-            f"""
-            <li>
-                <span class=\"log-ts\">{html.escape(log.get('timestamp', ''))}</span>
-                <span class=\"log-level\">{html.escape(log.get('level', 'ERROR'))}</span>
-                <span class=\"log-msg\">{html.escape(log.get('message', ''))}</span>
-            </li>
-            """
-            for log in error_logs
-        ) or "<li class=\"muted\">Последние ошибки не найдены</li>"
-
-        def render_metrics_block(title_text: str, payload: Dict[str, object]) -> str:
-            if not payload:
-                return ""
-            rows = "".join(
-                f"<li><span>{html.escape(str(name))}</span><span>{value}</span></li>"
-                for name, value in payload.items()
-            )
-            if not rows:
-                return ""
-            return f"<div class=\"metrics-block\"><p class=\"metrics-title\">{html.escape(title_text)}</p><ul>{rows}</ul></div>"
+        queue_section_html = admin_ui.render_queue_section(runtime_state)
+        failures_section_html = admin_ui.render_failures_section(failures)
+        top_rows = admin_ui.render_top_rows(top_users)
+        platform_rows = admin_ui.render_platform_rows(platforms)
+        recent_rows = admin_ui.render_recent_rows(recent)
+        chat_table = admin_ui.render_chat_table(
+            chat_id=chat_id,
+            chat_list=chat_list,
+            total_downloads=total_downloads,
+            failed=failed,
+            unique_users=unique_users,
+            total_bytes=total_bytes,
+            last_activity=last_activity,
+            build_link=build_link,
+        )
+        logs_html = admin_ui.render_logs_list(error_logs)
 
         fallback_metrics = {
             "Всего загрузок": f"{total_downloads:,}",
@@ -838,537 +344,49 @@ class AdminPanelServer:
             "Ошибок": f"{failed:,}",
             "Уникальных пользователей": unique_users,
             "Чатов в базе": len(chat_list),
-            "Объём данных": _format_bytes(int(total_bytes)),
+            "Объём данных": admin_ui.format_bytes(total_bytes),
         }
+        health_html = admin_ui.render_health_section(
+            health_info=health_info,
+            fallback_metrics=fallback_metrics,
+            health_endpoint=health_endpoint,
+        )
 
-        metrics_parts = [
-            block
-            for block in (
-                render_metrics_block("Счётчики", counters),
-                render_metrics_block("Гейджи", gauges),
-            )
-            if block
-        ]
-        if not metrics_parts:
-            metrics_parts.append(render_metrics_block("Базовые показатели", fallback_metrics))
-        metrics_html = "".join(metrics_parts)
-
-        cookie_status = str(cookie_info.get("last_status", "disabled")) if cookie_info else "disabled"
-        cookie_status_class = "danger" if cookie_status not in ("ok", "never", "skipped") else ""
-        cookie_last = cookie_info.get("last_refresh_iso") or cookie_info.get("last_refresh_ts")
-        if cookie_last and isinstance(cookie_last, (int, float)):
-            try:
-                cookie_last = _format_timestamp(datetime.fromtimestamp(float(cookie_last)).isoformat(timespec="seconds"))
-            except Exception:
-                cookie_last = str(cookie_last)
-        elif not cookie_last:
-            cookie_last = "—"
-        cookie_path = cookie_info.get("cookies_path")
-        cookie_error = cookie_info.get("last_error") if cookie_info else None
-        cookie_last_text = html.escape(str(cookie_last))
-
-        vc_enabled = bool(video_cache_info.get("enabled")) if video_cache_info else False
-        vc_hits = video_cache_info.get("hits") if video_cache_info else "—"
-        vc_misses = video_cache_info.get("misses") if video_cache_info else "—"
-        vc_last_store = video_cache_info.get("last_store_iso") or video_cache_info.get("last_store_ts") or "—"
-        vc_dir = video_cache_info.get("dir") if video_cache_info else None
-
-        if health_info:
-            health_html = (
-                "<div class=\"health-grid\">"
-                f"<div><p class=\"label\">Статус</p><span class=\"status-pill {status_class}\">{html.escape(health_status or 'disabled')}</span></div>"
-                f"<div><p class=\"label\">Аптайм</p><p class=\"value\">{uptime_text}</p></div>"
-                f"<div><p class=\"label\">Последнее обновление</p><p>{health_timestamp or '—'}</p></div>"
-                f"<div><p class=\"label\">Endpoint</p><p>{html.escape(health_endpoint)}</p></div>"
-                "</div>"
-                f"<div class=\"health-grid\">{metrics_html}</div>"
-                f"<div class=\"health-grid\">"
-                f"<div><p class=\"label\">IG cookies</p><span class=\"status-pill {cookie_status_class}\">{html.escape(cookie_status)}</span></div>"
-                f"<div><p class=\"label\">Файл</p><p>{html.escape(str(cookie_path or '—'))}</p></div>"
-                f"<div><p class=\"label\">Последнее обновление</p><p>{cookie_last_text}</p></div>"
-                f"<div><p class=\"label\">Ошибка</p><p>{html.escape(str(cookie_error or '—'))}</p></div>"
-                "</div>"
-                f"<div class=\"health-grid\">"
-                f"<div><p class=\"label\">Video cache</p><span class=\"status-pill {'danger' if not vc_enabled else ''}\">{'on' if vc_enabled else 'off'}</span></div>"
-                f"<div><p class=\"label\">🟢 hits</p><p>{vc_hits}</p></div>"
-                f"<div><p class=\"label\">🔴 misses</p><p>{vc_misses}</p></div>"
-                f"<div><p class=\"label\">Файл/dir</p><p>{html.escape(str(vc_dir or '—'))}</p></div>"
-                f"<div><p class=\"label\">Последнее сохранение</p><p>{html.escape(str(vc_last_store))}</p></div>"
-                "</div>"
-            )
-        else:
-            health_html = f"<p class=\"muted\">Healthcheck отключён в конфиге ({html.escape(health_endpoint)}).</p>"
-
-        chat_value = html.escape(str(chat_id)) if chat_id is not None else ""
-        search_value = html.escape(search_query)
+        chat_value = str(chat_id) if chat_id is not None else ""
+        search_value = search_query
         token_input = (
             f"<input type=\"hidden\" name=\"token\" value=\"{html.escape(access_token)}\" />"
             if (access_token and not multi_admin)
             else ""
         )
-        chat_sort_options_html = render_options(chat_sort_options, chat_sort)
-        top_sort_options_html = render_options(metric_sort_options, top_sort)
-        platform_sort_options_html = render_options(metric_sort_options, platform_sort)
-        dashboard_js = textwrap.dedent(
-            """
-            (() => {
-                const buttons = document.querySelectorAll('[data-action]');
-                buttons.forEach((btn) => {
-                    btn.addEventListener('click', async (event) => {
-                        const action = btn.dataset.action;
-                        if (!action) {
-                            return;
-                        }
-                        if (action === 'refresh') {
-                            event.preventDefault();
-                            window.location.reload();
-                            return;
-                        }
-                        if (btn.dataset.confirm && !window.confirm(btn.dataset.confirm)) {
-                            event.preventDefault();
-                            return;
-                        }
-                        const payload = {};
-                        if (btn.dataset.userId) {
-                            payload.user_id = Number(btn.dataset.userId);
-                        }
-                        if (btn.dataset.token) {
-                            payload.token = btn.dataset.token;
-                        }
-                        event.preventDefault();
-                        try {
-                            const response = await fetch(`/admin/api/actions/${action}`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                credentials: 'same-origin',
-                                body: JSON.stringify(payload),
-                            });
-                            const body = await response.json().catch(() => ({}));
-                            if (!response.ok || !body.ok) {
-                                alert(body.error || 'Не удалось выполнить действие');
-                                return;
-                            }
-                            window.location.reload();
-                        } catch (err) {
-                            console.error(err);
-                            alert('Сетевая ошибка, попробуйте позже');
-                        }
-                    });
-                });
-            })();
-            """
-        ).strip()
+        chat_sort_options_html = admin_ui.render_select_options(chat_sort_options, chat_sort)
+        top_sort_options_html = admin_ui.render_select_options(metric_sort_options, top_sort)
+        platform_sort_options_html = admin_ui.render_select_options(metric_sort_options, platform_sort)
+        dashboard_js = admin_ui.render_dashboard_js()
 
-        return f"""
-        <!DOCTYPE html>
-        <html lang=\"ru\">
-        <head>
-            <meta charset=\"utf-8\" />
-            <title>Admin Panel — Media Bandit</title>
-            <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
-            <style>
-                :root {{
-                    --bg: #050915;
-                    --surface: rgba(13,23,42,0.85);
-                    --surface-alt: rgba(15,27,52,0.6);
-                    --accent: #58f29c;
-                    --accent-secondary: #4cc9f0;
-                    --text: #f5f7ff;
-                    --muted: #94a3b8;
-                    --danger: #f87171;
-                    font-family: 'Space Grotesk', 'Fira Sans', sans-serif;
-                }}
-                * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-                body {{
-                    min-height: 100vh;
-                    background: radial-gradient(circle at top, #112044, #050915);
-                    color: var(--text);
-                    padding: 32px;
-                    display: flex;
-                    justify-content: center;
-                }}
-                main {{
-                    width: min(1200px, 100%);
-                    display: flex;
-                    flex-direction: column;
-                    gap: 24px;
-                }}
-                header {{
-                    display: flex;
-                    flex-direction: column;
-                    gap: 16px;
-                }}
-                .title-row {{
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    flex-wrap: wrap;
-                    gap: 12px;
-                }}
-                h1 {{ font-size: 28px; letter-spacing: 0.5px; }}
-                .scope-chip {{
-                    background: rgba(255,255,255,0.08);
-                    padding: 6px 14px;
-                    border-radius: 32px;
-                    font-size: 14px;
-                    letter-spacing: 0.5px;
-                }}
-                .cards {{
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                    gap: 16px;
-                }}
-                .card {{
-                    background: var(--surface);
-                    border: 1px solid rgba(255,255,255,0.05);
-                    border-radius: 16px;
-                    padding: 18px;
-                    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
-                }}
-                .label {{
-                    font-size: 14px;
-                    color: var(--muted);
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                    margin-bottom: 6px;
-                }}
-                .value {{
-                    font-size: clamp(28px, 5vw, 36px);
-                    font-weight: 600;
-                }}
-                .hint {{
-                    margin-top: 6px;
-                    color: var(--muted);
-                    font-size: 13px;
-                }}
-                .controls {{
-                    background: var(--surface);
-                    border: 1px solid rgba(255,255,255,0.05);
-                    border-radius: 16px;
-                    padding: 16px;
-                    display: flex;
-                    gap: 12px;
-                    flex-wrap: wrap;
-                    align-items: flex-end;
-                }}
-                .control-group {{
-                    display: flex;
-                    flex-direction: column;
-                    gap: 6px;
-                    min-width: 180px;
-                }}
-                .control-group label {{
-                    font-size: 11px;
-                    text-transform: uppercase;
-                    color: var(--muted);
-                    letter-spacing: 0.8px;
-                }}
-                input[type="number"], input[type="text"], select {{
-                    background: var(--surface-alt);
-                    border: 1px solid rgba(255,255,255,0.15);
-                    border-radius: 8px;
-                    color: var(--text);
-                    padding: 8px 12px;
-                }}
-                select {{ min-width: 140px; }}
-                button {{
-                    background: var(--accent);
-                    color: #04161c;
-                    border: none;
-                    border-radius: 8px;
-                    padding: 10px 18px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: transform 0.15s ease;
-                }}
-                button:hover {{ transform: translateY(-1px); }}
-                .ghost-btn {{
-                    border: 1px solid rgba(255,255,255,0.25);
-                    border-radius: 8px;
-                    padding: 10px 16px;
-                    text-decoration: none;
-                    color: var(--text);
-                }}
-                .ghost-btn:hover {{ border-color: var(--accent); color: var(--accent); }}
-                .identity-badge {{
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 10px;
-                    padding: 8px 18px;
-                    border-radius: 999px;
-                    background: rgba(255,255,255,0.08);
-                    font-size: 14px;
-                }}
-                .queue-grid {{
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-                    gap: 12px;
-                    margin-bottom: 12px;
-                }}
-                .queue-actions {{
-                    display: flex;
-                    gap: 12px;
-                    flex-wrap: wrap;
-                    margin-bottom: 16px;
-                }}
-                .action-btn {{
-                    background: var(--surface);
-                    color: var(--text);
-                    border: 1px solid rgba(255,255,255,0.25);
-                    border-radius: 8px;
-                    padding: 8px 14px;
-                    cursor: pointer;
-                    font-weight: 500;
-                }}
-                .action-btn:hover {{ border-color: var(--accent); }}
-                .action-btn.danger {{
-                    background: var(--danger);
-                    border-color: transparent;
-                    color: #fff;
-                }}
-                section {{
-                    background: var(--surface-alt);
-                    border-radius: 18px;
-                    border: 1px solid rgba(255,255,255,0.05);
-                    padding: 20px;
-                    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-                }}
-                section h2 {{
-                    font-size: 18px;
-                    margin-bottom: 14px;
-                    letter-spacing: 0.5px;
-                }}
-                table {{
-                    width: 100%;
-                    border-collapse: collapse;
-                    font-size: 14px;
-                }}
-                th, td {{
-                    padding: 10px;
-                    text-align: left;
-                    border-bottom: 1px solid rgba(255,255,255,0.06);
-                }}
-                th {{ color: var(--muted); font-weight: 500; }}
-                tbody tr:hover {{ background: rgba(255,255,255,0.03); }}
-                .chat-table tr.active {{ background: rgba(88,242,156,0.1); }}
-                .chat-table td:first-child a {{ color: var(--text); text-decoration: none; font-weight: 600; }}
-                .two-columns {{
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                    gap: 16px;
-                }}
-                .logs-list {{
-                    list-style: none;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 8px;
-                    max-height: 260px;
-                    overflow-y: auto;
-                }}
-                .logs-list li {{
-                    padding: 10px 12px;
-                    background: var(--surface);
-                    border-radius: 12px;
-                    border: 1px solid rgba(255,255,255,0.05);
-                }}
-                .log-ts {{
-                    font-family: 'Fira Code', monospace;
-                    font-size: 12px;
-                    color: var(--muted);
-                    margin-right: 8px;
-                }}
-                .log-level {{
-                    font-weight: 600;
-                    color: var(--danger);
-                    margin-right: 8px;
-                }}
-                .log-msg {{ color: var(--text); }}
-                .muted {{ color: var(--muted); }}
-                .health-grid {{
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-                    gap: 16px;
-                    margin-top: 8px;
-                }}
-                .status-pill {{
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 6px 12px;
-                    border-radius: 999px;
-                    font-weight: 600;
-                    background: rgba(88,242,156,0.15);
-                }}
-                .status-pill.danger {{ background: rgba(248,113,113,0.2); color: #fecaca; }}
-                .status-pill.warning {{ background: rgba(252,211,77,0.25); color: #fef3c7; }}
-                .metrics-block {{
-                    background: rgba(0,0,0,0.2);
-                    border-radius: 12px;
-                    padding: 12px;
-                    border: 1px solid rgba(255,255,255,0.05);
-                }}
-                .card.mini .value {{ font-size: 30px; }}
-                .danger-text {{ color: var(--danger); font-weight: 600; }}
-                .failure-table .error {{ color: var(--danger); }}
-                .failure-table .status-pill {{ font-size: 12px; padding: 4px 10px; }}
-                .metrics-block ul {{
-                    list-style: none;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 6px;
-                }}
-                .metrics-block li {{
-                    display: flex;
-                    justify-content: space-between;
-                    font-family: 'Fira Code', monospace;
-                    font-size: 13px;
-                }}
-                .metrics-title {{
-                    font-size: 13px;
-                    text-transform: uppercase;
-                    color: var(--muted);
-                    letter-spacing: 0.6px;
-                    margin-bottom: 8px;
-                }}
-                @media (max-width: 720px) {{
-                    body {{ padding: 16px; }}
-                    .controls {{ flex-direction: column; align-items: stretch; }}
-                    .control-group {{ width: 100%; }}
-                }}
-            </style>
-        </head>
-        <body>
-            <main>
-                <header>
-                    <div class=\"title-row\">
-                        <h1>Media Bandit · Админ-панель</h1>
-                        <span class=\"scope-chip\">{html.escape(scope)}</span>
-                    </div>
-                    {identity_html}
-                    <form method=\"get\" action=\"/admin\" class=\"controls\">
-                        <div class=\"control-group\">
-                            <label>ID чата</label>
-                            <input type=\"number\" name=\"chat_id\" placeholder=\"Например 12345\" value=\"{chat_value}\" />
-                        </div>
-                        <div class=\"control-group\">
-                            <label>Поиск по названию</label>
-                            <input type=\"text\" name=\"search\" placeholder=\"Название чата\" value=\"{search_value}\" />
-                        </div>
-                        <div class=\"control-group\">
-                            <label>Сортировка чатов</label>
-                            <select name=\"chat_sort\">
-                                {chat_sort_options_html}
-                            </select>
-                        </div>
-                        <div class=\"control-group\">
-                            <label>Топ пользователей</label>
-                            <select name=\"top_sort\">
-                                {top_sort_options_html}
-                            </select>
-                        </div>
-                        <div class=\"control-group\">
-                            <label>Платформы</label>
-                            <select name=\"platform_sort\">
-                                {platform_sort_options_html}
-                            </select>
-                        </div>
-                        {token_input}
-                        <button type=\"submit\">Применить</button>
-                        <a class=\"ghost-btn\" href=\"{build_link({'chat_id': None, 'search': None})}\">Сбросить фильтр</a>
-                    </form>
-                </header>
-                {cards_html}
-                {queue_section_html}
-                <section>
-                    <h2>Чаты</h2>
-                    <table class=\"chat-table\">
-                        <thead>
-                            <tr>
-                                <th>Чат</th>
-                                <th>ID</th>
-                                <th>Тип</th>
-                                <th>Загрузок</th>
-                                <th>Ошибок</th>
-                                <th>Пользователей</th>
-                                <th>Объём</th>
-                                <th>Активность</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {chat_table}
-                        </tbody>
-                    </table>
-                </section>
-                <div class=\"two-columns\">
-                    <section>
-                        <h2>Топ пользователей</h2>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Пользователь</th>
-                                    <th>Загрузок</th>
-                                    <th>Объём</th>
-                                    <th>Ошибки</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {top_rows}
-                            </tbody>
-                        </table>
-                    </section>
-                    <section>
-                        <h2>Платформы</h2>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Платформа</th>
-                                    <th>Загрузок</th>
-                                    <th>Объём</th>
-                                    <th>Ошибки</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {platform_rows}
-                            </tbody>
-                        </table>
-                    </section>
-                </div>
-                <section>
-                    <h2>Последние загрузки</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Пользователь</th>
-                                <th>Платформа</th>
-                                <th>Статус</th>
-                                <th>Объём</th>
-                                <th>Время</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {recent_rows}
-                        </tbody>
-                    </table>
-                </section>
-                {failures_section_html}
-                <section>
-                    <h2>Healthcheck</h2>
-                    {health_html}
-                </section>
-                <section>
-                    <h2>Ошибки</h2>
-                    <ul class=\"logs-list\">
-                        {logs_html}
-                    </ul>
-                </section>
-            </main>
-            <script>
-            {dashboard_js}
-            </script>
-        </body>
-        </html>
-        """
+        reset_link = build_link({"chat_id": None, "search": None})
+        context = {
+            "scope": scope,
+            "identity_html": identity_html,
+            "chat_value": chat_value,
+            "search_value": search_value,
+            "chat_sort_options_html": chat_sort_options_html,
+            "top_sort_options_html": top_sort_options_html,
+            "platform_sort_options_html": platform_sort_options_html,
+            "token_input": token_input,
+            "reset_link": reset_link,
+            "cards_html": cards_html,
+            "queue_section_html": queue_section_html,
+            "chat_table": chat_table,
+            "top_rows": top_rows,
+            "platform_rows": platform_rows,
+            "recent_rows": recent_rows,
+            "failures_section_html": failures_section_html,
+            "health_html": health_html,
+            "logs_html": logs_html,
+            "dashboard_js": dashboard_js,
+        }
+        return self._dashboard_template.render(**context)
 
     def _read_error_logs(self, max_lines: int) -> List[Dict[str, str]]:
         log_path = getattr(config, "LOG_FILE", None)
@@ -1403,13 +421,3 @@ class AdminPanelServer:
                 }
             )
         return parsed
-
-
-def _format_timestamp(ts: Optional[object]) -> str:
-    if not ts:
-        return "—"
-    if isinstance(ts, datetime):
-        # Normalize to naive string for consistent rendering
-        return ts.strftime("%Y-%m-%d %H:%M:%S")
-    text = str(ts)
-    return text.replace("T", " ")
