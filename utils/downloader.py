@@ -304,6 +304,13 @@ async def _download_once(
     workdir = output_dir.resolve()
     workdir_str = str(workdir)
     output_template = "%(title).100s-%(id)s.%(ext)s"
+    resolved_cookies_file = _normalize_cookies_path(
+        cookies_file
+        or os.environ.get("YTDLP_COOKIES_FILE")
+        or getattr(config, "YTDLP_COOKIES_FILE", None)
+    )
+    if resolved_cookies_file:
+        Path(resolved_cookies_file).parent.mkdir(parents=True, exist_ok=True)
     user_agent = os.environ.get(
         "YTDLP_USER_AGENT",
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
@@ -328,12 +335,8 @@ async def _download_once(
         user_agent,
     ]
 
-    if cookies_file:
-        cmd += ["--cookies", cookies_file]
-    else:
-        cf = os.environ.get("YTDLP_COOKIES_FILE")
-        if cf:
-            cmd += ["--cookies", cf]
+    if resolved_cookies_file:
+        cmd += ["--cookies", resolved_cookies_file]
 
     if "instagram.com" in url:
         cmd += ["--add-header", "Referer: https://www.instagram.com/"]
@@ -356,7 +359,7 @@ async def _download_once(
     if rc != 0:
         logger.error("yt-dlp завершился с кодом %s: %s", rc, stderr[:2000])
         last_line = stderr.splitlines()[-1] if stderr else "unknown error"
-        cookies_path = _resolve_instagram_cookies_path(cookies_file)
+        cookies_path = _resolve_instagram_cookies_path(resolved_cookies_file or cookies_file)
         if _should_try_instagram_fallback(url, last_line, cookies_path):
             logger.warning("Instagram reported restricted media, invoking API fallback")
             try:
@@ -402,12 +405,8 @@ async def _download_once(
             "--retries", "3",
             "--fragment-retries", "3",
         ]
-        if cookies_file:
-            audio_cmd += ["--cookies", cookies_file]
-        else:
-            cf = os.environ.get("YTDLP_COOKIES_FILE")
-            if cf:
-                audio_cmd += ["--cookies", cf]
+        if resolved_cookies_file:
+            audio_cmd += ["--cookies", resolved_cookies_file]
         if "instagram.com" in url:
             audio_cmd += ["--add-header", "Referer: https://www.instagram.com/"]
 
@@ -455,12 +454,8 @@ async def _download_once(
             "--retries", "3",
             "--fragment-retries", "3",
         ]
-        if cookies_file:
-            video_cmd += ["--cookies", cookies_file]
-        else:
-            cf = os.environ.get("YTDLP_COOKIES_FILE")
-            if cf:
-                video_cmd += ["--cookies", cf]
+        if resolved_cookies_file:
+            video_cmd += ["--cookies", resolved_cookies_file]
         if "instagram.com" in url:
             video_cmd += ["--add-header", "Referer: https://www.instagram.com/"]
 
@@ -533,11 +528,18 @@ async def _maybe_store_cache(url: str, file_path: Path) -> None:
     await video_cache.store_copy(url, file_path)
 
 
+def _normalize_cookies_path(path: Optional[str]) -> Optional[str]:
+    if not path:
+        return None
+    try:
+        return str(Path(path).expanduser().resolve())
+    except OSError:
+        return str(Path(path).expanduser().absolute())
+
+
 def _resolve_instagram_cookies_path(explicit: Optional[str]) -> Optional[str]:
-    if explicit:
-        return explicit
-    fallback = getattr(config, "YTDLP_COOKIES_FILE", None) or getattr(config, "IG_COOKIES_PATH", None)
-    return fallback
+    candidate = explicit or getattr(config, "YTDLP_COOKIES_FILE", None) or getattr(config, "IG_COOKIES_PATH", None)
+    return _normalize_cookies_path(candidate)
 
 
 def _should_try_instagram_fallback(url: str, error_line: str, cookies_path: Optional[str]) -> bool:
